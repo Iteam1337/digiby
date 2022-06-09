@@ -6,12 +6,16 @@ function App() {
       <header className="flex w-full max-w-md flex-col items-center">
         Header
       </header>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<main>Content</main>} />
-          {/* <Route component={NotFound} /> */}
-        </Routes>
-      </BrowserRouter>
+      <main>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<p>Search</p>} />
+            <Route path="/departures" element={<p>Departures</p>} />
+            <Route path="/results" element={<p>Results</p>} />
+            {/* <Route component={NotFound} /> */}
+          </Routes>
+        </BrowserRouter>
+      </main>
     </div>
   );
 }
