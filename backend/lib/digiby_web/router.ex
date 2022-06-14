@@ -5,8 +5,9 @@ defmodule DigibyWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", DigibyWeb do
+  scope "/", DigibyWeb do
     pipe_through :api
+    get "/transports", TransportController, :index
   end
 
   # Enables LiveDashboard only for development
