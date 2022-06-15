@@ -107,7 +107,7 @@ const Search = () => {
               placeholder="Välj start"
               className=" rounded-md bg-pm-grey py-2 px-3 text-xs"
             />
-            <span className="mt-2 mr-6 text-xs font-medium">
+            <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="from" />
             </span>
             <label htmlFor="to" className="mb-1 mt-6 text-xs font-bold">
@@ -118,7 +118,7 @@ const Search = () => {
               placeholder="Välj mål"
               className=" rounded-md bg-pm-grey py-2 px-3 text-xs"
             />
-            <span className="mt-2 mr-6 text-xs font-medium">
+            <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="to" />
             </span>
             <label
@@ -132,7 +132,7 @@ const Search = () => {
               startDate={startDate}
               setStartDate={setStartDate}
             />
-            <span className="mt-2 mr-6 text-xs font-medium">
+            <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="dateAndTime" />
             </span>
             <Button type="submit" text="Hitta resa" />
