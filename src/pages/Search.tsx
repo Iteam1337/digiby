@@ -70,20 +70,21 @@ const Search = () => {
     from: Yup.string()
       .min(2, 'För kort')
       .max(70, 'För långt')
-      .required('Lägg till start'),
+      .required('Lägg till din position'),
     to: Yup.string()
       .min(2, 'För kort')
       .max(70, 'För långt')
-      .required('Lägg till mål'),
+      .required('Lägg till ditt slutmål'),
     dateAndTime: Yup.date()
       .nullable()
       .required('Lägg till tidpunkt')
-      .min(new Date(), 'Tidpunkt kan inte vara tidigare än dagens datum'),
+      .min(new Date(), 'Det går inte att välja tidpunkt bakåt i tiden'),
   });
 
   return (
     <section>
-      <h1 className="mx-6 mb-10">Sök resa</h1>
+      <h1 className="mx-6 mb-3 text-2xl font-bold text-white">Hej!</h1>
+      <h2 className="mx-6 mb-10 text-lg text-white">Hitta din nästa resa</h2>
       <Formik
         initialValues={initialFormState}
         validationSchema={SignupSchema}
@@ -100,7 +101,7 @@ const Search = () => {
             className="mx-6 flex flex-col rounded-md bg-white p-6"
           >
             <label htmlFor="from" className="mb-1 text-xs font-bold">
-              Från
+              Var är du?
             </label>
             <Field
               name="from"
@@ -125,7 +126,7 @@ const Search = () => {
               htmlFor="dateAndTime"
               className="mb-1 mt-6 text-xs font-bold"
             >
-              Välj när du vill åka
+              När vill du åka?
             </label>
             <DatePickerField
               name="dateAndTime"

@@ -49,7 +49,8 @@ code {
 
 @media (hover: hover) {
   .react-datepicker__day:hover,
-  li.react-datepicker__time-list-item:hover {
+  li.react-datepicker__time-list-item:hover,
+  .react-datepicker__day--keyboard-selected {
     background-color: #737475 !important; /* pr-dark-grey */
     color: white !important;
   }
