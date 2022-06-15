@@ -37,7 +37,7 @@ export const DatePickerField = ({
       }}
       showTimeSelect
       dateFormat="Pp"
-      className="w-full rounded-md bg-pm-grey py-2 px-3 text-xs"
+      className="w-full rounded-md bg-pm-grey bg-[url(icons/time.svg)] bg-[length:12px_auto] bg-[left_8px_top_10px] bg-no-repeat py-2 pl-8 pr-3 text-xs"
     />
   );
 };
@@ -106,7 +106,7 @@ const Search = () => {
             <Field
               name="from"
               placeholder="Välj start"
-              className=" rounded-md bg-pm-grey py-2 px-3 text-xs"
+              className="rounded-md bg-pm-grey bg-[url(icons/pos.svg)] bg-[length:10px_auto] bg-[left_8px_top_10px] bg-no-repeat py-2 pl-8 pr-3 text-xs"
             />
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="from" />
@@ -117,7 +117,7 @@ const Search = () => {
             <Field
               name="to"
               placeholder="Välj mål"
-              className=" rounded-md bg-pm-grey py-2 px-3 text-xs"
+              className=" rounded-md bg-pm-grey bg-[url(icons/pos.svg)] bg-[length:10px_auto] bg-[left_8px_top_10px] bg-no-repeat py-2 pl-8 pr-3 text-xs"
             />
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="to" />
