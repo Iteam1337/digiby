@@ -49,11 +49,15 @@ code {
 
 @media (hover: hover) {
   .react-datepicker__day:hover,
-  li.react-datepicker__time-list-item:hover,
-  .react-datepicker__day--keyboard-selected {
+  li.react-datepicker__time-list-item:hover {
     background-color: #737475 !important; /* pr-dark-grey */
     color: white !important;
   }
+}
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--keyboard-selected:hover {
+  background-color: #737475 !important; /* pr-dark-grey */
+  color: white !important;
 }
 
 .react-datepicker__day--selected,
