@@ -1,58 +1,11 @@
 import { useState } from 'react';
-import {
-  Formik,
-  Field,
-  ErrorMessage,
-  useField,
-  useFormikContext,
-} from 'formik';
-import DatePicker from 'react-datepicker';
+import { Formik, Field, ErrorMessage } from 'formik';
 import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.css';
 import * as Yup from 'yup';
 
 import Button from '../components/Button';
-import TimeIcon from '../components/TimeIcon';
 import PosIcon from '../components/PosIcon';
-
-export const DatePickerField = ({
-  name,
-  startDate,
-  setStartDate,
-}: {
-  name: string;
-  startDate: Date;
-  setStartDate: (date: Date) => void;
-}) => {
-  const { setFieldValue, setFieldTouched } = useFormikContext();
-  const [field] = useField(name);
-  const [open, setOpen] = useState(false);
-  return (
-    <div>
-      <DatePicker
-        name={name}
-        selected={startDate}
-        onChange={(date: Date) => {
-          setFieldValue(field.name, date);
-          setStartDate(date);
-        }}
-        onChangeRaw={() => {
-          setFieldTouched(field.name, true, true);
-        }}
-        onFocus={() => setOpen(!open)}
-        onBlur={() => setOpen(!open)}
-        showTimeSelect
-        dateFormat="Pp"
-        className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
-      />
-      <TimeIcon
-        className={`absolute mt-[-22px] ml-[8px] ${
-          open ? 'fill-pm-black' : 'fill-pm-dark-grey'
-        }`}
-      />
-    </div>
-  );
-};
+import DatePickerField from '../components/DatePickerField';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
