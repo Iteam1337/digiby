@@ -12,6 +12,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import * as Yup from 'yup';
 
 import Button from '../components/Button';
+import TimeIcon from '../components/TimeIcon';
+import PosIcon from '../components/PosIcon';
 
 export const DatePickerField = ({
   name,
@@ -24,21 +26,31 @@ export const DatePickerField = ({
 }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext();
   const [field] = useField(name);
+  const [open, setOpen] = useState(false);
   return (
-    <DatePicker
-      name={name}
-      selected={startDate}
-      onChange={(date: Date) => {
-        setFieldValue(field.name, date);
-        setStartDate(date);
-      }}
-      onChangeRaw={() => {
-        setFieldTouched(field.name, true, true);
-      }}
-      showTimeSelect
-      dateFormat="Pp"
-      className="w-full rounded-md bg-pm-grey bg-[url(icons/time.svg)] bg-[length:12px_auto] bg-[left_8px_top_10px] bg-no-repeat py-2 pl-8 pr-3 text-xs"
-    />
+    <div>
+      <DatePicker
+        name={name}
+        selected={startDate}
+        onChange={(date: Date) => {
+          setFieldValue(field.name, date);
+          setStartDate(date);
+        }}
+        onChangeRaw={() => {
+          setFieldTouched(field.name, true, true);
+        }}
+        onFocus={() => setOpen(!open)}
+        onBlur={() => setOpen(!open)}
+        showTimeSelect
+        dateFormat="Pp"
+        className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+      />
+      <TimeIcon
+        className={`absolute mt-[-22px] ml-[8px] ${
+          open ? 'fill-pm-black' : 'fill-pm-dark-grey'
+        }`}
+      />
+    </div>
   );
 };
 
@@ -103,22 +115,28 @@ const Search = () => {
             <label htmlFor="from" className="mb-1 text-xs font-bold">
               Var är du?
             </label>
-            <Field
-              name="from"
-              placeholder="Välj start"
-              className="rounded-md bg-pm-grey bg-[url(icons/pos.svg)] bg-[length:10px_auto] bg-[left_8px_top_10px] bg-no-repeat py-2 pl-8 pr-3 text-xs"
-            />
+            <div>
+              <Field
+                name="from"
+                placeholder="Välj start"
+                className="peer rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+              />
+              <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
+            </div>
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="from" />
             </span>
             <label htmlFor="to" className="mb-1 mt-6 text-xs font-bold">
               Till
             </label>
-            <Field
-              name="to"
-              placeholder="Välj mål"
-              className=" rounded-md bg-pm-grey bg-[url(icons/pos.svg)] bg-[length:10px_auto] bg-[left_8px_top_10px] bg-no-repeat py-2 pl-8 pr-3 text-xs"
-            />
+            <div>
+              <Field
+                name="to"
+                placeholder="Välj mål"
+                className="peer rounded-md bg-pm-grey  py-2 pl-8 pr-3 text-xs"
+              />
+              <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
+            </div>
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="to" />
             </span>
