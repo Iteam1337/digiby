@@ -1,35 +1,41 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import axios from 'axios';
 import { Combobox } from '@headlessui/react';
+import debounce from 'lodash.debounce';
 
 import { Address } from '../utils/types';
 
-type Props = {
-  setFieldValue: (arg0: any, arg1: string | undefined) => void
-  value: string
-  placeholder: string
+const getAddress = (
+  value: string,
+  setSearchAddresses: React.Dispatch<React.SetStateAction<Address[]>>
+) => {
+  const url = 'https://pelias.iteamdev.io';
+  axios
+    .get(`${url}/v1/search?text=${encodeURIComponent(value)}`)
+    .then((res) => {
+      setSearchAddresses(
+        res.data.features.map((address: any) => ({
+          coordinates: address.geometry.coordinates,
+          address: address.properties.name + ' ' + address.properties.county,
+        }))
+      );
+    });
 };
 
-const AutoCompleteAddress = ({setFieldValue, value, placeholder}: Props) => {
+type Props = {
+  setFieldValue: (arg0: any, arg1: string | undefined) => void;
+  value: string;
+  placeholder: string;
+};
+
+const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
   const [serachAddresses, setSearchAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>();
 
-  const getAddress = (value: string) => {
-    if (value.length > 1) {
-      const url = 'https://pelias.iteamdev.io';
-      axios
-        .get(`${url}/v1/search?text=${encodeURIComponent(value)}`)
-        .then((res) => {
-          setSearchAddresses(
-            res.data.features.map((address: any) => ({
-              coordinates: address.geometry.coordinates,
-              address:
-                address.properties.name + ' ' + address.properties.county,
-            }))
-          );
-        });
-    }
-  };
+  const searchWithDebounce = useMemo(
+    () => debounce((q) => getAddress(q, setSearchAddresses), 300),
+    []
+  );
 
   return (
     <Combobox
@@ -39,7 +45,17 @@ const AutoCompleteAddress = ({setFieldValue, value, placeholder}: Props) => {
         setFieldValue(value, address);
       }}
     >
-      <Combobox.Input onChange={(event) => getAddress(event.target.value)} placeholder={placeholder} />
+      <Combobox.Input
+        onChange={(event) => {
+          if (event.target.value.length === 0) {
+            setFieldValue(value, '');
+            setSelectedAddress(undefined);
+          } else {
+            searchWithDebounce(event.target.value);
+          }
+        }}
+        placeholder={placeholder}
+      />
       <Combobox.Options>
         {serachAddresses &&
           serachAddresses.map((address, i) => (
