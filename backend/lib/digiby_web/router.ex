@@ -5,7 +5,7 @@ defmodule DigibyWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", DigibyWeb do
+  scope "/api", DigibyWeb do
     pipe_through :api
     get "/transports", TransportController, :index
   end
