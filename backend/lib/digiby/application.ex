@@ -7,6 +7,8 @@ defmodule Digiby.Application do
 
   @impl true
   def start(_type, _args) do
+    GTFS.cache_in_ets()
+
     children = [
       # Start the Telemetry supervisor
       DigibyWeb.Telemetry,
