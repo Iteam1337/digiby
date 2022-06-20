@@ -13,20 +13,22 @@ defmodule DigibyWeb.TransportView do
 
   def render("transport.json", %{transport: transport}) do
   %{
-      route_id: "43",
-      transportation_type: "länstrafiken Norrbotten", 
-      travel_time: 45,
-      departure: %{
-        arrives_at: DateTime.from_naive!(~N[2022-06-13 06:10:00], "Europe/Stockholm", Tzdata.TimeZoneDatabase),
-        position: %{lat: 66.4321345,lng: 20.6023657},
-        stop_name: "Voullerim 6000",
-      },
-      destination: %{
-        arrives_at: DateTime.from_naive!(~N[2022-06-13 06:55:00], "Europe/Stockholm", Tzdata.TimeZoneDatabase),
-        stop_name: "Jokkmokk Busstation",
-        position: %{lat: 66.6079861, lng: 19.8272512},
-      },
-      cost: 93
+    route_id: "43",
+    transportation_type: "länstrafiken Norrbotten", 
+    travel_time: 45,
+    departure: %{
+      arrives_at: DateTime.from_naive!(~N[2022-06-13 06:10:00], "Europe/Stockholm", Tzdata.TimeZoneDatabase),
+      position: %{lat: 66.4321345,lng: 20.6023657},
+      stop_name: "Voullerim 6000",
+    },
+    destination: %{
+      arrives_at: DateTime.from_naive!(~N[2022-06-13 06:55:00], "Europe/Stockholm", Tzdata.TimeZoneDatabase),
+      stop_name: "Jokkmokk Busstation",
+      position: %{lat: 66.6079861, lng: 19.8272512},
+    },
+    cost: 93,
+    stops: [],
+    geometry: []
   }
     # %{
     #   route_id: transport.route_id,
