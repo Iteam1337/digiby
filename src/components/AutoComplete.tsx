@@ -29,7 +29,7 @@ type Props = {
 };
 
 const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
-  const [serachAddresses, setSearchAddresses] = useState<Address[]>([]);
+  const [searchAddresses, setSearchAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>();
 
   const searchWithDebounce = useMemo(
@@ -41,7 +41,7 @@ const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
     <Combobox
       value={selectedAddress?.address}
       onChange={(address) => {
-        setSelectedAddress(address);
+        setSelectedAddress(address as Address | undefined);
         setFieldValue(value, address);
       }}
     >
@@ -59,8 +59,8 @@ const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
         className="peer rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
       <Combobox.Options>
-        {serachAddresses &&
-          serachAddresses.map((address, i) => (
+        {searchAddresses &&
+          searchAddresses.map((address, i) => (
             <Combobox.Option key={i} value={address}>
               {address.address}
             </Combobox.Option>

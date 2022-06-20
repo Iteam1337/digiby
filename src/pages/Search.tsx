@@ -21,7 +21,10 @@ const Search = () => {
   };
 
   const initialFormState: FormData = {
-    from: '',
+    from: {
+      coordinates: [0, 0],
+      address: '',
+    },
     to: {
       coordinates: [0, 0],
       address: '',
@@ -31,14 +34,14 @@ const Search = () => {
   };
 
   const SignupSchema = Yup.object().shape({
-    from: Yup.string()
-      .min(2, 'För kort')
-      .max(70, 'För långt')
-      .required('Lägg till din position'),
-    to: Yup.string()
-      .min(2, 'För kort')
-      .max(70, 'För långt')
-      .required('Lägg till ditt slutmål'),
+    from: Yup.object().shape({
+      address: Yup.string().required('Lägg till ditt slutmål'),
+      coordinates: Yup.array(),
+    }),
+    to: Yup.object().shape({
+      address: Yup.string().required('Lägg till ditt slutmål'),
+      coordinates: Yup.array(),
+    }),
     dateAndTime: Yup.date()
       .nullable()
       .required('Lägg till tidpunkt')
@@ -73,7 +76,6 @@ const Search = () => {
                 value="from"
                 placeholder="Välj start"
               />
-
               <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
             </div>
             <span className="mt-2 mr-6 text-xs">
@@ -85,7 +87,7 @@ const Search = () => {
             <div>
               <AutoCompleteAddress
                 setFieldValue={setFieldValue}
-                value="from"
+                value="to"
                 placeholder="Välj mål"
               />
               <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />

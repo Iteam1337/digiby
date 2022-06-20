@@ -4,7 +4,7 @@ export type Address = {
 };
 
 export type FormData = {
-  from: string;
+  from: Address;
   to: Address;
   time: string;
   date: string;
