@@ -55,6 +55,8 @@ const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
           }
         }}
         placeholder={placeholder}
+        name={value}
+        className="peer rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
       <Combobox.Options>
         {serachAddresses &&
