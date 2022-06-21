@@ -58,7 +58,7 @@ const AutoCompleteAddress = ({ name, placeholder }: Props) => {
         }} */
         placeholder={placeholder}
         name={name}
-        className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+        className="peer w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
       <Combobox.Options
         className={
