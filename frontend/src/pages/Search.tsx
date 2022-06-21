@@ -34,19 +34,12 @@ const Search = () => {
 
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
-      address: Yup.string()
-        .min(2, 'För kort')
-        .required('Lägg till ditt slutmål'),
+      address: Yup.string().required('Lägg till ditt slutmål'),
     }),
     to: Yup.object().shape({
-      address: Yup.string()
-        .min(2, 'För kort')
-        .required('Lägg till ditt slutmål'),
+      address: Yup.string().required('Lägg till ditt slutmål'),
     }),
-    dateAndTime: Yup.date()
-      .nullable()
-      .required('Lägg till tidpunkt')
-      .min(new Date(), 'Det går inte att välja tidpunkt bakåt i tiden'),
+    dateAndTime: Yup.date().nullable().required('Lägg till tidpunkt'),
   });
 
   return (
@@ -96,6 +89,7 @@ const Search = () => {
               name="dateAndTime"
               startDate={startDate}
               setStartDate={setStartDate}
+              placeholderText="Välj tidpunkt"
             />
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="dateAndTime" />
