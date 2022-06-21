@@ -56,12 +56,12 @@ const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
         }}
         placeholder={placeholder}
         name={value}
-        className="peer rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+        className="peer rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs w-72"
       />
-      <Combobox.Options>
+      <Combobox.Options  className={'w-72 max-h-32 z-10 overflow-y-scroll absolute bg-pm-grey mt-1 rounded-md'}>
         {searchAddresses &&
           searchAddresses.map((address, i) => (
-            <Combobox.Option key={i} value={address}>
+            <Combobox.Option key={i} value={address} className='py-2 pl-2 text-xs'>
               {address.address}
             </Combobox.Option>
           ))}

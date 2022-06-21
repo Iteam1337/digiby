@@ -65,7 +65,7 @@ const Search = () => {
           <form
             method="get"
             onSubmit={handleSubmit}
-            className="mx-6 flex flex-col rounded-md bg-white p-6"
+            className="mx-6 flex flex-col  rounded-md bg-white p-6 items-center"
           >
             <label htmlFor="from" className="mb-1 text-xs font-bold">
               Var är du?

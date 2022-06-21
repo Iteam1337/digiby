@@ -33,7 +33,7 @@ const DatePickerField = ({
         onBlur={() => setOpen(!open)}
         showTimeSelect
         dateFormat="Pp"
-        className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+        className="w-72 rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
       <TimeIcon
         className={`absolute mt-[-22px] ml-[8px] ${
