@@ -2,35 +2,34 @@ import { useState, useMemo } from 'react';
 import axios from 'axios';
 import { Combobox } from '@headlessui/react';
 import debounce from 'lodash.debounce';
+import { useFormikContext } from 'formik';
 
 import { Address } from '../utils/types';
 
 const getAddress = (
-  value: string,
+  name: string,
   setSearchAddresses: React.Dispatch<React.SetStateAction<Address[]>>
 ) => {
   const url = 'https://pelias.iteamdev.io';
-  axios
-    .get(`${url}/v1/search?text=${encodeURIComponent(value)}`)
-    .then((res) => {
-      setSearchAddresses(
-        res.data.features.map((address: any) => ({
-          coordinates: address.geometry.coordinates,
-          address: address.properties.name + ' ' + address.properties.county,
-        }))
-      );
-    });
+  axios.get(`${url}/v1/search?text=${encodeURIComponent(name)}`).then((res) => {
+    setSearchAddresses(
+      res.data.features.map((address: any) => ({
+        coordinates: address.geometry.coordinates,
+        address: address.properties.name + ' ' + address.properties.county,
+      }))
+    );
+  });
 };
 
 type Props = {
-  setFieldValue: (arg0: any, arg1: string | undefined) => void;
-  value: string;
+  name: string;
   placeholder: string;
 };
 
-const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
+const AutoCompleteAddress = ({ name, placeholder }: Props) => {
   const [searchAddresses, setSearchAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>();
+  const { setFieldValue /*, setFieldTouched */ } = useFormikContext();
 
   const searchWithDebounce = useMemo(
     () => debounce((q) => getAddress(q, setSearchAddresses), 300),
@@ -42,26 +41,37 @@ const AutoCompleteAddress = ({ setFieldValue, value, placeholder }: Props) => {
       value={selectedAddress?.address}
       onChange={(address) => {
         setSelectedAddress(address as Address | undefined);
-        setFieldValue(value, address);
+        setFieldValue(name, address);
       }}
     >
       <Combobox.Input
         onChange={(event) => {
           if (event.target.value.length === 0) {
-            setFieldValue(value, '');
+            setFieldValue(name, undefined);
             setSelectedAddress(undefined);
           } else {
             searchWithDebounce(event.target.value);
           }
         }}
+        /* onBlur={() => {
+          setFieldTouched(name, true, true);
+        }} */
         placeholder={placeholder}
-        name={value}
-        className="peer rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs w-72"
+        name={name}
+        className="peer w-72 rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
-      <Combobox.Options  className={'w-72 max-h-32 z-10 overflow-y-scroll absolute bg-pm-grey mt-1 rounded-md'}>
+      <Combobox.Options
+        className={
+          'absolute z-10 mt-1 max-h-32 w-72 overflow-y-scroll rounded-md bg-pm-grey'
+        }
+      >
         {searchAddresses &&
           searchAddresses.map((address, i) => (
-            <Combobox.Option key={i} value={address} className='py-2 pl-2 text-xs'>
+            <Combobox.Option
+              key={i}
+              value={address}
+              className="py-2 pl-2 text-xs"
+            >
               {address.address}
             </Combobox.Option>
           ))}

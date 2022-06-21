@@ -35,12 +35,14 @@ const Search = () => {
 
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
-      address: Yup.string().required('Lägg till ditt slutmål'),
-      coordinates: Yup.array(),
+      address: Yup.string()
+        .min(2, 'För kort')
+        .required('Lägg till ditt slutmål'),
     }),
     to: Yup.object().shape({
-      address: Yup.string().required('Lägg till ditt slutmål'),
-      coordinates: Yup.array(),
+      address: Yup.string()
+        .min(2, 'För kort')
+        .required('Lägg till ditt slutmål'),
     }),
     dateAndTime: Yup.date()
       .nullable()
@@ -61,7 +63,7 @@ const Search = () => {
           console.log('submitting form', formState);
         }}
       >
-        {({ handleSubmit, setFieldValue }) => (
+        {({ handleSubmit }) => (
           <form
             method="get"
             onSubmit={handleSubmit}
@@ -71,29 +73,21 @@ const Search = () => {
               Var är du?
             </label>
             <div>
-              <AutoCompleteAddress
-                setFieldValue={setFieldValue}
-                value="from"
-                placeholder="Välj start"
-              />
+              <AutoCompleteAddress name="from" placeholder="Välj start" />
               <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
             </div>
             <span className="mt-2 mr-6 text-xs">
-              <ErrorMessage name="from" />
+              <ErrorMessage name="from.address" />
             </span>
             <label htmlFor="to" className="mb-1 mt-6 text-xs font-bold">
               Till
             </label>
             <div>
-              <AutoCompleteAddress
-                setFieldValue={setFieldValue}
-                value="to"
-                placeholder="Välj mål"
-              />
+              <AutoCompleteAddress name="to" placeholder="Välj mål" />
               <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
             </div>
             <span className="mt-2 mr-6 text-xs">
-              <ErrorMessage name="to" />
+              <ErrorMessage name="to.address" />
             </span>
             <label
               htmlFor="dateAndTime"
