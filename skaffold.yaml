@@ -7,6 +7,7 @@ build:
     - image: iteam1337/digiby-backend
       context: backend 
     - image: iteam1337/digiby-frontend
+      context: frontend
 deploy:
   kustomize:
     paths:
