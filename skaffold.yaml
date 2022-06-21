@@ -1,0 +1,20 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  name: digiby 
+build:
+  artifacts:
+    - image: iteam1337/digiby-backend
+      context: backend 
+    - image: iteam1337/digiby-frontend
+deploy:
+  kustomize:
+    paths:
+      - k8s/base
+  statusCheckDeadlineSeconds: 600
+profiles:
+- name: prod
+  deploy:
+    kustomize:
+      paths:
+      - k8s/overlays/prod
