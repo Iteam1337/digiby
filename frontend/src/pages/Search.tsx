@@ -8,6 +8,7 @@ import { FormData } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
+import getTransports from '../utils/getTransports';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -60,6 +61,7 @@ const Search = () => {
           formState.time = formatTime(startDate);
           formState.date = formatDate(startDate);
           console.log('submitting form', formState);
+          getTransports();
         }}
       >
         {({ handleSubmit }) => (
