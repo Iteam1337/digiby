@@ -3,6 +3,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
 import moment from 'moment';
 import * as Yup from 'yup';
+import { useQuery } from 'react-query';
 
 import { FormData } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
@@ -12,6 +13,8 @@ import getTransports from '../utils/getTransports';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
+
+  const transportsQuery = useQuery('transports', getTransports);
 
   const formatDate = (date: Date) => {
     return moment(date).format('L');
@@ -61,7 +64,7 @@ const Search = () => {
           formState.time = formatTime(startDate);
           formState.date = formatDate(startDate);
           console.log('submitting form', formState);
-          getTransports();
+          console.log('transportsQuery', transportsQuery);
         }}
       >
         {({ handleSubmit }) => (
