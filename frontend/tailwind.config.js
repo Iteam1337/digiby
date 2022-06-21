@@ -12,6 +12,8 @@ module.exports = {
         'pm-grey': '#f1f3f5',
         'pm-dark-grey': '#737475',
         'pm-black': '#1f1f1f',
+        'pm-background': ' #E5E5E5',
+        'pm-white': '#FDFEFF',
       },
     },
   },
