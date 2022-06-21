@@ -5,6 +5,7 @@ import debounce from 'lodash.debounce';
 import { useFormikContext } from 'formik';
 
 import { Address } from '../utils/types';
+import PosIcon from './PosIcon';
 
 const getAddress = (
   name: string,
@@ -60,9 +61,10 @@ const AutoCompleteAddress = ({ name, placeholder }: Props) => {
         name={name}
         className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
+          <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
       <Combobox.Options
         className={
-          'absolute z-10 mt-1 max-h-32 w-72 overflow-y-scroll rounded-md bg-pm-grey'
+          ' -10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey'
         }
       >
         {searchAddresses &&

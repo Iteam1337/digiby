@@ -7,7 +7,6 @@ import * as Yup from 'yup';
 import { FormData } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
-import PosIcon from '../components/PosIcon';
 import DatePickerField from '../components/DatePickerField';
 
 const Search = () => {
@@ -74,7 +73,6 @@ const Search = () => {
             </label>
             <div>
               <AutoCompleteAddress name="from" placeholder="Välj start" />
-              <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
             </div>
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="from.address" />
@@ -84,7 +82,6 @@ const Search = () => {
             </label>
             <div>
               <AutoCompleteAddress name="to" placeholder="Välj mål" />
-              <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
             </div>
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="to.address" />
