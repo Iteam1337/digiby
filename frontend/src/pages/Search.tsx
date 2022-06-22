@@ -28,8 +28,7 @@ const Search = () => {
       coordinates: [0, 0],
       address: '',
     },
-    time: formatTime(startDate),
-    date: formatDate(startDate),
+    date: new Date(),
   };
 
   const SignupSchema = Yup.object().shape({
@@ -39,8 +38,24 @@ const Search = () => {
     to: Yup.object().shape({
       address: Yup.string().required('Lägg till ditt slutmål'),
     }),
-    dateAndTime: Yup.date().nullable().required('Lägg till tidpunkt'),
+    date: Yup.date().nullable().required('Lägg till tidpunkt'),
   });
+
+  function submit(formState: FormData) {
+    const formattedState = {
+      from: {
+        address: formState.from.address,
+        coordinates: formState.from.coordinates,
+      },
+      to: {
+        address: formState.to.address,
+        coordinates: formState.to.coordinates,
+      },
+      time: formatTime(formState.date),
+      date: formatDate(formState.date),
+    };
+    return console.log('submitting form', formattedState);
+  }
 
   return (
     <section>
@@ -50,9 +65,7 @@ const Search = () => {
         initialValues={initialFormState}
         validationSchema={SignupSchema}
         onSubmit={(formState) => {
-          formState.time = formatTime(startDate);
-          formState.date = formatDate(startDate);
-          console.log('submitting form', formState);
+          submit(formState);
         }}
       >
         {({ handleSubmit }) => (
@@ -86,13 +99,13 @@ const Search = () => {
               När vill du åka?
             </label>
             <DatePickerField
-              name="dateAndTime"
+              name="date"
               startDate={startDate}
               setStartDate={setStartDate}
               placeholderText="Välj tidpunkt"
             />
             <span className="mt-2 mr-6 text-xs">
-              <ErrorMessage name="dateAndTime" />
+              <ErrorMessage name="date" />
             </span>
             <Button type="submit" text="Hitta resa" />
           </form>
