@@ -30,7 +30,7 @@ type Props = {
 const AutoCompleteAddress = ({ name, placeholder }: Props) => {
   const [searchAddresses, setSearchAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>();
-  const { setFieldValue /*, setFieldTouched */ } = useFormikContext();
+  const { setFieldValue } = useFormikContext();
 
   const searchWithDebounce = useMemo(
     () => debounce((q) => getAddress(q, setSearchAddresses), 300),
@@ -48,22 +48,19 @@ const AutoCompleteAddress = ({ name, placeholder }: Props) => {
       <Combobox.Input
         onChange={(event) => {
           if (event.target.value.length === 0) {
-            setFieldValue(name, undefined);
+            setFieldValue(name, '');
             setSelectedAddress(undefined);
           } else {
             searchWithDebounce(event.target.value);
           }
         }}
-        /* onBlur={() => {
-          setFieldTouched(name, true, true);
-        }} */
         placeholder={placeholder}
         name={name}
         className="peer w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
       <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
       <Combobox.Options
-        className={' -10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey'}
+        className={'-10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey'}
       >
         {searchAddresses &&
           searchAddresses.map((address, i) => (

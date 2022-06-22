@@ -23,11 +23,14 @@ const Search = () => {
       coordinates: [0, 0],
       address: '',
     },
-    time: formatTime(startDate),
-    date: formatDate(startDate),
+    date: new Date(),
   };
 
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState({
+    ...initialFormState,
+    time: '',
+    day: '',
+  });
   console.log('formData', formData);
 
   const transportsQuery = useQuery('transports', getTransports);
@@ -36,20 +39,23 @@ const Search = () => {
 
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
-      address: Yup.string()
-        .min(2, 'För kort')
-        .required('Lägg till ditt slutmål'),
+      address: Yup.string().required('Lägg till ditt slutmål'),
     }),
     to: Yup.object().shape({
-      address: Yup.string()
-        .min(2, 'För kort')
-        .required('Lägg till ditt slutmål'),
+      address: Yup.string().required('Lägg till ditt slutmål'),
     }),
-    dateAndTime: Yup.date()
-      .nullable()
-      .required('Lägg till tidpunkt')
-      .min(new Date(), 'Det går inte att välja tidpunkt bakåt i tiden'),
+    date: Yup.date().nullable().required('Lägg till tidpunkt'),
   });
+
+  function submit(formState: FormData) {
+    const formattedState = {
+      ...formState,
+      time: formatTime(formState.date),
+      day: formatDate(formState.date),
+    };
+    setFormData(formattedState);
+    return;
+  }
 
   return (
     <section>
@@ -59,10 +65,7 @@ const Search = () => {
         initialValues={initialFormState}
         validationSchema={SignupSchema}
         onSubmit={(formState) => {
-          formState.time = formatTime(startDate);
-          formState.date = formatDate(startDate);
-          console.log('submitting form', formState);
-          setFormData(formState);
+          submit(formState);
           console.log('transportsQuery', transportsQuery);
         }}
       >
@@ -97,12 +100,13 @@ const Search = () => {
               När vill du åka?
             </label>
             <DatePickerField
-              name="dateAndTime"
+              name="date"
               startDate={startDate}
               setStartDate={setStartDate}
+              placeholderText="Välj tidpunkt"
             />
             <span className="mt-2 mr-6 text-xs">
-              <ErrorMessage name="dateAndTime" />
+              <ErrorMessage name="date" />
             </span>
             <Button type="submit" text="Hitta resa" />
           </form>
