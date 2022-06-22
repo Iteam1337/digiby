@@ -1,23 +1,18 @@
 import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
-import moment from 'moment';
 import * as Yup from 'yup';
+import { useQuery } from 'react-query';
 
 import { FormData } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
+import getTransports from '../utils/getTransports';
+import { formatDate, formatTime } from '../utils/dateTimeFormatting';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
-
-  const formatDate = (date: Date) => {
-    return moment(date).format('L');
-  };
-  const formatTime = (date: Date) => {
-    return moment(date).format('HH:mm');
-  };
 
   const initialFormState: FormData = {
     from: {
@@ -31,6 +26,13 @@ const Search = () => {
     time: formatTime(startDate),
     date: formatDate(startDate),
   };
+
+  const [formData, setFormData] = useState(initialFormState);
+  console.log('formData', formData);
+
+  const transportsQuery = useQuery('transports', getTransports);
+  // todo: add argument to api call when api accepts this
+  // const transportsQuery = useQuery(['transports', formData], () => getTransports(formData));
 
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
@@ -60,6 +62,8 @@ const Search = () => {
           formState.time = formatTime(startDate);
           formState.date = formatDate(startDate);
           console.log('submitting form', formState);
+          setFormData(formState);
+          console.log('transportsQuery', transportsQuery);
         }}
       >
         {({ handleSubmit }) => (
