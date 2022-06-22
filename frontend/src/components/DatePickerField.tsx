@@ -1,4 +1,4 @@
-import { useField, useFormikContext } from 'formik';
+import { useFormikContext } from 'formik';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,28 +9,33 @@ const DatePickerField = ({
   name,
   startDate,
   setStartDate,
+  placeholderText,
 }: {
   name: string;
   startDate: Date;
   setStartDate: (date: Date) => void;
+  placeholderText: string;
 }) => {
-  const { setFieldValue, setFieldTouched } = useFormikContext();
-  const [field] = useField(name);
+  const { setFieldValue /* , setFieldTouched */ } = useFormikContext();
   const [open, setOpen] = useState(false);
+
   return (
     <div>
       <DatePicker
         name={name}
         selected={startDate}
+        placeholderText={placeholderText}
+        onCalendarOpen={() => {
+          setOpen(true);
+        }}
+        onCalendarClose={() => setOpen(false)}
         onChange={(date: Date) => {
-          setFieldValue(field.name, date);
+          setFieldValue(name, date);
           setStartDate(date);
         }}
-        onChangeRaw={() => {
-          setFieldTouched(field.name, true, true);
-        }}
-        onFocus={() => setOpen(!open)}
-        onBlur={() => setOpen(!open)}
+        /* onChangeRaw={() => {
+          setFieldTouched(name, true, true);
+        }} */
         showTimeSelect
         dateFormat="Pp"
         className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
