@@ -3,6 +3,7 @@ defmodule DigibyWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug CORSPlug, origin: ["*"]
   end
 
   scope "/api", DigibyWeb do

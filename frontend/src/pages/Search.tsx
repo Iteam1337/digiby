@@ -1,23 +1,18 @@
 import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
-import moment from 'moment';
 import * as Yup from 'yup';
+import { useQuery } from 'react-query';
 
 import { FormData } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
+import getTransports from '../utils/getTransports';
+import { formatDate, formatTime } from '../utils/dateTimeFormatting';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
-
-  const formatDate = (date: Date) => {
-    return moment(date).format('L');
-  };
-  const formatTime = (date: Date) => {
-    return moment(date).format('HH:mm');
-  };
 
   const initialFormState: FormData = {
     from: {
@@ -31,6 +26,17 @@ const Search = () => {
     date: new Date(),
   };
 
+  const [formData, setFormData] = useState({
+    ...initialFormState,
+    time: '',
+    day: '',
+  });
+  console.log('formData', formData);
+
+  const transportsQuery = useQuery('transports', getTransports);
+  // todo: add argument to api call when api accepts this
+  // const transportsQuery = useQuery(['transports', formData], () => getTransports(formData));
+
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
       address: Yup.string().required('Lägg till ditt slutmål'),
@@ -43,18 +49,12 @@ const Search = () => {
 
   function submit(formState: FormData) {
     const formattedState = {
-      from: {
-        address: formState.from.address,
-        coordinates: formState.from.coordinates,
-      },
-      to: {
-        address: formState.to.address,
-        coordinates: formState.to.coordinates,
-      },
+      ...formState,
       time: formatTime(formState.date),
-      date: formatDate(formState.date),
+      day: formatDate(formState.date),
     };
-    return console.log('submitting form', formattedState);
+    setFormData(formattedState);
+    return;
   }
 
   return (
@@ -66,6 +66,7 @@ const Search = () => {
         validationSchema={SignupSchema}
         onSubmit={(formState) => {
           submit(formState);
+          console.log('transportsQuery', transportsQuery);
         }}
       >
         {({ handleSubmit }) => (
