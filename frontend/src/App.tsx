@@ -1,22 +1,25 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+import Layout from './components/Layout';
+import Search from './pages/Search';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center">
-      <header className="flex w-full max-w-md flex-col items-center">
-        Header
-      </header>
-      <main>
+    <QueryClientProvider client={queryClient}>
+      <Layout>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<p>Search</p>} />
+            <Route path="/" element={<Search />} />
             <Route path="/departures" element={<p>Departures</p>} />
             <Route path="/results" element={<p>Results</p>} />
             {/* <Route component={NotFound} /> */}
           </Routes>
         </BrowserRouter>
-      </main>
-    </div>
+      </Layout>
+    </QueryClientProvider>
   );
 }
 

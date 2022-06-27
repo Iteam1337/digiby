@@ -43,7 +43,8 @@ defmodule Digiby.MixProject do
       {:tzdata, "~> 1.1"},
       {:polyline, "~> 1.3.0"},
       {:csv, "~> 2.4"},
-      {:distance, "~> 1.0"}
+      {:distance, "~> 1.0"},
+      {:cors_plug, "~> 3.0.3"}
     ]
   end
 
