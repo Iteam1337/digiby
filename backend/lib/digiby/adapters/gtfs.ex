@@ -7,9 +7,9 @@ defmodule GTFS do
   end
 
   def get_buses(date) do
-    get_from_ets(:norrbotten_services, "20220911")
-    |> Map.get(:service_id)
-    |> (fn service_id -> :ets.lookup(:norrbotten_trips, service_id) end).()
+    :ets.lookup(:norrbotten_services, date)
+    |> Enum.map(&(elem(&1, 1) |> Map.get(:service_id)))
+    |> Enum.flat_map(fn service_id -> :ets.lookup(:norrbotten_trips, service_id) end)
     |> Enum.map(fn e -> elem(e, 1) end)
     |> Enum.flat_map(fn trip_id -> :ets.lookup(:norrbotten_stop_times, trip_id) end)
     |> Enum.map(fn e -> elem(e, 1) end)
@@ -37,15 +37,12 @@ defmodule GTFS do
   end
 
   defp load_services do
-    table = :ets.new(:norrbotten_services, [:set, :public, :named_table])
+    table = :ets.new(:norrbotten_services, [:duplicate_bag, :public, :named_table])
 
     "calendar_dates.txt"
     |> get_decoded_csv_stream()
-    |> Enum.reduce(%{}, fn value, acc ->
-      Map.put(acc, value["date"], %{
-        service_id: value["service_id"],
-        exception_type: value["exception_type"]
-      })
+    |> Enum.map(fn value ->
+      {value["date"], %{service_id: value["service_id"], exception_type: value["exception_type"]}}
     end)
     |> Enum.each(fn tuple -> :ets.insert(table, tuple) end)
 
