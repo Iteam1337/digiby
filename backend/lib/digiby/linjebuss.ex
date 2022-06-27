@@ -18,8 +18,9 @@ defmodule Digiby.Linjebuss do
       |> Enum.reject(fn e -> e |> Tuple.to_list() |> Enum.any?(&is_nil/1) end)
 
     {best_trip_id, best_start_stop, best_stop_stop} =
-      Enum.min_by(best_matches_for_lines, fn {_trip_id, %{stop_distance: distance_to_pickup},
-                                              %{stop_distance: distance_to_dropoff}} ->
+      Enum.min_by(best_matches_for_lines, fn {_trip_id,
+                                              %{meters_from_query_to_stop: distance_to_pickup},
+                                              %{meters_from_query_to_stop: distance_to_dropoff}} ->
         distance_to_pickup + distance_to_dropoff
       end)
 
@@ -32,7 +33,7 @@ defmodule Digiby.Linjebuss do
         |> Enum.take_while(fn %{stop_position: %{name: name}} ->
           name != best_stop_stop[:stop_position][:name]
         end)
-        |> Enum.concat([best_stop_stop])
+        |> Enum.concat([Map.drop(best_stop_stop, [:meters_from_query_to_stop])])
 
       %{bus | stop_times: stops}
     end)
@@ -41,8 +42,8 @@ defmodule Digiby.Linjebuss do
 
       travel_time =
         Time.diff(
-          last_stop[:arrival_time] |> Time.from_iso8601!(),
-          first_stop[:arrival_time] |> Time.from_iso8601!()
+          last_stop[:arrival_time],
+          first_stop[:arrival_time]
         )
 
       %Transport{
@@ -50,45 +51,34 @@ defmodule Digiby.Linjebuss do
         transportation_type: :linje_buss,
         travel_time: travel_time,
         cost: 900_000,
-        departure: first_stop[:stop_position],
-        destination: last_stop[:stop_position],
+        departure: best_start_stop,
+        destination: best_stop_stop,
         stops: bus.stop_times
       }
     end)
   end
 
-  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00])
-
-  def find_nearest_bus_stop(position, bus, "24" <> minute_and_second),
-    do: find_nearest_bus_stop(position, bus, "00" <> minute_and_second)
-
-  def find_nearest_bus_stop(position, bus, after_time) when is_binary(after_time) do
-    time = Time.from_iso8601!(after_time)
-    find_nearest_bus_stop(position, bus, time)
-  end
-
-  def find_nearest_bus_stop(position, bus, after_time) do
+  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00]) do
     bus.stop_times
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
     |> Enum.map(fn %{stop_position: %{lng: lng, lat: lat}} = stop ->
       Map.put(
         stop,
-        :stop_distance,
+        :meters_from_query_to_stop,
         Distance.GreatCircle.distance(
           {String.to_float(lng), String.to_float(lat)},
           position
         )
       )
     end)
-    |> Enum.min_by(fn %{stop_distance: distance} -> distance end, &<=/2, fn -> nil end)
+    |> Enum.min_by(fn %{meters_from_query_to_stop: distance} -> distance end, &<=/2, fn ->
+      nil
+    end)
   end
-
-  def is_bus_stop_time_after?(%{arrival_time: "24" <> minute_and_second}, after_time),
-    do: is_bus_stop_time_after?(%{arrival_time: "00" <> minute_and_second}, after_time)
 
   def is_bus_stop_time_after?(%{arrival_time: time}, after_time) do
     after_time
-    |> Time.diff(Time.from_iso8601!(time))
+    |> Time.diff(time)
     |> Kernel.<(0)
   end
 end

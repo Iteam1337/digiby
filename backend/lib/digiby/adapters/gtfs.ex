@@ -90,12 +90,16 @@ defmodule GTFS do
                     } ->
       :ets.insert(
         table,
-        {trip_id, %{stop_position: stop_position, arrival_time: arrival_time}}
+        {trip_id, %{stop_position: stop_position, arrival_time: timestr_to_time(arrival_time)}}
       )
     end)
 
     IO.puts("Stop times loaded")
   end
+
+  def timestr_to_time("24" <> rest), do: timestr_to_time("00" <> rest)
+
+  def timestr_to_time(time), do: Time.from_iso8601!(time)
 
   defp load_trips do
     table = :ets.new(:norrbotten_trips, [:duplicate_bag, :public, :named_table])
