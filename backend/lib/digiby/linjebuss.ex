@@ -8,23 +8,26 @@ defmodule Digiby.Linjebuss do
   def list_transports(date_time, from_position, to_position) do
     buses = GTFS.get_buses("20220621")
 
-    bz =
+    best_matches_for_lines =
       for bus <- buses do
-        best_pickup_bus_stop = find_nearest_bus_stop(@svappavaara_konsum, bus)
-        best_drop_off_bus_stop = find_nearest_bus_stop(@kiruna_kastanjen, bus)
+        best_pickup_bus_stop = find_nearest_bus_stop(@kiruna_kastanjen, bus)
+
+        best_drop_off_bus_stop =
+          find_nearest_bus_stop(
+            @svappavaara_konsum,
+            bus,
+            best_pickup_bus_stop["arrival_time"]
+          )
 
         {bus[:trip_id], best_pickup_bus_stop, best_drop_off_bus_stop}
       end
+      |> Enum.reject(fn e -> e |> Tuple.to_list() |> Enum.any?(&is_nil/1) end)
 
     {best_trip_id, best_start_stop, best_stop_stop} =
-      Enum.min_by(bz, fn {_trip_id, %{stop_distance: distance_to_pickup},
-                          %{stop_distance: distance_to_dropoff}} ->
+      Enum.min_by(best_matches_for_lines, fn {_trip_id, %{stop_distance: distance_to_pickup},
+                                              %{stop_distance: distance_to_dropoff}} ->
         distance_to_pickup + distance_to_dropoff
       end)
-
-    IO.inspect(best_start_stop)
-    IO.inspect(best_stop_stop)
-    IO.inspect(best_trip_id)
 
     Enum.filter(buses, fn %{trip_id: id} -> best_trip_id == id end)
     |> Enum.map(fn %{stops: stops} ->
@@ -36,12 +39,21 @@ defmodule Digiby.Linjebuss do
       end)
       |> Enum.concat([best_stop_stop])
     end)
-    |> IO.inspect(label: "filtered")
 
     [%Transport{}]
   end
 
-  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00]) do
+  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00])
+
+  def find_nearest_bus_stop(position, bus, "24" <> minute_and_second),
+    do: find_nearest_bus_stop(position, bus, "00" <> minute_and_second)
+
+  def find_nearest_bus_stop(position, bus, after_time) when is_binary(after_time) do
+    time = Time.from_iso8601!(after_time)
+    find_nearest_bus_stop(position, bus, time)
+  end
+
+  def find_nearest_bus_stop(position, bus, after_time) do
     bus[:stops]
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
     |> Enum.map(fn %{"stop" => %{lng: lng, lat: lat}} = stop ->
@@ -54,7 +66,7 @@ defmodule Digiby.Linjebuss do
         )
       )
     end)
-    |> Enum.min_by(fn %{stop_distance: distance} -> distance end)
+    |> Enum.min_by(fn %{stop_distance: distance} -> distance end, &<=/2, fn -> nil end)
   end
 
   def is_bus_stop_time_after?(%{"arrival_time" => "24" <> minute_and_second}, after_time),
