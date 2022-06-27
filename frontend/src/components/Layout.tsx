@@ -31,14 +31,20 @@ const Layout = ({ children }: { children: JSX.Element }) => {
       >
         <header className="mb-6 bg-pm-green p-6">
           {page === 'departures' && (
-            <div className="mx-auto flex flex-col max-w-screen-sm">
-              <div className='flex justify-center'>
-                <button onClick={() => navigate('/')} >
-                  <ArrowIcon />
-                </button>
-                <h2 className='text-white font-bold '>Min position - JokkMokk </h2>
+            <div className="mx-auto max-w-screen-sm  ">
+              <button onClick={() => navigate('/')} className="absolute top-8">
+                <ArrowIcon />
+              </button>
+              <div className="flex flex-col justify-center">
+                <div className="flex justify-center">
+                  <h2 className="font-bold text-white ">
+                    Min position - JokkMokk{' '}
+                  </h2>
+                </div>
+                <p className="text-center text-xs text-white">
+                  Tidigast avgång
+                </p>
               </div>
-              <p className='text-white text-xs text-center'>Tidigast avgång</p>
             </div>
           )}
         </header>
