@@ -1,0 +1,66 @@
+# Untitled notebook
+
+```elixir
+Mix.install([
+  {:csv, "~> 2.4"}
+])
+```
+
+## Section
+
+```elixir
+stops =
+  Path.expand("./backend/data/norrbotten/stops.txt", __DIR__)
+  |> File.stream!()
+  |> CSV.decode!(headers: true)
+  |> Stream.map(fn e -> Map.take(e, ["stop_name", "stop_id"]) end)
+  |> Enum.take(1)
+  |> Enum.reduce(%{}, fn value, acc -> Map.put(acc, value["stop_id"], value["stop_name"]) end)
+```
+
+```elixir
+services_today =
+  Path.expand("./backend/data/norrbotten/calendar_dates.txt", __DIR__)
+  |> File.stream!()
+  |> CSV.decode!(headers: true)
+  |> Enum.reduce(%{}, fn value, acc ->
+    Map.put(acc, value["date"], %{
+      service_id: value["service_id"],
+      exception_type: value["exception_type"]
+    })
+  end)
+
+# |> Stream.filter(&(&1["date"] == "20220610"))
+# |> Stream.map(& &1["service_id"])
+# |> Enum.map(&IO.inspect/1)
+```
+
+```elixir
+trips_today =
+  Path.expand("./norrbotten/trips.txt", __DIR__)
+  |> File.stream!()
+  |> CSV.decode!(headers: true)
+  |> Stream.filter(&Enum.member?(services_today, &1["service_id"]))
+  |> Enum.map(& &1["trip_id"])
+```
+
+```elixir
+trips_stoptimes =
+  Path.expand("./backend/data/norrbotten/stop_times.txt", __DIR__)
+  |> File.stream!()
+  |> CSV.decode!(headers: true)
+  |> Stream.map(fn e -> Map.put(e, "stop_name", stops[e["stop_id"]]) end)
+  # |> Stream.map(fn e -> Map.take(e, ["trip_id", "arrival_time", "stop_name"]) end)
+  |> Enum.take(2)
+
+# |> Enum.group_by(fn x -> x["trip_id"] end)
+#  |> Map.take(trips_today)
+# |> Enum.map(fn {_k, v} -> List.first(v) end)
+# |> Enum.group_by(fn e -> e["stop_name"] end)
+# |> Enum.map(fn {_k, v} -> List.first(v) end)
+# |> Enum.sort(&(&1["arrival_time"] < &2["arrival_time"]))
+```
+
+```elixir
+Stream.interval(1000) |> Enum.map(&IO.inspect/1)
+```

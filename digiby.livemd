@@ -1,0 +1,201 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Testing Vroom
+
+```elixir
+Mix.install([
+  {:httpoison, "~> 1.8"},
+  {:poison, "~> 5.0"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Shipments
+
+```
+pickup = %{
+  index               # integer
+  description:        #	a string describing this step
+  location:           #	coordinates array
+  location_index:     #	index of relevant row and column in custom matrices
+  setup:              #	task setup duration (defaults to 0)
+  service:            #	task service duration (defaults to 0)
+  time_windows:       # an array of time_window objects describing valid slots for task service start
+}
+delivery = %{
+  id                  # integer
+  description:        #	a string describing this step
+  location:           #	coordinates array
+  location_index:     #	index of relevant row and column in custom matrices
+  setup:              #	task setup duration (defaults to 0)
+  service:            #	task service duration (defaults to 0)
+  time_windows:       # an array of time_window objects describing valid slots for task service start
+}
+shipments = [%{
+  pickup: pickup,    # a shipment_step object describing pickup
+  delivery: delivery,  # a shipment_step object describing delivery
+  amount: [],     # an array of integers describing multidimensional quantities
+  skills: [],     # an array of integers defining mandatory skills
+  priority: 0     # an integer in the [0, 100] range describing priority level (defaults to 0)
+}]
+
+```
+
+```elixir
+pickup = %{
+  # integer
+  id: Enum.random(1..10),
+  # 	coordinates array
+  location: [2.1739196777343754, 48.858057227865434]
+}
+
+delivery = %{
+  # integer
+  id: Enum.random(1..10),
+  # 	coordinates array
+  location: [2.1739196777343754, 48.838057227865434]
+}
+
+shipments = [
+  %{
+    # a shipment_step object describing pickup
+    pickup: pickup,
+    # a shipment_step object describing delivery
+    delivery: delivery,
+    # an array of integers describing multidimensional quantities
+    amount: [],
+    # an array of integers defining mandatory skills
+    skills: [],
+    # an integer in the [0, 100] range describing priority level (defaults to 0)
+    priority: 0
+  }
+]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  %{
+    amount: [],
+    delivery: %{id: 7, location: [2.1739196777343754, 48.838057227865434]},
+    pickup: %{id: 9, location: [2.1739196777343754, 48.85805722786544]},
+    priority: 0,
+    skills: []
+  }
+]
+```
+
+```elixir
+body =
+  Poison.encode!(%{
+    "jobs" => [],
+    "shipments" => shipments,
+    "vehicles" => [
+      %{
+        "id" => 1,
+        "start" => [2.1739196777343754, 48.838057227865434],
+        "startDescription" => "Boulevard Raymond Poincaré, Marnes-la-Coquette",
+        "end" => [2.1739196777343754, 48.838057227865434],
+        "endDescription" => "Boulevard Raymond Poincaré, Marnes-la-Coquette"
+      }
+    ],
+    "options" => %{"g" => true}
+  })
+
+HTTPoison.post!("https://vroom.predictivemovement.se/", body, [
+  {"Content-Type", "application/json"}
+]).body
+|> Poison.decode!()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{
+  "code" => 0,
+  "routes" => [
+    %{
+      "cost" => 0,
+      "distance" => 0,
+      "duration" => 0,
+      "geometry" => "o``qIybfmA??????",
+      "priority" => 0,
+      "service" => 0,
+      "setup" => 0,
+      "steps" => [
+        %{
+          "arrival" => 0,
+          "distance" => 0,
+          "duration" => 0,
+          "location" => [2.173919677734375, 48.838057227865434],
+          "service" => 0,
+          "setup" => 0,
+          "type" => "start",
+          "violations" => [],
+          "waiting_time" => 0
+        },
+        %{
+          "arrival" => 0,
+          "distance" => 0,
+          "duration" => 0,
+          "id" => 9,
+          "job" => 9,
+          "location" => [2.173919677734375, 48.85805722786544],
+          "service" => 0,
+          "setup" => 0,
+          "type" => "pickup",
+          "violations" => [],
+          "waiting_time" => 0
+        },
+        %{
+          "arrival" => 0,
+          "distance" => 0,
+          "duration" => 0,
+          "id" => 7,
+          "job" => 7,
+          "location" => [2.173919677734375, 48.838057227865434],
+          "service" => 0,
+          "setup" => 0,
+          "type" => "delivery",
+          "violations" => [],
+          "waiting_time" => 0
+        },
+        %{
+          "arrival" => 0,
+          "distance" => 0,
+          "duration" => 0,
+          "location" => [2.173919677734375, 48.838057227865434],
+          "service" => 0,
+          "setup" => 0,
+          "type" => "end",
+          "violations" => [],
+          "waiting_time" => 0
+        }
+      ],
+      "vehicle" => 1,
+      "violations" => [],
+      "waiting_time" => 0
+    }
+  ],
+  "summary" => %{
+    "computing_times" => %{"loading" => 23, "routing" => 2, "solving" => 3},
+    "cost" => 0,
+    "distance" => 0,
+    "duration" => 0,
+    "priority" => 0,
+    "routes" => 1,
+    "service" => 0,
+    "setup" => 0,
+    "unassigned" => 0,
+    "violations" => [],
+    "waiting_time" => 0
+  },
+  "unassigned" => []
+}
+```
