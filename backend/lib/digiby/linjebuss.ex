@@ -33,15 +33,22 @@ defmodule Digiby.Linjebuss do
       end)
       |> Enum.concat([best_stop_stop])
     end)
-    |> IO.inspect(label: "filtered")
     |> Enum.map(fn bus ->
+      {first_stop, last_stop} = {List.first(bus), List.last(bus)}
+
+      travel_time =
+        Time.diff(
+          last_stop["arrival_time"] |> Time.from_iso8601!(),
+          first_stop["arrival_time"] |> Time.from_iso8601!()
+        )
+
       %Transport{
         route_id: 1,
         transportation_type: :linje_bus,
-        travel_time: 2000,
+        travel_time: travel_time,
         cost: 900_000,
-        departure: List.first(bus)["stop"],
-        destination: List.last(bus)["stop"],
+        departure: first_stop["stop"],
+        destination: last_stop["stop"],
         stops: bus
       }
     end)
