@@ -30,13 +30,19 @@ const Departures = () => {
     return str + `${minutes} min`;
   };
 
+  const formatTime = (stops: Array<any>) => {
+    const departureTime = stops[0].arrival_time;
+    const arrivalTime = stops[stops.length - 1].arrival_time;
+    return `${departureTime} — ${arrivalTime}`;
+  };
+
   return (
     <section className=" mx-4 bg-pm-background">
       <h3 className="my-6 text-xl font-bold">Idag</h3>
       <DeparturesCard
         vehicle={data[0].line_number}
         vehicleInfo={data[0].transportation_type}
-        time={data[0].stops[0].arrival_time}
+        time={formatTime(data[0].stops)}
         totalTime={humanizeTime(data[0].travel_time)}
         cost={`${data[0].cost} SEK`}
       />
