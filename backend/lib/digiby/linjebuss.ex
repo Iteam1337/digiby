@@ -1,20 +1,14 @@
 defmodule Digiby.Linjebuss do
-  @kiruna_polisstation {20.222821, 67.857271}
-  @forsamlingshemmet {20.236833, 67.851933}
-  @kiruna_radarn {20.2776983, 67.839335}
-  @svappavaara_konsum {21.0448641, 67.6484589}
-  @kiruna_kastanjen {20.2703692, 67.838188}
-
-  def list_transports(date_time, from_position, to_position) do
+  def list_transports(_date_time, from_position, to_position) do
     buses = GTFS.get_buses("20220621")
 
     best_matches_for_lines =
       for bus <- buses do
-        best_pickup_bus_stop = find_nearest_bus_stop(@kiruna_kastanjen, bus)
+        best_pickup_bus_stop = find_nearest_bus_stop(from_position, bus)
 
         best_drop_off_bus_stop =
           find_nearest_bus_stop(
-            @svappavaara_konsum,
+            to_position,
             bus,
             best_pickup_bus_stop["arrival_time"]
           )
@@ -39,8 +33,18 @@ defmodule Digiby.Linjebuss do
       end)
       |> Enum.concat([best_stop_stop])
     end)
-
-    [%Transport{}]
+    |> IO.inspect(label: "filtered")
+    |> Enum.map(fn bus ->
+      %Transport{
+        route_id: 1,
+        transportation_type: :linje_bus,
+        travel_time: 2000,
+        cost: 900_000,
+        departure: List.first(bus)["stop"],
+        destination: List.last(bus)["stop"],
+        stops: bus
+      }
+    end)
   end
 
   def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00])
