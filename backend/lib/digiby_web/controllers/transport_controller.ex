@@ -7,7 +7,7 @@ defmodule DigibyWeb.TransportController do
   action_fallback DigibyWeb.FallbackController
 
   def index(conn, _params) do
-    transports = Linjebuss.list_transports()
+    transports = Linjebuss.list_transports(nil, nil, nil)
     render(conn, "index.json", transports: transports)
   end
 end
