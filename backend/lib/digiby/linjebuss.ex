@@ -24,17 +24,21 @@ defmodule Digiby.Linjebuss do
       end)
 
     Enum.filter(buses, fn %{trip_id: id} -> best_trip_id == id end)
-    |> Enum.map(fn %{stops: stops} ->
-      Enum.drop_while(stops, fn %{"stop" => %{name: name}} ->
-        name != best_start_stop["stop"][:name]
-      end)
-      |> Enum.take_while(fn %{"stop" => %{name: name}} ->
-        name != best_stop_stop["stop"][:name]
-      end)
-      |> Enum.concat([best_stop_stop])
+    |> Enum.map(fn %{stop_times: stops} = bus ->
+      stops =
+        Enum.drop_while(stops, fn %{"stop" => %{name: name}} ->
+          name != best_start_stop["stop"][:name]
+        end)
+        |> Enum.take_while(fn %{"stop" => %{name: name}} ->
+          name != best_stop_stop["stop"][:name]
+        end)
+        |> Enum.concat([best_stop_stop])
+
+      %{bus | stop_times: stops}
     end)
+    |> IO.inspect(label: "yee")
     |> Enum.map(fn bus ->
-      {first_stop, last_stop} = {List.first(bus), List.last(bus)}
+      {first_stop, last_stop} = {List.first(bus.stop_times), List.last(bus.stop_times)}
 
       travel_time =
         Time.diff(
@@ -43,13 +47,13 @@ defmodule Digiby.Linjebuss do
         )
 
       %Transport{
-        route_id: 1,
+        line_number: bus.line_number,
         transportation_type: :linje_bus,
         travel_time: travel_time,
         cost: 900_000,
         departure: first_stop["stop"],
         destination: last_stop["stop"],
-        stops: bus
+        stops: bus.stop_times
       }
     end)
   end
@@ -65,7 +69,7 @@ defmodule Digiby.Linjebuss do
   end
 
   def find_nearest_bus_stop(position, bus, after_time) do
-    bus[:stops]
+    bus.stop_times
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
     |> Enum.map(fn %{"stop" => %{lng: lng, lat: lat}} = stop ->
       Map.put(

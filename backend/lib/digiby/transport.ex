@@ -1,6 +1,6 @@
 defmodule Transport do
   defstruct [
-    :route_id,
+    :line_number,
     :transportation_type,
     :travel_time,
     :cost,
