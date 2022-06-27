@@ -22,8 +22,6 @@ defmodule GTFS do
       )
     end)
     |> Enum.map(fn %{route_id: route_id} = trip ->
-      IO.inspect(route_id)
-
       Map.put(
         trip,
         :line_number,

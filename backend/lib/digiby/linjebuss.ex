@@ -36,7 +36,6 @@ defmodule Digiby.Linjebuss do
 
       %{bus | stop_times: stops}
     end)
-    |> IO.inspect(label: "yee")
     |> Enum.map(fn bus ->
       {first_stop, last_stop} = {List.first(bus.stop_times), List.last(bus.stop_times)}
 
