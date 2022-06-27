@@ -3,6 +3,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 import { FormData } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
@@ -13,6 +14,9 @@ import { formatDate, formatTime } from '../utils/dateTimeFormatting';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const initialFormState: FormData = {
     from: {
@@ -33,9 +37,10 @@ const Search = () => {
   });
   console.log('formData', formData);
 
-  const transportsQuery = useQuery('transports', getTransports);
   // todo: add argument to api call when api accepts this
-  // const transportsQuery = useQuery(['transports', formData], () => getTransports(formData));
+  const transportsQuery = useQuery(['transports', formData], () =>
+    getTransports(formData)
+  );
 
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
@@ -54,6 +59,16 @@ const Search = () => {
       day: formatDate(formState.date),
     };
     setFormData(formattedState);
+    if (transportsQuery.data) {
+      navigate('/departures');
+    }
+    if (transportsQuery.isLoading) {
+      setLoading(true);
+    }
+    if (transportsQuery.error) {
+      setError(true);
+    }
+
     return;
   }
 
@@ -66,7 +81,6 @@ const Search = () => {
         validationSchema={SignupSchema}
         onSubmit={(formState) => {
           submit(formState);
-          console.log('transportsQuery', transportsQuery);
         }}
       >
         {({ handleSubmit }) => (
@@ -109,6 +123,8 @@ const Search = () => {
               <ErrorMessage name="date" />
             </span>
             <Button type="submit" text="Hitta resa" />
+            {loading && <span>Söker...</span>}
+            {error && <span>Något gick fel, försök igen</span>}
           </form>
         )}
       </Formik>
