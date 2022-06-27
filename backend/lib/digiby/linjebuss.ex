@@ -41,8 +41,8 @@ defmodule Digiby.Linjebuss do
 
       travel_time =
         Time.diff(
-          last_stop[:arrival_time] |> Time.from_iso8601!(),
-          first_stop[:arrival_time] |> Time.from_iso8601!()
+          last_stop[:arrival_time],
+          first_stop[:arrival_time]
         )
 
       %Transport{
@@ -57,17 +57,7 @@ defmodule Digiby.Linjebuss do
     end)
   end
 
-  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00])
-
-  def find_nearest_bus_stop(position, bus, "24" <> minute_and_second),
-    do: find_nearest_bus_stop(position, bus, "00" <> minute_and_second)
-
-  def find_nearest_bus_stop(position, bus, after_time) when is_binary(after_time) do
-    time = Time.from_iso8601!(after_time)
-    find_nearest_bus_stop(position, bus, time)
-  end
-
-  def find_nearest_bus_stop(position, bus, after_time) do
+  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00]) do
     bus.stop_times
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
     |> Enum.map(fn %{stop_position: %{lng: lng, lat: lat}} = stop ->
@@ -83,12 +73,9 @@ defmodule Digiby.Linjebuss do
     |> Enum.min_by(fn %{stop_distance: distance} -> distance end, &<=/2, fn -> nil end)
   end
 
-  def is_bus_stop_time_after?(%{arrival_time: "24" <> minute_and_second}, after_time),
-    do: is_bus_stop_time_after?(%{arrival_time: "00" <> minute_and_second}, after_time)
-
   def is_bus_stop_time_after?(%{arrival_time: time}, after_time) do
     after_time
-    |> Time.diff(Time.from_iso8601!(time))
+    |> Time.diff(time)
     |> Kernel.<(0)
   end
 end
