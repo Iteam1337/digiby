@@ -88,7 +88,6 @@ defmodule Digiby.Linjebuss do
 
   def is_bus_stop_time_after?(%{arrival_time: time}, after_time) do
     after_time
-    |> IO.inspect()
     |> Time.diff(Time.from_iso8601!(time))
     |> Kernel.<(0)
   end
