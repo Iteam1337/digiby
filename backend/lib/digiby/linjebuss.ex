@@ -10,7 +10,7 @@ defmodule Digiby.Linjebuss do
           find_nearest_bus_stop(
             to_position,
             bus,
-            best_pickup_bus_stop["arrival_time"]
+            best_pickup_bus_stop[:arrival_time]
           )
 
         {bus[:trip_id], best_pickup_bus_stop, best_drop_off_bus_stop}
@@ -26,11 +26,11 @@ defmodule Digiby.Linjebuss do
     Enum.filter(buses, fn %{trip_id: id} -> best_trip_id == id end)
     |> Enum.map(fn %{stop_times: stops} = bus ->
       stops =
-        Enum.drop_while(stops, fn %{"stop" => %{name: name}} ->
-          name != best_start_stop["stop"][:name]
+        Enum.drop_while(stops, fn %{stop_position: %{name: name}} ->
+          name != best_start_stop[:stop_position][:name]
         end)
-        |> Enum.take_while(fn %{"stop" => %{name: name}} ->
-          name != best_stop_stop["stop"][:name]
+        |> Enum.take_while(fn %{stop_position: %{name: name}} ->
+          name != best_stop_stop[:stop_position][:name]
         end)
         |> Enum.concat([best_stop_stop])
 
@@ -41,8 +41,8 @@ defmodule Digiby.Linjebuss do
 
       travel_time =
         Time.diff(
-          last_stop["arrival_time"] |> Time.from_iso8601!(),
-          first_stop["arrival_time"] |> Time.from_iso8601!()
+          last_stop[:arrival_time] |> Time.from_iso8601!(),
+          first_stop[:arrival_time] |> Time.from_iso8601!()
         )
 
       %Transport{
@@ -50,8 +50,8 @@ defmodule Digiby.Linjebuss do
         transportation_type: :linje_bus,
         travel_time: travel_time,
         cost: 900_000,
-        departure: first_stop["stop"],
-        destination: last_stop["stop"],
+        departure: first_stop[:stop_position],
+        destination: last_stop[:stop_position],
         stops: bus.stop_times
       }
     end)
@@ -70,7 +70,7 @@ defmodule Digiby.Linjebuss do
   def find_nearest_bus_stop(position, bus, after_time) do
     bus.stop_times
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
-    |> Enum.map(fn %{"stop" => %{lng: lng, lat: lat}} = stop ->
+    |> Enum.map(fn %{stop_position: %{lng: lng, lat: lat}} = stop ->
       Map.put(
         stop,
         :stop_distance,
@@ -83,11 +83,12 @@ defmodule Digiby.Linjebuss do
     |> Enum.min_by(fn %{stop_distance: distance} -> distance end, &<=/2, fn -> nil end)
   end
 
-  def is_bus_stop_time_after?(%{"arrival_time" => "24" <> minute_and_second}, after_time),
-    do: is_bus_stop_time_after?(%{"arrival_time" => "00" <> minute_and_second}, after_time)
+  def is_bus_stop_time_after?(%{arrival_time: "24" <> minute_and_second}, after_time),
+    do: is_bus_stop_time_after?(%{arrival_time: "00" <> minute_and_second}, after_time)
 
-  def is_bus_stop_time_after?(%{"arrival_time" => time}, after_time) do
+  def is_bus_stop_time_after?(%{arrival_time: time}, after_time) do
     after_time
+    |> IO.inspect()
     |> Time.diff(Time.from_iso8601!(time))
     |> Kernel.<(0)
   end

@@ -83,7 +83,16 @@ defmodule GTFS do
     |> Stream.map(fn stop_time ->
       Map.take(stop_time, ["trip_id", "arrival_time", "stop"])
     end)
-    |> Enum.each(fn stop_time -> :ets.insert(table, {stop_time["trip_id"], stop_time}) end)
+    |> Enum.each(fn %{
+                      "trip_id" => trip_id,
+                      "stop" => stop_position,
+                      "arrival_time" => arrival_time
+                    } ->
+      :ets.insert(
+        table,
+        {trip_id, %{stop_position: stop_position, arrival_time: arrival_time}}
+      )
+    end)
 
     IO.puts("Stop times loaded")
   end
