@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import moment from 'moment';
 
 import { departuresAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
@@ -23,9 +22,13 @@ const Departures = () => {
 
   //TODO: map out all departures
 
-  const totalTravelTime = moment(data[0].travel_time).format('HH-mm-ss');
-  // .duration(data[0].travel_time * 1000)
-  // .humanize();
+  const humanizeTime = (timeInSeconds: number) => {
+    const totalMinutes = timeInSeconds / 60;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+    const str = hours > 0 ? `${hours}h ` : '';
+    return str + `${minutes} min`;
+  };
 
   return (
     <section className=" mx-4 bg-pm-background">
@@ -34,7 +37,7 @@ const Departures = () => {
         vehicle={data[0].line_number}
         vehicleInfo={data[0].transportation_type}
         time={data[0].stops[0].arrival_time}
-        totalTime={`${totalTravelTime}`}
+        totalTime={humanizeTime(data[0].travel_time)}
         cost={`${data[0].cost} SEK`}
       />
     </section>
