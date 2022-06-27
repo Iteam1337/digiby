@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 
+import { departuresAtom } from '../utils/atoms';
 import ArrowIcon from '../icons/ArrowIcon';
 
 const Layout = ({ children }: { children: JSX.Element }) => {
   const [page, setPage] = useState('');
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const [departures] = useAtom(departuresAtom);
+
+  const { data } = departures;
 
   useEffect(() => {
     switch (pathname) {
@@ -21,7 +26,6 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     }
   }, [pathname]);
 
-  //TODO: get title from global state
   return (
     <>
       <div
@@ -38,7 +42,8 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               <div className="flex flex-col justify-center">
                 <div className="flex justify-center">
                   <h2 className="font-bold text-white ">
-                    Min position - JokkMokk{' '}
+                    {data &&
+                      data[0].departure.name + ' - ' + data[0].destination.name}
                   </h2>
                 </div>
                 <p className="text-center text-xs text-white">

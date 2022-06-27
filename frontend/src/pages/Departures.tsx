@@ -1,45 +1,40 @@
-import { useQuery } from 'react-query';
+import { useAtom } from 'jotai';
+import moment from 'moment';
 
+import { departuresAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
-import getTransports from '../utils/getTransports';
 
 const Departures = () => {
-  // todo: find solution to ts error below by adding generics (<..., Error>)?
-  const { isLoading, isError, data, error } = useQuery(
-    'transports',
-    getTransports
-  );
+  const [departures] = useAtom(departuresAtom);
 
-  if (isLoading) {
+  const { loading, data, error } = departures;
+
+  if (loading) {
     return <span>Söker...</span>;
   }
 
-  if (isError) {
-    // @ts-ignore: Unreachable code error
-    return <span>Något gick fel: {error.message}</span>;
+  if (!loading && error) {
+    return <span>Försök igen...</span>;
   }
+
+  if (data) {
+    console.log(data[0]);
+  }
+
+  //TODO: map out all departures
+
+  const totalTravelTime = moment(data[0].travel_time).format('HH-mm-ss');
+  // .duration(data[0].travel_time * 1000)
+  // .humanize();
 
   return (
     <section className=" mx-4 bg-pm-background">
       <h3 className="my-6 text-xl font-bold">Idag</h3>
       <DeparturesCard
-        vehicle={data[0].route_id}
+        vehicle={data[0].line_number}
         vehicleInfo={data[0].transportation_type}
-        time={`${data[0].departure.arrives_at.slice(
-          11,
-          16
-        )}–${data[0].destination.arrives_at.slice(11, 16)}`}
-        totalTime={`${data[0].travel_time} min`}
-        cost={`${data[0].cost} SEK`}
-      />
-      <DeparturesCard
-        vehicle={data[0].route_id}
-        vehicleInfo={data[0].transportation_type}
-        time={`${data[0].departure.arrives_at.slice(
-          11,
-          16
-        )}–${data[0].destination.arrives_at.slice(11, 16)}`}
-        totalTime={`${data[0].travel_time} min`}
+        time={data[0].stops[0].arrival_time}
+        totalTime={`${totalTravelTime}`}
         cost={`${data[0].cost} SEK`}
       />
     </section>
