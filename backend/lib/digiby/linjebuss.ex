@@ -47,7 +47,7 @@ defmodule Digiby.Linjebuss do
 
       %Transport{
         line_number: bus.line_number,
-        transportation_type: :linje_bus,
+        transportation_type: :linje_buss,
         travel_time: travel_time,
         cost: 900_000,
         departure: first_stop[:stop_position],
