@@ -41,7 +41,9 @@ defmodule Digiby.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tzdata, "~> 1.1"},
-      {:polyline, "~> 1.3.0"}
+      {:polyline, "~> 1.3.0"},
+      {:csv, "~> 2.4"},
+      {:distance, "~> 1.0"}
     ]
   end
 
