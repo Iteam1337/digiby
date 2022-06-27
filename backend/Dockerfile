@@ -49,6 +49,7 @@ RUN mix deps.compile
 COPY priv priv
 
 COPY lib lib
+COPY data data
 
 # Compile the release
 RUN mix compile
