@@ -1,19 +1,25 @@
 defmodule Digiby.Linjebuss do
-  def list_transports(_date_time, from_position, to_position) do
-    buses = GTFS.get_buses("20220621")
+  def list_transports(date, time, from_position, to_position) do
+    time = Time.from_iso8601!(time) |> IO.inspect()
+    buses = GTFS.get_buses(date)
 
     best_matches_for_lines =
       for bus <- buses do
-        best_pickup_bus_stop = find_nearest_bus_stop(from_position, bus)
+        best_pickup_bus_stop = find_nearest_bus_stop(from_position, bus, time)
+        IO.inspect(best_pickup_bus_stop)
 
-        best_drop_off_bus_stop =
-          find_nearest_bus_stop(
-            to_position,
-            bus,
-            best_pickup_bus_stop[:arrival_time]
-          )
+        if best_pickup_bus_stop do
+          best_drop_off_bus_stop =
+            find_nearest_bus_stop(
+              to_position,
+              bus,
+              best_pickup_bus_stop[:arrival_time]
+            )
 
-        {bus[:trip_id], best_pickup_bus_stop, best_drop_off_bus_stop}
+          {bus[:trip_id], best_pickup_bus_stop, best_drop_off_bus_stop}
+        else
+          {nil}
+        end
       end
       |> Enum.reject(fn e -> e |> Tuple.to_list() |> Enum.any?(&is_nil/1) end)
 
