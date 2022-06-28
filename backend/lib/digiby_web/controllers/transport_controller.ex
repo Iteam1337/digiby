@@ -11,12 +11,17 @@ defmodule DigibyWeb.TransportController do
   # @svappavaara_konsum {21.0448641, 67.6484589}
   # @kiruna_kastanjen {20.2703692, 67.838188}
 
-  def index(conn, %{
-        "fromLat" => fromLat,
-        "fromLng" => fromLng,
-        "toLat" => toLat,
-        "toLng" => toLng
-      }) do
+  def index(
+        conn,
+        %{
+          "fromLat" => fromLat,
+          "fromLng" => fromLng,
+          "toLat" => toLat,
+          "toLng" => toLng,
+          "date" => date,
+          "time" => time
+        }
+      ) do
     from = {
       String.to_float(fromLng),
       String.to_float(fromLat)
@@ -27,7 +32,7 @@ defmodule DigibyWeb.TransportController do
       String.to_float(toLat)
     }
 
-    transports = Linjebuss.list_transports(nil, from, to)
+    transports = Linjebuss.list_transports(String.replace(date, "-", ""), time <> ":00", from, to)
 
     render(conn, "index.json", transports: transports)
   end
