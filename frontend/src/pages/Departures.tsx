@@ -33,13 +33,15 @@ const Departures = () => {
   return (
     <section className=" mx-4 bg-pm-background">
       <h3 className="my-6 text-xl font-bold">Idag</h3>
-      <DeparturesCard
-        vehicle={data[0].line_number}
-        vehicleInfo={data[0].transportation_type}
-        time={formatTime(data[0].stops)}
-        totalTime={humanizeTime(data[0].travel_time)}
-        cost={`${data[0].cost} SEK`}
-      />
+      {data && (
+        <DeparturesCard
+          vehicle={data[0].line_number}
+          vehicleInfo={data[0].transportation_type}
+          time={formatTime(data[0].stops)}
+          totalTime={humanizeTime(data[0].travel_time)}
+          cost={`${data[0].cost} SEK`}
+        />
+      )}
     </section>
   );
 };

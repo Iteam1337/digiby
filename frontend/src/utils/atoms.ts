@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 
-import { FormData } from './types';
+import { FormData, Departures } from './types';
 import getTransports from './getTransports';
 
 export type DeparturesData = {
   loading: boolean;
   error: string | null;
-  data: any;
+  data: Departures[] | null;
 };
 
 const fetchDepartures = atom<DeparturesData>({
