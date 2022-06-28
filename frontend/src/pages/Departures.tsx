@@ -16,12 +16,6 @@ const Departures = () => {
     return <span>Försök igen...</span>;
   }
 
-  if (data) {
-    console.log(data[0]);
-  }
-
-  //TODO: map out all departures
-
   const humanizeTime = (timeInSeconds: number) => {
     const totalMinutes = timeInSeconds / 60;
     const hours = Math.floor(totalMinutes / 60);
