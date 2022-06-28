@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 
-import { FormData, Departures, FormattedState } from './types';
+import { Departure, FormattedState } from './types';
 import getTransports from './getTransports';
 
 export type DeparturesData = {
   loading: boolean;
   error: string | null;
-  data: Departures[] | null;
+  data: Departure[] | null;
 };
 
 const fetchDepartures = atom<DeparturesData>({
@@ -30,3 +30,38 @@ export const departuresAtom = atom(
     fetchData();
   }
 );
+
+export const departuresDetails = atom<Departure>({
+  cost: 1,
+  departure: {
+    arrival_time: '',
+    meters_from_query_to_stop: 1,
+    stop_position: {
+      lng: '',
+      lat: '',
+      name: '',
+    },
+  },
+  destination: {
+    arrival_time: '',
+    meters_from_query_to_stop: 1,
+    stop_position: {
+      lng: '',
+      lat: '',
+      name: '',
+    },
+  },
+  line_number: '51',
+  stops: [
+    {
+      arrival_time: '13:50',
+      stop_position: {
+        lng: '',
+        lat: '',
+        name: '',
+      },
+    },
+  ],
+  transportation_type: 'buss',
+  travel_time: 1,
+});

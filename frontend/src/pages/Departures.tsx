@@ -16,32 +16,14 @@ const Departures = () => {
     return <span>Försök igen...</span>;
   }
 
-  const humanizeTime = (timeInSeconds: number) => {
-    const totalMinutes = timeInSeconds / 60;
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    const str = hours > 0 ? `${hours}h ` : '';
-    return str + `${minutes} min`;
-  };
-
-  const formatTime = (stops: Array<any>) => {
-    const departureTime = stops[0].arrival_time;
-    const arrivalTime = stops[stops.length - 1].arrival_time;
-    return `${departureTime} — ${arrivalTime}`;
-  };
+  if (data) {
+    console.log(data);
+  }
 
   return (
     <section className=" mx-4 bg-pm-background">
       <h3 className="my-6 text-xl font-bold">Idag</h3>
-      {data && (
-        <DeparturesCard
-          vehicle={data[0].line_number}
-          vehicleInfo={data[0].transportation_type}
-          time={formatTime(data[0].stops)}
-          totalTime={humanizeTime(data[0].travel_time)}
-          cost={`${data[0].cost} SEK`}
-        />
-      )}
+      {data && <DeparturesCard departure={data[0]} />}
     </section>
   );
 };

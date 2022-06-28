@@ -1,19 +1,6 @@
-import { useAtom } from 'jotai';
-import { useNavigate } from 'react-router-dom';
-
 import { Departure } from '../utils/types';
-import { departuresDetails } from '../utils/atoms';
-import DepartureInfo from './DepartureInfo';
 
-const DeparturesCard = ({ departure }: { departure: Departure }) => {
-  const [details, setDetails] = useAtom(departuresDetails);
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    setDetails(departure);
-    navigate('/departure-details');
-  };
-
+const DeparturesInfo = ({ departure }: { departure: Departure }) => {
   const humanizeTime = (timeInSeconds: number) => {
     const totalMinutes = timeInSeconds / 60;
     const hours = Math.floor(totalMinutes / 60);
@@ -29,10 +16,7 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
   };
 
   return (
-    <button
-      onClick={() => handleClick()}
-      className="mb-4 rounded-md bg-pm-white p-4"
-    >
+    <section className="absolute left-0 bottom-0 right-0 bg-pm-white p-6">
       <div className="flex justify-between">
         <p className="font-bold">{departure.line_number}</p>
         <p>{formatTime(departure.stops)}</p>
@@ -44,8 +28,8 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
       <div className="flex justify-end">
         <p className="font-bold">{`${departure.cost} SEK`}</p>
       </div>
-    </button>
+    </section>
   );
 };
 
-export default DeparturesCard;
+export default DeparturesInfo;

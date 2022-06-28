@@ -32,7 +32,7 @@ type Stop = {
   stop_position: StopPosition;
 };
 
-export type Departures = {
+export type Departure = {
   cost: number;
   departure: Travelinfo;
   destination: Travelinfo;
