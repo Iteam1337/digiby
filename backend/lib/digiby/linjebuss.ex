@@ -6,7 +6,6 @@ defmodule Digiby.Linjebuss do
     best_matches_for_lines =
       for bus <- buses do
         best_pickup_bus_stop = find_nearest_bus_stop(from_position, bus, time)
-        IO.inspect(best_pickup_bus_stop)
 
         if best_pickup_bus_stop do
           best_drop_off_bus_stop =
