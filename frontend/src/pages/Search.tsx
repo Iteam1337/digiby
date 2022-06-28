@@ -2,17 +2,20 @@ import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 
-import { FormData } from '../utils/types';
+import { FormData, FormattedState } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
-import getTransports from '../utils/getTransports';
 import { formatDate, formatTime } from '../utils/dateTimeFormatting';
+import { departuresAtom } from '../utils/atoms';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
+  const navigate = useNavigate();
+  const [_departures, getDepartures] = useAtom(departuresAtom);
 
   const initialFormState: FormData = {
     from: {
@@ -26,17 +29,6 @@ const Search = () => {
     date: new Date(),
   };
 
-  const [formData, setFormData] = useState({
-    ...initialFormState,
-    time: '',
-    day: '',
-  });
-  console.log('formData', formData);
-
-  const transportsQuery = useQuery('transports', getTransports);
-  // todo: add argument to api call when api accepts this
-  // const transportsQuery = useQuery(['transports', formData], () => getTransports(formData));
-
   const SignupSchema = Yup.object().shape({
     from: Yup.object().shape({
       address: Yup.string().required('Lägg till ditt slutmål'),
@@ -48,12 +40,14 @@ const Search = () => {
   });
 
   function submit(formState: FormData) {
-    const formattedState = {
+    const formattedState: FormattedState = {
       ...formState,
       time: formatTime(formState.date),
-      day: formatDate(formState.date),
+      date: formatDate(formState.date),
     };
-    setFormData(formattedState);
+
+    getDepartures(formattedState);
+    navigate('/departures');
     return;
   }
 
@@ -66,14 +60,13 @@ const Search = () => {
         validationSchema={SignupSchema}
         onSubmit={(formState) => {
           submit(formState);
-          console.log('transportsQuery', transportsQuery);
         }}
       >
         {({ handleSubmit }) => (
           <form
             method="get"
             onSubmit={handleSubmit}
-            className="mx-6 flex flex-col rounded-md bg-white p-6"
+            className="mx-6 flex flex-col rounded-md bg-pm-white p-6"
           >
             <label htmlFor="from" className="mb-1 text-xs font-bold">
               Var är du?

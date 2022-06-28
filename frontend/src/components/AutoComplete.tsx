@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import { useFormikContext } from 'formik';
 
 import { Address } from '../utils/types';
-import PosIcon from './PosIcon';
+import PosIcon from '../icons/PosIcon';
 
 const getAddress = (
   name: string,
