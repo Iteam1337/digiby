@@ -6,6 +6,7 @@ defmodule Transport do
     :cost,
     departure: %Position{},
     destination: %Position{},
-    stops: []
+    stops: [],
+    geometry: []
   ]
 end
