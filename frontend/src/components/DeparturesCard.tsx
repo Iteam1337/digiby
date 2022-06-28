@@ -31,7 +31,7 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
   return (
     <button
       onClick={() => handleClick()}
-      className="mb-4 rounded-md bg-pm-white p-4"
+      className="mb-4 w-full rounded-md bg-pm-white p-4"
     >
       <div className="flex justify-between">
         <p className="font-bold">{departure.line_number}</p>

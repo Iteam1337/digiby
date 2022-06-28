@@ -33,7 +33,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
           page === 'home' ? 'bg-pm-green' : 'bg-pm-background'
         } h-screen`}
       >
-        <header className="mb-6 bg-pm-green p-6">
+        <header className="relative z-10 mb-6 w-full bg-pm-green p-6">
           {page === 'departures' && (
             <div className="mx-auto max-w-screen-sm  ">
               <button onClick={() => navigate('/')} className="absolute top-8">

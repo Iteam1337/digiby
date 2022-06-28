@@ -84,3 +84,7 @@ li.react-datepicker__time-list-item--selected {
   .react-datepicker__triangle::before {
   border-top-color: #737475 !important; /* pr-dark-grey */
 }
+
+#map {
+  z-index: 0;
+}
