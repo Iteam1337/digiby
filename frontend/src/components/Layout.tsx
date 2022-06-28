@@ -41,9 +41,11 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               </button>
               <div className="flex flex-col justify-center">
                 <div className="flex justify-center">
-                  <h2 className="font-bold text-white ">
+                  <h2 className="ml-4 text-center font-bold text-white">
                     {data &&
-                      data[0].departure.name + ' - ' + data[0].destination.name}
+                      data[0].departure.stop_position.name +
+                        ' - ' +
+                        data[0].destination.stop_position.name}
                   </h2>
                 </div>
                 <p className="text-center text-xs text-white">
