@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 
-import { FormData } from '../utils/types';
+import { FormData, FormattedState } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
@@ -40,10 +40,10 @@ const Search = () => {
   });
 
   function submit(formState: FormData) {
-    const formattedState = {
+    const formattedState: FormattedState = {
       ...formState,
       time: formatTime(formState.date),
-      day: formatDate(formState.date),
+      date: formatDate(formState.date),
     };
 
     getDepartures(formattedState);

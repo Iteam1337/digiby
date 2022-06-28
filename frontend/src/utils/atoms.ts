@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-import { FormData, Departures } from './types';
+import { FormData, Departures, FormattedState } from './types';
 import getTransports from './getTransports';
 
 export type DeparturesData = {
@@ -17,7 +17,7 @@ const fetchDepartures = atom<DeparturesData>({
 
 export const departuresAtom = atom(
   (get) => get(fetchDepartures),
-  (_get, set, formData: FormData) => {
+  (_get, set, formData: FormattedState) => {
     const fetchData = async () => {
       set(fetchDepartures, (prev) => ({ ...prev, loading: true }));
       try {

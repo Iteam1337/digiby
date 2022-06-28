@@ -3,6 +3,12 @@ export type Address = {
   address: string;
 };
 
+export type FormattedState = {
+  from: Address;
+  to: Address;
+  time: string;
+  date: string;
+};
 export type FormData = {
   from: Address;
   to: Address;
