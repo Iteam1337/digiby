@@ -5,14 +5,18 @@ defmodule GTFS do
     load_stop_times()
     load_trips()
     load_routes()
+    load_shapes()
   end
 
   def get_buses(date) do
     :ets.lookup(:norrbotten_services, date)
     |> Enum.map(&(elem(&1, 1) |> Map.get(:service_id)))
     |> Enum.flat_map(fn service_id -> :ets.lookup(:norrbotten_trips, service_id) end)
-    |> Enum.map(fn {_, e} ->
-      %{trip_id: elem(e, 0), route_id: elem(e, 1)}
+    |> Enum.map(fn {_, values} -> values end)
+    |> Enum.map(fn %{shape_id: shape_id} = trip ->
+      shape = :ets.lookup(:norrbotten_shapes, shape_id) |> Enum.map(fn {_, v} -> v end)
+
+      Map.put(trip, :geometry, shape)
     end)
     |> Enum.map(fn %{trip_id: trip_id} = trip ->
       Map.put(
@@ -38,7 +42,8 @@ defmodule GTFS do
       %{
         stop_times: filtered_values.stop_times,
         trip_id: trip_id,
-        line_number: values.line_number
+        line_number: values.line_number,
+        geometry: values.geometry
       }
     end)
   end
@@ -106,9 +111,13 @@ defmodule GTFS do
 
     "trips.txt"
     |> get_decoded_csv_stream()
-    |> Stream.map(fn trip -> Map.take(trip, ["service_id", "trip_id", "route_id"]) end)
+    |> Stream.map(fn trip -> Map.take(trip, ["service_id", "trip_id", "route_id", "shape_id"]) end)
     |> Enum.each(fn trip ->
-      :ets.insert(table, {trip["service_id"], {trip["trip_id"], trip["route_id"]}})
+      :ets.insert(
+        table,
+        {trip["service_id"],
+         %{trip_id: trip["trip_id"], route_id: trip["route_id"], shape_id: trip["shape_id"]}}
+      )
     end)
   end
 
@@ -124,6 +133,22 @@ defmodule GTFS do
       })
     end)
     |> Enum.each(fn tuple -> :ets.insert(table, tuple) end)
+  end
+
+  defp load_shapes do
+    table = :ets.new(:norrbotten_shapes, [:duplicate_bag, :public, :named_table])
+
+    "shapes.txt"
+    |> get_decoded_csv_stream()
+    |> Stream.map(fn e -> Map.take(e, ["shape_id", "shape_pt_lat", "shape_pt_lon"]) end)
+    |> Enum.each(fn shape ->
+      :ets.insert(
+        table,
+        {shape["shape_id"], %{lat: shape["shape_pt_lat"], lng: shape["shape_pt_lon"]}}
+      )
+    end)
+
+    IO.puts("Shapes loaded")
   end
 
   defp get_decoded_csv_stream(file) do

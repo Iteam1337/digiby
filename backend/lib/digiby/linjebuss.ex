@@ -58,7 +58,8 @@ defmodule Digiby.Linjebuss do
         cost: 900_000,
         departure: best_start_stop,
         destination: best_stop_stop,
-        stops: bus.stop_times
+        stops: bus.stop_times,
+        geometry: bus.geometry
       }
     end)
   end
