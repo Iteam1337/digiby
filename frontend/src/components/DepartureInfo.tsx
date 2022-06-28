@@ -26,7 +26,8 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
         <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
       </div>
       <div className="flex justify-end">
-        <p className="font-bold">{`${departure.cost} SEK`}</p>
+        {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
+        <p className="font-bold">200 SEK</p>
       </div>
     </section>
   );
