@@ -1,6 +1,11 @@
+import { useState } from 'react';
+
+import ArrowIcon from '../icons/ArrowIcon';
+// import DragIcon from '../icons/DragIcon';
 import { Departure } from '../utils/types';
 
 const DeparturesInfo = ({ departure }: { departure: Departure }) => {
+  const [open, setOpen] = useState(false);
   const humanizeTime = (timeInSeconds: number) => {
     const totalMinutes = timeInSeconds / 60;
     const hours = Math.floor(totalMinutes / 60);
@@ -32,8 +37,26 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
   };
 
   return (
-    <section className="absolute left-0 bottom-0 right-0 z-10 divide-y divide-pm-black rounded-t-md bg-pm-white p-6">
-      <div className="pb-6">
+    <details className="absolute left-0 bottom-0 right-0 z-10 overflow-hidden rounded-t-md bg-pm-white">
+      <summary
+        className="mx-6 cursor-pointer list-none pb-6"
+        onClick={() => setOpen(!open)}
+      >
+        <p className="sr-only">Information om din resa</p>
+        <div className="flex w-full justify-center py-3" aria-hidden="true">
+          <ArrowIcon
+            className={` fill-pm-dark-grey ${
+              open ? 'rotate-[270deg]' : 'rotate-90'
+            } overflow-y-scroll`}
+          />
+          {/* todo: add swipte functionality to open details */}
+          {/* <ArrowIcon
+            className={`invisible fill-pm-dark-grey md:visible ${
+              open ? 'rotate-[270deg]' : 'rotate-90'
+            } overflow-y-scroll`}
+          />
+          <DragIcon className="visible fill-pm-dark-grey md:invisible" /> */}
+        </div>
         <div className="flex justify-between">
           <p className="font-bold">{departure.line_number}</p>
           <p>{formatTime(departure.stops)}</p>
@@ -46,16 +69,15 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
           {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
           <p className="font-bold">200 SEK</p>
         </div>
-      </div>
-      <div className="flex pt-6">
+      </summary>
+      <div className="mx-6 flex border-t border-t-pm-black pt-6">
         <div className="flex flex-col gap-6">
-          {departure.departure.meters_from_query_to_stop < 5000 && (
+          {departure.departure.meters_from_query_to_stop < 10000 && (
             <p className="text-xs">
-              {departure.departure.meters_from_query_to_stop < 5000 &&
-                myPositionTime(
-                  departure.departure.meters_from_query_to_stop,
-                  departure.stops[0].arrival_time
-                )}
+              {myPositionTime(
+                departure.departure.meters_from_query_to_stop,
+                departure.stops[0].arrival_time
+              )}
             </p>
           )}
           {departure.stops.map((stop) => (
@@ -65,8 +87,8 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
           ))}
         </div>
 
-        <div className="mt-[4px] flex flex-col">
-          {departure.departure.meters_from_query_to_stop < 5000 && (
+        <div className="mt-[4px] flex flex-col" aria-hidden="true">
+          {departure.departure.meters_from_query_to_stop < 10000 && (
             <div className="flex flex-col">
               <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
               <div className="divide flex h-[30px] divide-x-2 divide-dotted divide-pm-dark-grey">
@@ -92,7 +114,7 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
           })}
         </div>
         <div className="flex flex-col gap-6">
-          {departure.departure.meters_from_query_to_stop < 5000 && (
+          {departure.departure.meters_from_query_to_stop < 10000 && (
             <p className="text-xs">Min position</p>
           )}
           {departure.stops.map((stop) => (
@@ -102,7 +124,7 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
           ))}
         </div>
       </div>
-    </section>
+    </details>
   );
 };
 
