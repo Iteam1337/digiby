@@ -9,7 +9,6 @@ defmodule Digiby.Linjebuss do
     best_sorted_departures =
       trips
       |> get_best_matches_for_trips(from_position, to_position, time)
-      |> IO.inspect()
       |> sort_matches()
 
     best_trip_ids =

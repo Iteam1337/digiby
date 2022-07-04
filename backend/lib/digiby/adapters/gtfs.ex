@@ -5,7 +5,7 @@ defmodule GTFS do
     load_stop_times()
     load_trips()
     load_routes()
-    # load_shapes()
+    load_shapes()
   end
 
   def get_buses(date) do
@@ -14,7 +14,9 @@ defmodule GTFS do
     |> Enum.flat_map(fn service_id -> :ets.lookup(:norrbotten_trips, service_id) end)
     |> Enum.map(fn {_, values} -> values end)
     |> Enum.map(fn %{shape_id: shape_id} = trip ->
-      shape = :ets.lookup(:norrbotten_shapes, shape_id) |> Enum.map(fn {_, v} -> v end)
+      shape =
+        :ets.lookup(:norrbotten_shapes, shape_id)
+        |> Enum.map(fn {_, v} -> v end)
 
       Map.put(trip, :geometry, shape)
     end)
@@ -141,10 +143,14 @@ defmodule GTFS do
     "shapes.txt"
     |> get_decoded_csv_stream()
     |> Stream.map(fn e -> Map.take(e, ["shape_id", "shape_pt_lat", "shape_pt_lon"]) end)
-    |> Enum.each(fn shape ->
+    |> Enum.each(fn %{"shape_id" => id, "shape_pt_lon" => lon, "shape_pt_lat" => lat} ->
       :ets.insert(
         table,
-        {shape["shape_id"], %{lat: shape["shape_pt_lat"], lng: shape["shape_pt_lon"]}}
+        {id,
+         [
+           Float.parse(lon) |> elem(0),
+           Float.parse(lat) |> elem(0)
+         ]}
       )
     end)
 
