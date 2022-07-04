@@ -21,9 +21,10 @@ const Departures = () => {
   }
 
   return (
-    <section className=" mx-4 bg-pm-background">
+    <section className=" mx-4 h-full bg-pm-background">
       <h3 className="my-6 text-xl font-bold">Idag</h3>
-      {data && <DeparturesCard departure={data[0]} />}
+      {data &&
+        data.map((item, i) => <DeparturesCard key={i} departure={item} />)}
     </section>
   );
 };

@@ -31,7 +31,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
       <div
         className={`${
           page === 'home' ? 'bg-pm-green' : 'bg-pm-background'
-        } h-screen`}
+        } h-full min-h-screen`}
       >
         <header className="relative z-10 mb-6 w-full bg-pm-green p-6">
           {page === 'departures' && (
