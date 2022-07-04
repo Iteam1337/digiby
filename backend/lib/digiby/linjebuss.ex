@@ -1,44 +1,26 @@
 defmodule Digiby.Linjebuss do
+  alias Digiby.Transport
+  @maximum_walking_distance 2500
   def list_transports(date, time, from_position, to_position) do
-    time = Time.from_iso8601!(time) |> IO.inspect()
-    buses = GTFS.get_buses(date)
+    time = Time.from_iso8601!(time)
 
-    best_matches_for_lines =
-      for bus <- buses do
-        best_pickup_bus_stop = find_nearest_bus_stop(from_position, bus, time)
-
-        if best_pickup_bus_stop do
-          best_drop_off_bus_stop =
-            find_nearest_bus_stop(
-              to_position,
-              bus,
-              best_pickup_bus_stop[:arrival_time]
-            )
-
-          {bus[:trip_id], best_pickup_bus_stop, best_drop_off_bus_stop}
-        else
-          {nil}
-        end
-      end
-      |> Enum.reject(fn e -> e |> Tuple.to_list() |> Enum.any?(&is_nil/1) end)
+    trips = GTFS.get_buses(date)
 
     best_sorted_departures =
-      Enum.sort_by(best_matches_for_lines, fn {_trip_id,
-                                               %{meters_from_query_to_stop: distance_to_pickup},
-                                               %{meters_from_query_to_stop: distance_to_dropoff}} ->
-        distance_to_pickup + distance_to_dropoff
-      end)
-      |> Enum.take(20)
+      trips
+      |> get_best_matches_for_trips(from_position, to_position, time)
+      |> IO.inspect()
+      |> sort_matches()
 
     best_trip_ids =
-      best_sorted_departures |> Enum.map(fn {best_trip_id, _, _} -> best_trip_id end)
+      best_sorted_departures |> Enum.map(fn {best_trip_id, _, _, _} -> best_trip_id end)
 
-    buses
+    trips
     |> Enum.filter(fn %{trip_id: id} -> id in best_trip_ids end)
     |> Enum.map(fn %{stop_times: stops, trip_id: id} = bus ->
-      {_, best_start_stop, best_stop_stop} =
+      {_, best_start_stop, best_stop_stop, _} =
         best_sorted_departures
-        |> Enum.find(nil, fn {best_trip_id, _, _} -> best_trip_id == id end)
+        |> Enum.find(nil, fn {best_trip_id, _, _, _} -> best_trip_id == id end)
 
       stops =
         Enum.drop_while(stops, fn %{stop_position: %{name: name}} ->
@@ -73,6 +55,39 @@ defmodule Digiby.Linjebuss do
     end)
   end
 
+  def sort_matches(best_matches_for_trips),
+    do:
+      best_matches_for_trips
+      |> Enum.sort_by(fn {_trip_id,
+                          %{
+                            meters_from_query_to_stop: distance_to_pickup
+                          },
+                          %{
+                            meters_from_query_to_stop: distance_to_dropoff
+                          }, _} ->
+        distance_to_pickup + distance_to_dropoff
+      end)
+
+  def get_best_matches_for_trips(trips, from_position, to_position, time) do
+    for trip <- trips do
+      best_pickup_bus_stop = find_nearest_bus_stop(from_position, trip, time)
+
+      if best_pickup_bus_stop do
+        best_drop_off_bus_stop =
+          find_nearest_bus_stop(
+            to_position,
+            trip,
+            best_pickup_bus_stop[:arrival_time]
+          )
+
+        {trip[:trip_id], best_pickup_bus_stop, best_drop_off_bus_stop, trip.line_number}
+      else
+        {nil}
+      end
+    end
+    |> Enum.reject(fn e -> e |> Tuple.to_list() |> Enum.any?(&is_nil/1) end)
+  end
+
   def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00]) do
     bus.stop_times
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
@@ -85,6 +100,9 @@ defmodule Digiby.Linjebuss do
           position
         )
       )
+    end)
+    |> Enum.reject(fn %{meters_from_query_to_stop: distance} ->
+      distance > @maximum_walking_distance
     end)
     |> Enum.min_by(fn %{meters_from_query_to_stop: distance} -> distance end, &<=/2, fn ->
       nil

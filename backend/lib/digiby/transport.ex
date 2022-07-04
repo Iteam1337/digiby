@@ -1,5 +1,6 @@
-defmodule Transport do
+defmodule Digiby.Transport do
   defstruct [
+    :id,
     :line_number,
     :transportation_type,
     :travel_time,

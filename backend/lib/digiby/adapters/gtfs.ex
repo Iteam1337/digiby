@@ -5,7 +5,7 @@ defmodule GTFS do
     load_stop_times()
     load_trips()
     load_routes()
-    load_shapes()
+    # load_shapes()
   end
 
   def get_buses(date) do
