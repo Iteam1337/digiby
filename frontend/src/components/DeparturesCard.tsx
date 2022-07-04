@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Departure } from '../utils/types';
 import { departuresDetails } from '../utils/atoms';
-import DepartureInfo from './DepartureInfo';
 
 const DeparturesCard = ({ departure }: { departure: Departure }) => {
   const [details, setDetails] = useAtom(departuresDetails);

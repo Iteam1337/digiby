@@ -37,7 +37,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
           {page === 'departures' && (
             <div className="mx-auto max-w-screen-sm  ">
               <button onClick={() => navigate('/')} className="absolute top-8">
-                <ArrowIcon />
+                <ArrowIcon className="fill-pm-white" />
               </button>
               <div className="flex flex-col justify-center">
                 <div className="flex justify-center">
