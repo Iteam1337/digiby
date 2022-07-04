@@ -37,9 +37,9 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
   };
 
   return (
-    <details className="absolute left-0 bottom-0 right-0 z-10 overflow-hidden rounded-t-md bg-pm-white">
+    <details className="absolute left-0 bottom-0 right-0 z-10 max-h-screen overflow-scroll rounded-t-md bg-pm-white">
       <summary
-        className="mx-6 cursor-pointer list-none pb-6"
+        className="mx-6 max-w-screen-sm cursor-pointer list-none pb-6 sm:mx-auto sm:w-full"
         onClick={() => setOpen(!open)}
       >
         <p className="sr-only">Information om din resa</p>
@@ -59,7 +59,7 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
         </div>
         <div className="flex justify-between">
           <p className="font-bold">{departure.line_number}</p>
-          <p>{formatTime(departure.stops)}</p>
+          <p className="text-xs">{formatTime(departure.stops)}</p>
         </div>
         <div className="flex justify-between pb-6">
           <p className="text-xs">{departure.transportation_type}</p>
@@ -70,7 +70,7 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
           <p className="font-bold">200 SEK</p>
         </div>
       </summary>
-      <div className="mx-6 flex border-t border-t-pm-black pt-6">
+      <div className="mx-6 flex max-w-screen-sm border-t border-t-pm-black pt-6 sm:mx-auto sm:w-full">
         <div className="flex flex-col gap-6">
           {departure.departure.meters_from_query_to_stop < 10000 && (
             <p className="text-xs">
