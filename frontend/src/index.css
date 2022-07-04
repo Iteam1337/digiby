@@ -16,6 +16,10 @@ code {
     monospace;
 }
 
+summary::-webkit-details-marker {
+  display: none !important;
+}
+
 /* react-datepicker */
 
 .react-datepicker {
