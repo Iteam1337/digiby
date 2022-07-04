@@ -31,22 +31,27 @@ const Layout = ({ children }: { children: JSX.Element }) => {
       <div
         className={`${
           page === 'home' ? 'bg-pm-green' : 'bg-pm-background'
-        } h-screen`}
+        } h-full min-h-screen`}
       >
-        <header className="mb-6 bg-pm-green p-6">
+        <header className="relative z-10 mb-6 w-full bg-pm-green p-6">
           {page === 'departures' && (
             <div className="mx-auto max-w-screen-sm  ">
               <button onClick={() => navigate('/')} className="absolute top-8">
-                <ArrowIcon />
+                <ArrowIcon className="fill-pm-white" />
               </button>
               <div className="flex flex-col justify-center">
                 <div className="flex justify-center">
                   <h2 className="ml-4 text-center font-bold text-white">
-                    {data &&
-                      data[0].departure.stop_position.name +
-                        ' - ' +
-                        data[0].destination.stop_position.name}
+                    Start – Mål
                   </h2>
+                  {/* {data && (
+                    <h2 className="ml-4 text-center font-bold text-white">
+                      {data[0].departure.stop_position.name &&
+                        data[0].departure.stop_position.name +
+                          ' - ' +
+                          data[0].destination.stop_position.name}
+                    </h2>
+                  )} */}
                 </div>
                 <p className="text-center text-xs text-white">
                   Tidigast avgång

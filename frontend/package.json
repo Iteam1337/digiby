@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@danmarshall/deckgl-typings": "^4.9.24",
     "@headlessui/react": "^1.6.4",
     "@types/react-datepicker": "^4.4.2",
     "axios": "^0.27.2",
+    "deck.gl": "^8.7.12",
     "formik": "^2.2.9",
     "jotai": "^1.7.2",
     "lodash.debounce": "^4.0.8",
@@ -20,6 +22,7 @@
     "react": "^17.0.2",
     "react-datepicker": "^4.8.0",
     "react-dom": "^17.0.2",
+    "react-map-gl": "^7.0.16",
     "react-router-dom": "^6.3.0",
     "yup": "^0.32.11"
   },
