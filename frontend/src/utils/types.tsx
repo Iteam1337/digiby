@@ -32,6 +32,8 @@ type Stop = {
   stop_position: StopPosition;
 };
 
+type LatLng = [number, number];
+
 export type Departure = {
   cost: number;
   departure: Travelinfo;
@@ -40,4 +42,5 @@ export type Departure = {
   stops: Stop[];
   transportation_type: string;
   travel_time: number;
+  geometry: LatLng[];
 };

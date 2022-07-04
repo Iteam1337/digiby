@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 import Layout from './components/Layout';
 import Search from './pages/Search';

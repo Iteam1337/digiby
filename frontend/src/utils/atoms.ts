@@ -64,4 +64,5 @@ export const departuresDetails = atom<Departure>({
   ],
   transportation_type: 'buss',
   travel_time: 1,
+  geometry: [0, 0],
 });
