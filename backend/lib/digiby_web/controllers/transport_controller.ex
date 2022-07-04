@@ -32,8 +32,36 @@ defmodule DigibyWeb.TransportController do
       String.to_float(toLat)
     }
 
-    transports = Linjebuss.list_transports(String.replace(date, "-", ""), time <> ":00", from, to)
+    time = (time <> ":00") |> Time.from_iso8601!()
 
-    render(conn, "index.json", transports: transports)
+    query_date =
+      date
+      |> String.split("-")
+      |> Enum.map(&Integer.parse/1)
+      |> Enum.map(&elem(&1, 0))
+      |> List.to_tuple()
+      |> Date.from_erl!()
+
+    transports_query_day =
+      Linjebuss.list_transports(
+        query_date |> Date.to_string() |> String.replace("-", ""),
+        start_time: time,
+        from: from,
+        to: to
+      )
+      |> Enum.map(fn transport -> Map.put(transport, :date, Date.to_string(query_date)) end)
+
+    transports_tomorrow =
+      Linjebuss.list_transports(
+        query_date |> Date.add(1) |> Date.to_string() |> String.replace("-", ""),
+        end_time: time,
+        from: from,
+        to: to
+      )
+      |> Enum.map(fn transport ->
+        Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
+      end)
+
+    render(conn, "index.json", transports: Enum.concat(transports_query_day, transports_tomorrow))
   end
 end

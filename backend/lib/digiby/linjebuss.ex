@@ -1,14 +1,16 @@
 defmodule Digiby.Linjebuss do
   alias Digiby.Transport
   @maximum_walking_distance 2500
-  def list_transports(date, time, from_position, to_position) do
-    time = Time.from_iso8601!(time)
-
+  def list_transports(date, options) do
     trips = GTFS.get_buses(date)
+    start_time = Keyword.get(options, :start_time, ~T[00:00:00])
+    from_position = Keyword.get(options, :from)
+    to_position = Keyword.get(options, :to)
+    end_time = Keyword.get(options, :end_time, ~T[23:59:59])
 
     best_sorted_departures =
       trips
-      |> get_best_matches_for_trips(from_position, to_position, time)
+      |> get_best_matches_for_trips(from_position, to_position, start_time, end_time)
       |> sort_matches()
 
     best_trip_ids =
@@ -67,9 +69,9 @@ defmodule Digiby.Linjebuss do
         distance_to_pickup + distance_to_dropoff
       end)
 
-  def get_best_matches_for_trips(trips, from_position, to_position, time) do
+  def get_best_matches_for_trips(trips, from_position, to_position, after_time, before_time) do
     for trip <- trips do
-      best_pickup_bus_stop = find_nearest_bus_stop(from_position, trip, time)
+      best_pickup_bus_stop = find_nearest_bus_stop(from_position, trip, after_time, before_time)
 
       if best_pickup_bus_stop do
         best_drop_off_bus_stop =
@@ -87,9 +89,15 @@ defmodule Digiby.Linjebuss do
     |> Enum.reject(fn e -> e |> Tuple.to_list() |> Enum.any?(&is_nil/1) end)
   end
 
-  def find_nearest_bus_stop(position, bus, after_time \\ ~T[00:00:00]) do
+  def find_nearest_bus_stop(
+        position,
+        bus,
+        after_time \\ ~T[00:00:00],
+        before_time \\ ~T[23:59:59]
+      ) do
     bus.stop_times
     |> Enum.filter(&is_bus_stop_time_after?(&1, after_time))
+    |> Enum.filter(&is_bus_stop_time_before?(&1, before_time))
     |> Enum.map(fn %{stop_position: %{lng: lng, lat: lat}} = stop ->
       Map.put(
         stop,
@@ -112,5 +120,11 @@ defmodule Digiby.Linjebuss do
     after_time
     |> Time.diff(time)
     |> Kernel.<(0)
+  end
+
+  def is_bus_stop_time_before?(%{arrival_time: time}, before_time) do
+    before_time
+    |> Time.diff(time)
+    |> Kernel.>(-60 * 60 * 3)
   end
 end
