@@ -44,7 +44,8 @@ defmodule Digiby.MixProject do
       {:polyline, "~> 1.3.0"},
       {:csv, "~> 2.4"},
       {:distance, "~> 1.0"},
-      {:cors_plug, "~> 3.0.3"}
+      {:cors_plug, "~> 3.0.3"},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 
