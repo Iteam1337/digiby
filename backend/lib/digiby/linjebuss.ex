@@ -125,6 +125,6 @@ defmodule Digiby.Linjebuss do
   def is_bus_stop_time_before?(%{arrival_time: time}, before_time) do
     before_time
     |> Time.diff(time)
-    |> Kernel.>(-60 * 60 * 3)
+    |> Kernel.>(0)
   end
 end
