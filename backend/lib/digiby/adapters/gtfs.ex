@@ -17,7 +17,6 @@ defmodule GTFS do
       shape =
         :ets.lookup(:norrbotten_shapes, shape_id)
         |> Enum.map(fn {_, v} -> v end)
-        |> IO.inspect()
 
       Map.put(trip, :geometry, shape)
     end)
