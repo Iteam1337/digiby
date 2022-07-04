@@ -48,12 +48,7 @@ const DeparturesDetails = () => {
 
   return (
     <>
-      <DeckGL
-        layers={[layer]}
-        initialViewState={mapState}
-        mapboxApiAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-        controller={true}
-      >
+      <DeckGL layers={[layer]} initialViewState={mapState} controller={true}>
         <StaticMap
           mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
           reuseMaps
