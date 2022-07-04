@@ -54,7 +54,7 @@ defmodule DigibyWeb.TransportController do
     transports_tomorrow =
       Linjebuss.list_transports(
         query_date |> Date.add(1) |> Date.to_string() |> String.replace("-", ""),
-        end_time: time,
+        end_time: time |> Time.add(1, :second),
         from: from,
         to: to
       )
