@@ -4,6 +4,7 @@ import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer } from 'deck.gl';
 
 import { departuresDetails } from '../utils/atoms';
+import DepartureInfo from '../components/DepartureInfo';
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -59,7 +60,7 @@ const DeparturesDetails = () => {
           mapStyle="mapbox://styles/mapbox/dark-v10"
         />
       </DeckGL>
-      {/* {departure && <DepartureInfo departure={departure} />} */}
+      {departure && <DepartureInfo departure={departure} />}
     </>
   );
 };

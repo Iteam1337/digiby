@@ -4,7 +4,7 @@ import ArrowIcon from '../icons/ArrowIcon';
 // import DragIcon from '../icons/DragIcon';
 import { Departure } from '../utils/types';
 
-const DeparturesInfo = ({ departure }: { departure: Departure }) => {
+const DepartureInfo = ({ departure }: { departure: Departure }) => {
   const [open, setOpen] = useState(false);
   const humanizeTime = (timeInSeconds: number) => {
     const totalMinutes = timeInSeconds / 60;
@@ -128,4 +128,4 @@ const DeparturesInfo = ({ departure }: { departure: Departure }) => {
   );
 };
 
-export default DeparturesInfo;
+export default DepartureInfo;
