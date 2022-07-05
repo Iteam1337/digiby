@@ -4,6 +4,7 @@ import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 
 import pin from '../icons/pin.svg';
+import startPin from '../icons/startPin.svg';
 import { departuresDetails } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 
@@ -21,6 +22,9 @@ const DeparturesDetails = () => {
     return <p> no departure found </p>;
   }
 
+  const stopPosition = departure?.stops.slice(-1)[0].stop_position;
+  const startPosition = departure.stops[0].stop_position;
+
   const geoJsonObject = {
     type: 'Feature',
     geometry: {
@@ -29,7 +33,7 @@ const DeparturesDetails = () => {
     },
   };
 
-  const layer = new GeoJsonLayer({
+  const busLayer = new GeoJsonLayer({
     id: 'geojson-layer',
     data: geoJsonObject,
     pickable: true,
@@ -46,9 +50,7 @@ const DeparturesDetails = () => {
     getElevation: 3,
   });
 
-  const stopPosition = departure?.stops.slice(-1)[0].stop_position;
-
-  const iconLayer = new IconLayer({
+  const stopPositionLayer = new IconLayer({
     id: 'icon-layer',
     data: [
       {
@@ -70,12 +72,34 @@ const DeparturesDetails = () => {
     getSize: (d) => 20,
   });
 
+  const startPositionLayer = new IconLayer({
+    id: 'icon-layer',
+    data: [
+      {
+        coordinates: [
+          parseFloat(startPosition.lng),
+          parseFloat(startPosition.lat),
+        ],
+      },
+    ],
+    pickable: true,
+    getIcon: () => ({
+      url: startPin,
+      mask: false,
+      width: 10,
+      height: 10,
+    }),
+    sizeScale: 1,
+    getPosition: (d) => d.coordinates,
+    getSize: (d) => 10,
+  });
+
   return (
     <>
       {departure && (
         <>
           <DeckGL
-            layers={[iconLayer, layer]}
+            layers={[busLayer, stopPositionLayer, startPositionLayer]}
             initialViewState={mapState}
             controller={true}
           >
