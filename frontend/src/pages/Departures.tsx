@@ -40,10 +40,6 @@ const Departures = () => {
 
   const { loading, data, error } = departures;
 
-  if (!loading && !data) {
-    console.log('nu?');
-  }
-
   if (loading) {
     return <span>Söker...</span>;
   }
