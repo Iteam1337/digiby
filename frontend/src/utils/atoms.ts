@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-import { Departure, FormattedState } from './types';
+import { Departure, DepartureSearchParams } from './types';
 import getTransports from './getTransports';
 
 export type DeparturesData = {
@@ -17,11 +17,11 @@ const fetchDepartures = atom<DeparturesData>({
 
 export const departuresAtom = atom(
   (get) => get(fetchDepartures),
-  (_get, set, formData: FormattedState) => {
+  (_get, set, searchParams: DepartureSearchParams) => {
     const fetchData = async () => {
       set(fetchDepartures, (prev) => ({ ...prev, loading: true }));
       try {
-        const data = await getTransports(formData);
+        const data = await getTransports(searchParams);
         set(fetchDepartures, { loading: false, error: null, data });
       } catch (error: any) {
         set(fetchDepartures, { loading: false, error, data: null });
@@ -66,3 +66,10 @@ export const departuresDetails = atom<Departure>({
   travel_time: 1,
   geometry: [0, 0],
 });
+
+type FromTo = {
+  from?: string;
+  to?: string;
+};
+
+export const fromToAddressAtom = atom<FromTo>({ from: '', to: '' });

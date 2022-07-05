@@ -2,16 +2,14 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 
-import { departuresAtom } from '../utils/atoms';
+import { fromToAddressAtom } from '../utils/atoms';
 import ArrowIcon from '../icons/ArrowIcon';
 
 const Layout = ({ children }: { children: JSX.Element }) => {
   const [page, setPage] = useState('');
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [departures] = useAtom(departuresAtom);
-
-  const { data } = departures;
+  const [fromToAddress] = useAtom(fromToAddressAtom);
 
   useEffect(() => {
     switch (pathname) {
@@ -41,17 +39,11 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               </button>
               <div className="flex flex-col justify-center">
                 <div className="flex justify-center">
-                  <h2 className="ml-4 text-center font-bold text-white">
-                    Start – Mål
-                  </h2>
-                  {/* {data && (
+                  {fromToAddress && (
                     <h2 className="ml-4 text-center font-bold text-white">
-                      {data[0].departure.stop_position.name &&
-                        data[0].departure.stop_position.name +
-                          ' - ' +
-                          data[0].destination.stop_position.name}
+                      {fromToAddress.from + ' - ' + fromToAddress.to}
                     </h2>
-                  )} */}
+                  )}
                 </div>
                 <p className="text-center text-xs text-white">
                   Tidigast avgång

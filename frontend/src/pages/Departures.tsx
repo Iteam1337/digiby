@@ -1,12 +1,48 @@
+import { useEffect } from 'react';
 import { useAtom } from 'jotai';
+import { useSearchParams } from 'react-router-dom';
 
-import { departuresAtom } from '../utils/atoms';
+import { departuresAtom, fromToAddressAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
+import { DepartureSearchParams } from '../utils/types';
 
 const Departures = () => {
-  const [departures] = useAtom(departuresAtom);
+  const [departures, getDepartures] = useAtom(departuresAtom);
+  const [_fromToAddress, setFromToAddress] = useAtom(fromToAddressAtom);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const fromAddress = searchParams.get('fromAddress');
+    const toAddress = searchParams.get('toAddress');
+    if (fromAddress && toAddress) {
+      setFromToAddress({ from: fromAddress, to: toAddress });
+    }
+
+    const fromLat = searchParams.get('fromLat');
+    const fromLng = searchParams.get('fromLng');
+    const toLat = searchParams.get('toLat');
+    const toLng = searchParams.get('toLng');
+    const date = searchParams.get('date');
+    const time = searchParams.get('time');
+
+    if (fromLat && fromLng && toLat && toLng && time && date) {
+      const departureSearchParams: DepartureSearchParams = {
+        fromLat,
+        fromLng,
+        toLat,
+        toLng,
+        time,
+        date,
+      };
+      getDepartures(departureSearchParams);
+    }
+  }, [searchParams]);
 
   const { loading, data, error } = departures;
+
+  if (!loading && !data) {
+    console.log('nu?');
+  }
 
   if (loading) {
     return <span>Söker...</span>;
