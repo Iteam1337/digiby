@@ -9,6 +9,7 @@ export type FormattedState = {
   time: string;
   date: string;
 };
+
 export type FormData = {
   from: Address;
   to: Address;
@@ -43,4 +44,13 @@ export type Departure = {
   transportation_type: string;
   travel_time: number;
   geometry: LatLng[];
+};
+
+export type DepartureSearchParams = {
+  fromLat: string;
+  fromLng: string;
+  toLat: string;
+  toLng: string;
+  time: string;
+  date: string;
 };
