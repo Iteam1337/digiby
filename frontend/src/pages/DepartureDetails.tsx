@@ -14,16 +14,13 @@ const DeparturesDetails = () => {
     pitch: 0,
     bearing: 0,
   });
-
   const [departure] = useAtom(departuresDetails);
-
-  console.log('departure', departure);
 
   const geoJsonObject = {
     type: 'Feature',
     geometry: {
       type: 'LineString',
-      coordinates: departure.geometry,
+      coordinates: departure?.geometry,
     },
   };
 
@@ -48,14 +45,22 @@ const DeparturesDetails = () => {
 
   return (
     <>
-      <DeckGL layers={[layer]} initialViewState={mapState} controller={true}>
-        <StaticMap
-          mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-          reuseMaps
-          mapStyle="mapbox://styles/mapbox/dark-v10"
-        />
-      </DeckGL>
-      {departure && <DepartureInfo departure={departure} />}
+      {departure && (
+        <>
+          <DeckGL
+            layers={[layer]}
+            initialViewState={mapState}
+            controller={true}
+          >
+            <StaticMap
+              mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+              reuseMaps
+              mapStyle="mapbox://styles/mapbox/dark-v10"
+            />
+          </DeckGL>
+          <DepartureInfo departure={departure} />
+        </>
+      )}
     </>
   );
 };
