@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
-import DeckGL, { GeoJsonLayer } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 
+import pin from '../icons/pin.svg';
 import { departuresDetails } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 
@@ -15,6 +16,10 @@ const DeparturesDetails = () => {
     bearing: 0,
   });
   const [departure] = useAtom(departuresDetails);
+
+  if (!departure) {
+    return <p> no departure found </p>;
+  }
 
   const geoJsonObject = {
     type: 'Feature',
@@ -41,14 +46,36 @@ const DeparturesDetails = () => {
     getElevation: 3,
   });
 
-  console.log(layer);
+  const stopPosition = departure?.stops.slice(-1)[0].stop_position;
+
+  const iconLayer = new IconLayer({
+    id: 'icon-layer',
+    data: [
+      {
+        coordinates: [
+          parseFloat(stopPosition.lng),
+          parseFloat(stopPosition.lat),
+        ],
+      },
+    ],
+    pickable: true,
+    getIcon: () => ({
+      url: pin,
+      mask: false,
+      width: 16,
+      height: 20,
+    }),
+    sizeScale: 1,
+    getPosition: (d) => d.coordinates,
+    getSize: (d) => 20,
+  });
 
   return (
     <>
       {departure && (
         <>
           <DeckGL
-            layers={[layer]}
+            layers={[iconLayer, layer]}
             initialViewState={mapState}
             controller={true}
           >
