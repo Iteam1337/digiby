@@ -41,12 +41,12 @@ const DeparturesDetails = () => {
     filled: true,
     extruded: true,
     pointType: 'circle',
-    lineWidthScale: 5,
-    lineWidthMinPixels: 2,
+    lineWidthScale: 1,
+    lineWidthMinPixels: 1,
     getFillColor: [19, 197, 123],
     getLineColor: [19, 197, 123],
     getPointRadius: 100,
-    getLineWidth: 5,
+    getLineWidth: 2,
     getElevation: 3,
   });
 
@@ -60,7 +60,6 @@ const DeparturesDetails = () => {
         ],
       },
     ],
-    pickable: true,
     getIcon: () => ({
       url: pin,
       mask: false,
@@ -82,7 +81,6 @@ const DeparturesDetails = () => {
         ],
       },
     ],
-    pickable: true,
     getIcon: () => ({
       url: startPin,
       mask: false,
