@@ -36,6 +36,7 @@ type Stop = {
 type LatLng = [number, number];
 
 export type Departure = {
+  date: string;
   cost: number;
   departure: Travelinfo;
   destination: Travelinfo;
