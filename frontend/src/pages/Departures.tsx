@@ -48,15 +48,20 @@ const Departures = () => {
     return <span>Försök igen...</span>;
   }
 
-  if (data) {
-    console.log(data);
-  }
-
   return (
     <section className=" mx-4 h-full bg-pm-background">
       <h3 className="my-6 text-xl font-bold">Idag</h3>
       {data &&
         data.map((item, i) => <DeparturesCard key={i} departure={item} />)}
+
+      {!loading && data?.length === 0 && (
+        <div className=" flex flex-col items-center">
+          <p>Ingen rutt hittades</p>
+          <a className="underline" href="/">
+            Tillbaka till sök
+          </a>
+        </div>
+      )}
     </section>
   );
 };
