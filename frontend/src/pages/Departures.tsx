@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { useSearchParams } from 'react-router-dom';
 
+import Loading from '../components/Loading';
 import { departuresAtom, fromToAddressAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
@@ -41,7 +42,7 @@ const Departures = () => {
   const { loading, data, error } = departures;
 
   if (loading) {
-    return <span>Söker...</span>;
+    return <Loading />;
   }
 
   if (!loading && error) {
