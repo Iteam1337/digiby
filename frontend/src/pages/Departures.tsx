@@ -82,8 +82,8 @@ const Departures = () => {
         <>
           {dates.map((date: string, i: number) => {
             return (
-              <>
-                <h3 key={i} className="my-6 text-xl font-bold">
+              <div key={i}>
+                <h3 className="my-6 text-xl font-bold">
                   {getDaysFromToday(date)}
                 </h3>
                 {data?.map((item, i) => {
@@ -91,7 +91,7 @@ const Departures = () => {
                     return <DeparturesCard key={i} departure={item} />;
                   }
                 })}
-              </>
+              </div>
             );
           })}
         </>
