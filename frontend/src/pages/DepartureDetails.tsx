@@ -41,8 +41,6 @@ const DeparturesDetails = () => {
     getElevation: 3,
   });
 
-  console.log(layer);
-
   return (
     <>
       {departure && (
