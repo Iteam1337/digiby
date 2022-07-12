@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
@@ -17,6 +17,17 @@ const DeparturesDetails = () => {
     bearing: 0,
   });
   const [departure] = useAtom(departuresDetails);
+
+  useEffect(() => {
+    if (departure)
+      setMapState({
+        longitude: parseFloat(departure.destination.stop_position.lng),
+        latitude: parseFloat(departure.destination.stop_position.lat),
+        zoom: 7,
+        pitch: 0,
+        bearing: 0,
+      });
+  }, [departure]);
 
   if (!departure) {
     return <p> no departure found </p>;
