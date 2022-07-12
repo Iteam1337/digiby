@@ -30,7 +30,14 @@ const DeparturesDetails = () => {
   }, [departure]);
 
   if (!departure) {
-    return <p> no departure found </p>;
+    return (
+      <div className=" flex flex-col items-center">
+        <p>Ingen rutt hittades</p>
+        <a className="underline" href="/">
+          Tillbaka till sök
+        </a>
+      </div>
+    );
   }
 
   const stopPosition = departure?.stops.slice(-1)[0].stop_position;
