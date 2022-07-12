@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { useSearchParams } from 'react-router-dom';
-import moment from 'moment';
+import { differenceInDays } from 'date-fns';
 
 import Loading from '../components/Loading';
 import { departuresAtom, fromToAddressAtom } from '../utils/atoms';
@@ -52,8 +52,8 @@ const Departures = () => {
   }
 
   const getDaysFromToday = (date: string) => {
-    const today = moment(formatDate(new Date()));
-    const diff = moment(date).diff(today, 'days');
+    const today = formatDate(new Date());
+    const diff = differenceInDays(new Date(date), new Date(today));
 
     if (diff === 0) {
       return 'Idag';
