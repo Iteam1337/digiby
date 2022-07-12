@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Departure } from '../utils/types';
 import { departuresDetails } from '../utils/atoms';
+import { getHoursAndMinutes, humanizeTime } from '../utils/dateTimeFormatting';
 
 const DeparturesCard = ({ departure }: { departure: Departure }) => {
   const [details, setDetails] = useAtom(departuresDetails);
@@ -13,20 +14,6 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
     navigate('/departure-details');
   };
 
-  const humanizeTime = (timeInSeconds: number) => {
-    const totalMinutes = timeInSeconds / 60;
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    const str = hours > 0 ? `${hours}h ` : '';
-    return str + `${minutes} min`;
-  };
-
-  const formatTime = (stops: Array<any>) => {
-    const departureTime = stops[0].arrival_time;
-    const arrivalTime = stops[stops.length - 1].arrival_time;
-    return `${departureTime} — ${arrivalTime}`;
-  };
-
   return (
     <button
       onClick={() => handleClick()}
@@ -34,7 +21,7 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
     >
       <div className="flex justify-between">
         <p className="font-bold">{departure.line_number}</p>
-        <p>{formatTime(departure.stops)}</p>
+        <p>{getHoursAndMinutes(departure.stops)}</p>
       </div>
       <div className="flex justify-between pb-6">
         <p className="text-xs">{departure.transportation_type}</p>
