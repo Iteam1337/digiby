@@ -32,7 +32,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
       <header className="relative z-10 w-full bg-pm-green p-6">
         {!homeScreen && (
           <div className="mx-auto max-w-screen-sm  ">
-            <button onClick={() => navigate('/')} className="absolute top-8">
+            <button onClick={() => navigate(-1)} className="absolute top-8">
               <ArrowIcon className="fill-pm-white" />
             </button>
             <div className="flex flex-col justify-center">
