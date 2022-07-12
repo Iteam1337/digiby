@@ -72,6 +72,7 @@ const Search = () => {
       >
         {({ handleSubmit }) => (
           <form
+            autoComplete="off"
             method="get"
             onSubmit={handleSubmit}
             className="mx-6 flex flex-col rounded-md bg-pm-white p-6"
