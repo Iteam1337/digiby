@@ -67,8 +67,8 @@ const DeparturesDetails = () => {
       height: 20,
     }),
     sizeScale: 1,
-    getPosition: (d) => d.coordinates,
-    getSize: (d) => 20,
+    getPosition: (d: any) => d.coordinates,
+    getSize: () => 20,
   });
 
   const startPositionLayer = new IconLayer({
@@ -88,8 +88,8 @@ const DeparturesDetails = () => {
       height: 10,
     }),
     sizeScale: 1,
-    getPosition: (d) => d.coordinates,
-    getSize: (d) => 10,
+    getPosition: (d: any) => d.coordinates,
+    getSize: () => 10,
   });
 
   return (
