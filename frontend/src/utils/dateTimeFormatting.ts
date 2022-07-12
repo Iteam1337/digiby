@@ -1,11 +1,11 @@
-import moment from 'moment';
+import { format } from 'date-fns';
 
 const formatDate = (date: Date) => {
-  return moment(date).format('YYYY-MM-DD');
+  return format(date, 'yyyy-MM-dd');
 };
 
 const formatTime = (date: Date) => {
-  return moment(date).format('HH:mm');
+  return format(date, 'HH:mm');
 };
 
 const getHoursAndMinutes = (stops: Array<any>) => {
