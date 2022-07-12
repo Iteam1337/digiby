@@ -1,24 +1,12 @@
 import { useState } from 'react';
 
 import ArrowIcon from '../icons/ArrowIcon';
+import { getHoursAndMinutes, humanizeTime } from '../utils/dateTimeFormatting';
 // import DragIcon from '../icons/DragIcon';
 import { Departure } from '../utils/types';
 
 const DepartureInfo = ({ departure }: { departure: Departure }) => {
   const [open, setOpen] = useState(false);
-  const humanizeTime = (timeInSeconds: number) => {
-    const totalMinutes = timeInSeconds / 60;
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    const str = hours > 0 ? `${hours}h ` : '';
-    return str + `${minutes} min`;
-  };
-
-  const formatTime = (stops: Array<any>) => {
-    const departureTime = stops[0].arrival_time;
-    const arrivalTime = stops[stops.length - 1].arrival_time;
-    return `${departureTime} — ${arrivalTime}`;
-  };
 
   const myPositionTime = (distance: number, arrival: string) => {
     // Convert meters_from_query_to_stop to milliseconds.
@@ -59,7 +47,7 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
         </div>
         <div className="flex justify-between">
           <p className="font-bold">{departure.line_number}</p>
-          <p className="text-xs">{formatTime(departure.stops)}</p>
+          <p className="text-xs">{getHoursAndMinutes(departure.stops)}</p>
         </div>
         <div className="flex justify-between pb-6">
           <p className="text-xs">{departure.transportation_type}</p>
