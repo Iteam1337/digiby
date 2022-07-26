@@ -45,6 +45,8 @@ defmodule Digiby.MixProject do
       {:csv, "~> 2.4"},
       {:distance, "~> 1.0"},
       {:cors_plug, "~> 3.0.3"},
+      {:nimble_csv, "~> 1.2.0"},
+      {:flow, "~> 1.2.0"},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end

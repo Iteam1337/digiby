@@ -97,8 +97,6 @@ defmodule GTFS do
   end
 
   defp load_stop_times do
-    IO.inspect(:ets.first(:norrbotten_stops))
-
     "stop_times.txt"
     |> get_decoded_csv_stream()
     |> Stream.map(fn stop_time ->
@@ -155,10 +153,11 @@ defmodule GTFS do
   end
 
   defp load_shapes do
-    "shapes.txt"
-    |> get_decoded_csv_stream()
-    |> Stream.map(fn e -> Map.take(e, ["shape_id", "shape_pt_lat", "shape_pt_lon"]) end)
-    |> Enum.each(fn %{"shape_id" => id, "shape_pt_lon" => lon, "shape_pt_lat" => lat} ->
+    Path.expand("./data/norrbotten/shapes.txt", File.cwd!())
+    |> File.stream!(read_ahead: 10_000)
+    |> NimbleCSV.RFC4180.parse_stream()
+    |> Flow.from_enumerable(stages: 4)
+    |> Flow.map(fn [id, lat, lon, _, _] ->
       :ets.insert(
         @shapes_table_name,
         {id,
@@ -168,6 +167,7 @@ defmodule GTFS do
          ]}
       )
     end)
+    |> Enum.to_list()
 
     IO.puts("Shapes loaded")
   end
