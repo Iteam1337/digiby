@@ -7,7 +7,8 @@ defmodule Digiby.Application do
 
   @impl true
   def start(_type, _args) do
-    GTFS.cache_in_ets()
+    {loading_time, :ok} = :timer.tc(fn -> GTFS.load_cache_in_ets() end)
+    IO.inspect(loading_time / 1_000_000, label: "loading cache in seconds")
 
     children = [
       # Start the Telemetry supervisor
