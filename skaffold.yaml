@@ -8,8 +8,9 @@ build:
       context: backend 
     - image: iteam1337/digiby-frontend
       context: frontend
-      buildArgs:
-       VITE_MAPBOX_ACCESS_TOKEN: "{{.VITE_MAPBOX_ACCESS_TOKEN}}" # these needs to be set at build time
+      docker:
+        buildArgs:
+         VITE_MAPBOX_ACCESS_TOKEN: "{{.VITE_MAPBOX_ACCESS_TOKEN}}" # these needs to be set at build time
 deploy:
   kustomize:
     paths:
