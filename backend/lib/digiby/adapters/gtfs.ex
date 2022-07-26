@@ -27,18 +27,16 @@ defmodule GTFS do
     |> then(fn _ -> load_stop_times() end)
   end
 
+  def get_geometry(shape_id),
+    do:
+      :ets.lookup(:norrbotten_shapes, shape_id)
+      |> Enum.map(fn {_, v} -> v end)
+
   def get_buses(date) do
     :ets.lookup(:norrbotten_services, date)
     |> Enum.map(&(elem(&1, 1) |> Map.get(:service_id)))
     |> Enum.flat_map(fn service_id -> :ets.lookup(:norrbotten_trips, service_id) end)
     |> Enum.map(fn {_, values} -> values end)
-    |> Enum.map(fn %{shape_id: shape_id} = trip ->
-      shape =
-        :ets.lookup(:norrbotten_shapes, shape_id)
-        |> Enum.map(fn {_, v} -> v end)
-
-      Map.put(trip, :geometry, shape)
-    end)
     |> Enum.map(fn %{trip_id: trip_id} = trip ->
       Map.put(
         trip,
@@ -64,7 +62,7 @@ defmodule GTFS do
         stop_times: filtered_values.stop_times,
         trip_id: trip_id,
         line_number: values.line_number,
-        geometry: values.geometry
+        shape_id: values.shape_id
       }
     end)
   end

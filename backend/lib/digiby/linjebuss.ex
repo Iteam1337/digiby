@@ -51,10 +51,25 @@ defmodule Digiby.Linjebuss do
         departure: best_start_stop,
         destination: best_stop_stop,
         stops: bus.stop_times,
-        geometry: bus.geometry
+        geometry:
+          GTFS.get_geometry(bus.shape_id)
+          |> filter_geometry(best_start_stop.stop_position, best_stop_stop.stop_position)
+          |> tap(fn g -> IO.inspect(Enum.count(g)) end)
       }
     end)
   end
+
+  def filter_geometry(geometry, start_coord, stop_coord),
+    do:
+      geometry
+      |> Enum.drop_while(fn coord ->
+        coord != Enum.map([start_coord.lng, start_coord.lat], &String.to_float/1)
+      end)
+      |> Enum.reverse()
+      |> Enum.drop_while(fn coord ->
+        coord != Enum.map([stop_coord.lng, stop_coord.lat], &String.to_float/1)
+      end)
+      |> Enum.reverse()
 
   def sort_matches(best_matches_for_trips),
     do:
