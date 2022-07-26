@@ -2,24 +2,25 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 
-import { departuresAtom } from '../utils/atoms';
+import { fromToAddressAtom } from '../utils/atoms';
 import ArrowIcon from '../icons/ArrowIcon';
 
 const Layout = ({ children }: { children: JSX.Element }) => {
-  const [page, setPage] = useState('');
+  const [homeScreen, setHomeScreen] = useState(true);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [departures] = useAtom(departuresAtom);
-
-  const { data } = departures;
+  const [fromToAddress] = useAtom(fromToAddressAtom);
 
   useEffect(() => {
     switch (pathname) {
       case '/':
-        setPage('home');
+        setHomeScreen(true);
         break;
       case '/departures':
-        setPage('departures');
+        setHomeScreen(false);
+        break;
+      case '/departure-details':
+        setHomeScreen(false);
         break;
       default:
         break;
@@ -28,35 +29,34 @@ const Layout = ({ children }: { children: JSX.Element }) => {
 
   return (
     <>
-      <div
-        className={`${
-          page === 'home' ? 'bg-pm-green' : 'bg-pm-background'
-        } h-screen`}
-      >
-        <header className="mb-6 bg-pm-green p-6">
-          {page === 'departures' && (
-            <div className="mx-auto max-w-screen-sm  ">
-              <button onClick={() => navigate('/')} className="absolute top-8">
-                <ArrowIcon />
-              </button>
-              <div className="flex flex-col justify-center">
-                <div className="flex justify-center">
+      <header className="relative z-10 w-full bg-pm-green p-6">
+        {!homeScreen && (
+          <div className="mx-auto max-w-screen-sm  ">
+            <button onClick={() => navigate(-1)} className="absolute top-8">
+              <ArrowIcon className="fill-pm-white" />
+            </button>
+            <div className="flex flex-col justify-center">
+              <div className="flex justify-center">
+                {fromToAddress && (
                   <h2 className="ml-4 text-center font-bold text-white">
-                    {data &&
-                      data[0].departure.stop_position.name +
-                        ' - ' +
-                        data[0].destination.stop_position.name}
+                    {fromToAddress.from + ' - ' + fromToAddress.to}
                   </h2>
-                </div>
-                <p className="text-center text-xs text-white">
-                  Tidigast avgång
-                </p>
+                )}
               </div>
+              <p className="text-center text-xs text-white">
+                Tidigaste avgångar
+              </p>
             </div>
-          )}
-        </header>
-        <main className="mx-auto w-full max-w-screen-sm">{children}</main>
-      </div>
+          </div>
+        )}
+      </header>
+      <main
+        className={`${
+          homeScreen ? 'bg-pm-green' : 'bg-pm-background'
+        }  h-full min-h-screen w-full pt-6 `}
+      >
+        <article className="mx-auto w-full max-w-screen-sm">{children}</article>
+      </main>
     </>
   );
 };

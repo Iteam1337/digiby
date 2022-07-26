@@ -1,32 +1,37 @@
-type DepaturesInfo = {
-  vehicle: string;
-  vehicleInfo: string;
-  time: string;
-  totalTime: string;
-  cost: string;
-};
+import { useAtom } from 'jotai';
+import { useNavigate } from 'react-router-dom';
 
-const DeparturesCard = ({
-  vehicle,
-  vehicleInfo,
-  time,
-  totalTime,
-  cost,
-}: DepaturesInfo) => {
+import { Departure } from '../utils/types';
+import { departuresDetails } from '../utils/atoms';
+import { getHoursAndMinutes, humanizeTime } from '../utils/dateTimeFormatting';
+
+const DeparturesCard = ({ departure }: { departure: Departure }) => {
+  const [details, setDetails] = useAtom(departuresDetails);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    setDetails(departure);
+    navigate('/departure-details');
+  };
+
   return (
-    <div className="mb-4 rounded-md bg-pm-white p-4">
+    <button
+      onClick={() => handleClick()}
+      className="mb-4 w-full rounded-md bg-pm-white p-4"
+    >
       <div className="flex justify-between">
-        <p className="font-bold">{vehicle}</p>
-        <p>{time}</p>
+        <p className="font-bold">{departure.line_number}</p>
+        <p>{getHoursAndMinutes(departure.stops)}</p>
       </div>
       <div className="flex justify-between pb-6">
-        <p className="text-xs">{vehicleInfo}</p>
-        <p className="text-xs">{totalTime}</p>
+        <p className="text-xs">{departure.transportation_type}</p>
+        <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
       </div>
       <div className="flex justify-end">
-      <p className="font-bold">{cost}</p>
+        {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
+        <p className="font-bold">200 SEK</p>
       </div>
-    </div>
+    </button>
   );
 };
 

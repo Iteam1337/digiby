@@ -2,20 +2,17 @@ import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useNavigate, createSearchParams } from 'react-router-dom';
 
 import { FormData, FormattedState } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
 import { formatDate, formatTime } from '../utils/dateTimeFormatting';
-import { departuresAtom } from '../utils/atoms';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
   const navigate = useNavigate();
-  const [_departures, getDepartures] = useAtom(departuresAtom);
 
   const initialFormState: FormData = {
     from: {
@@ -46,8 +43,19 @@ const Search = () => {
       date: formatDate(formState.date),
     };
 
-    getDepartures(formattedState);
-    navigate('/departures');
+    navigate({
+      pathname: 'departures',
+      search: `?${createSearchParams({
+        fromLng: formattedState.from.coordinates[0].toString(),
+        fromLat: formattedState.from.coordinates[1].toString(),
+        toLng: formattedState.to.coordinates[0].toString(),
+        toLat: formattedState.to.coordinates[1].toString(),
+        time: formattedState.time,
+        date: formattedState.date,
+        fromAddress: formattedState.from.address,
+        toAddress: formattedState.to.address,
+      })}`,
+    });
     return;
   }
 
@@ -64,6 +72,7 @@ const Search = () => {
       >
         {({ handleSubmit }) => (
           <form
+            autoComplete="off"
             method="get"
             onSubmit={handleSubmit}
             className="mx-6 flex flex-col rounded-md bg-pm-white p-6"
