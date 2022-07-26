@@ -51,7 +51,7 @@ defmodule Digiby.Linjebuss do
         departure: best_start_stop,
         destination: best_stop_stop,
         stops: bus.stop_times,
-        geometry: bus.geometry
+        geometry: GTFS.get_geometry(bus.shape_id)
       }
     end)
   end
