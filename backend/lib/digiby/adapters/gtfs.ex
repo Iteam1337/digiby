@@ -1,11 +1,30 @@
 defmodule GTFS do
-  def cache_in_ets do
-    load_stops()
-    load_services()
-    load_stop_times()
-    load_trips()
-    load_routes()
-    load_shapes()
+  @stops_table_name :norrbotten_stops
+  @services_table_name :norrbotten_services
+  @stop_times_table_name :norrbotten_stop_times
+  @routes_table_name :norrbotten_routes
+  @shapes_table_name :norrbotten_shapes
+  @trips_table_name :norrbotten_trips
+  def load_cache_in_ets do
+    :ets.new(@stops_table_name, [:set, :public, :named_table])
+    :ets.new(@routes_table_name, [:set, :public, :named_table])
+    :ets.new(@services_table_name, [:duplicate_bag, :public, :named_table])
+    :ets.new(@stop_times_table_name, [:duplicate_bag, :public, :named_table])
+    :ets.new(@shapes_table_name, [:duplicate_bag, :public, :named_table])
+    :ets.new(@trips_table_name, [:duplicate_bag, :public, :named_table])
+
+    Enum.map(
+      [
+        &load_stops/0,
+        &load_services/0,
+        &load_trips/0,
+        &load_routes/0,
+        &load_shapes/0
+      ],
+      &Task.async/1
+    )
+    |> Enum.each(&Task.await(&1, 50_000))
+    |> then(fn _ -> load_stop_times() end)
   end
 
   def get_buses(date) do
@@ -50,9 +69,7 @@ defmodule GTFS do
     end)
   end
 
-  defp load_stops do
-    table = :ets.new(:norrbotten_stops, [:set, :public, :named_table])
-
+  defp load_stops() do
     "stops.txt"
     |> get_decoded_csv_stream()
     |> Stream.map(fn e -> Map.take(e, ["stop_name", "stop_id", "stop_lon", "stop_lat"]) end)
@@ -63,24 +80,24 @@ defmodule GTFS do
         lng: value["stop_lon"]
       })
     end)
-    |> Enum.each(fn tuple -> :ets.insert(table, tuple) end)
+    |> Enum.each(fn tuple -> :ets.insert(:norrbotten_stops, tuple) end)
+
+    IO.puts("Stops loaded")
   end
 
   defp load_services do
-    table = :ets.new(:norrbotten_services, [:duplicate_bag, :public, :named_table])
-
     "calendar_dates.txt"
     |> get_decoded_csv_stream()
     |> Enum.map(fn value ->
       {value["date"], %{service_id: value["service_id"], exception_type: value["exception_type"]}}
     end)
-    |> Enum.each(fn tuple -> :ets.insert(table, tuple) end)
+    |> Enum.each(fn tuple -> :ets.insert(@services_table_name, tuple) end)
 
     IO.puts("Services loaded")
   end
 
   defp load_stop_times do
-    table = :ets.new(:norrbotten_stop_times, [:duplicate_bag, :public, :named_table])
+    IO.inspect(:ets.first(:norrbotten_stops))
 
     "stop_times.txt"
     |> get_decoded_csv_stream()
@@ -96,7 +113,7 @@ defmodule GTFS do
                       "arrival_time" => arrival_time
                     } ->
       :ets.insert(
-        table,
+        @stop_times_table_name,
         {trip_id, %{stop_position: stop_position, arrival_time: timestr_to_time(arrival_time)}}
       )
     end)
@@ -109,23 +126,21 @@ defmodule GTFS do
   def timestr_to_time(time), do: Time.from_iso8601!(time)
 
   defp load_trips do
-    table = :ets.new(:norrbotten_trips, [:duplicate_bag, :public, :named_table])
-
     "trips.txt"
     |> get_decoded_csv_stream()
     |> Stream.map(fn trip -> Map.take(trip, ["service_id", "trip_id", "route_id", "shape_id"]) end)
     |> Enum.each(fn trip ->
       :ets.insert(
-        table,
+        @trips_table_name,
         {trip["service_id"],
          %{trip_id: trip["trip_id"], route_id: trip["route_id"], shape_id: trip["shape_id"]}}
       )
     end)
+
+    IO.puts("Trips loaded")
   end
 
   defp load_routes do
-    table = :ets.new(:norrbotten_routes, [:set, :public, :named_table])
-
     "routes.txt"
     |> get_decoded_csv_stream()
     |> Stream.map(fn e -> Map.take(e, ["route_id", "route_short_name"]) end)
@@ -134,18 +149,18 @@ defmodule GTFS do
         line_number: value["route_short_name"]
       })
     end)
-    |> Enum.each(fn tuple -> :ets.insert(table, tuple) end)
+    |> Enum.each(fn tuple -> :ets.insert(@routes_table_name, tuple) end)
+
+    IO.puts("Routes loaded")
   end
 
   defp load_shapes do
-    table = :ets.new(:norrbotten_shapes, [:duplicate_bag, :public, :named_table])
-
     "shapes.txt"
     |> get_decoded_csv_stream()
     |> Stream.map(fn e -> Map.take(e, ["shape_id", "shape_pt_lat", "shape_pt_lon"]) end)
     |> Enum.each(fn %{"shape_id" => id, "shape_pt_lon" => lon, "shape_pt_lat" => lat} ->
       :ets.insert(
-        table,
+        @shapes_table_name,
         {id,
          [
            Float.parse(lon) |> elem(0),
