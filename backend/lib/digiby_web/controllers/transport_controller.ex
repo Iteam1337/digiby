@@ -34,13 +34,7 @@ defmodule DigibyWeb.TransportController do
 
     time = (time <> ":00") |> Time.from_iso8601!()
 
-    query_date =
-      date
-      |> String.split("-")
-      |> Enum.map(&Integer.parse/1)
-      |> Enum.map(&elem(&1, 0))
-      |> List.to_tuple()
-      |> Date.from_erl!()
+    query_date = input_date_to_elixir_date(date)
 
     transports_query_day =
       Linjebuss.list_transports(
@@ -64,4 +58,22 @@ defmodule DigibyWeb.TransportController do
 
     render(conn, "index.json", transports: Enum.concat(transports_query_day, transports_tomorrow))
   end
+
+  @doc """
+
+  iex> input_date_to_elixir_date("2022-08-10")
+  ~D[2022-08-10] 
+
+  iex> input_date_to_elixir_date("2222-08-10")
+  ~D[2222-08-10] 
+
+  """
+  def input_date_to_elixir_date(date),
+    do:
+      date
+      |> String.split("-")
+      |> Enum.map(&Integer.parse/1)
+      |> Enum.map(&elem(&1, 0))
+      |> List.to_tuple()
+      |> Date.from_erl!()
 end
