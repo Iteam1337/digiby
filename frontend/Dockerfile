@@ -1,5 +1,6 @@
 FROM node:16.14-slim AS builder
 
+arg VITE_MAPBOX_ACCESS_TOKEN
 WORKDIR /app
 ADD package*.json .
 RUN npm ci
