@@ -1,21 +1,26 @@
 defmodule Digiby.Linjebuss do
   alias Digiby.Transport
   @maximum_walking_distance 2500
+  @gtfs_adapter Application.get_env(:digiby, :gtfs) || GTFS
   def list_transports(date, options) do
-    trips = GTFS.get_buses(date)
+    trips = @gtfs_adapter.get_buses(date)
+
     start_time = Keyword.get(options, :start_time, ~T[00:00:00])
     from_position = Keyword.get(options, :from)
     to_position = Keyword.get(options, :to)
     end_time = Keyword.get(options, :end_time, ~T[23:59:59])
 
+    # get best matches in order
     best_sorted_departures =
       trips
       |> get_best_matches_for_trips(from_position, to_position, start_time, end_time)
       |> sort_matches()
 
+    # ids with best matches
     best_trip_ids =
       best_sorted_departures |> Enum.map(fn {best_trip_id, _, _, _} -> best_trip_id end)
 
+    # remove irrelvant stops
     trips
     |> Enum.filter(fn %{trip_id: id} -> id in best_trip_ids end)
     |> Enum.map(fn %{stop_times: stops, trip_id: id} = bus ->
@@ -34,6 +39,8 @@ defmodule Digiby.Linjebuss do
 
       {%{bus | stop_times: stops}, {best_start_stop, best_stop_stop}}
     end)
+
+    # get travel time and add telementry
     |> Enum.map(fn {bus, {best_start_stop, best_stop_stop}} ->
       {first_stop, last_stop} = {List.first(bus.stop_times), List.last(bus.stop_times)}
 
@@ -52,9 +59,8 @@ defmodule Digiby.Linjebuss do
         destination: best_stop_stop,
         stops: bus.stop_times,
         geometry:
-          GTFS.get_geometry(bus.shape_id)
+          @gtfs_adapter.get_geometry(bus.shape_id)
           |> filter_geometry(best_start_stop.stop_position, best_stop_stop.stop_position)
-          |> tap(fn g -> IO.inspect(Enum.count(g)) end)
       }
     end)
   end
