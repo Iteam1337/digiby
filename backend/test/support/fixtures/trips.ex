@@ -4,6 +4,7 @@ defmodule Digiby.TripsFixture do
       %{
         line_number: "102",
         shape_id: "1252500000000000488",
+        route_type: "1501",
         stop_times: [
           %{
             arrival_time: ~T[15:30:00],

@@ -53,16 +53,22 @@ defmodule GTFS do
         |> elem(1)
         |> Map.get(:line_number)
       )
+      |> Map.put(
+        :route_type,
+        :ets.lookup(:norrbotten_routes, route_id)
+        |> List.first()
+        |> elem(1)
+        |> Map.get(:route_type)
+      )
     end)
     |> Enum.group_by(fn %{trip_id: trip_id} -> trip_id end)
     |> Enum.map(fn {trip_id, [values | _]} ->
-      filtered_values = Map.drop(values, [:trip_id, :route_id, :line_number])
-
       %{
-        stop_times: filtered_values.stop_times,
+        stop_times: values.stop_times,
         trip_id: trip_id,
         line_number: values.line_number,
-        shape_id: values.shape_id
+        shape_id: values.shape_id,
+        route_type: values.route_type
       }
     end)
   end
@@ -139,10 +145,11 @@ defmodule GTFS do
   defp load_routes do
     "routes.txt"
     |> get_decoded_csv_stream()
-    |> Stream.map(fn e -> Map.take(e, ["route_id", "route_short_name"]) end)
+    |> Stream.map(fn e -> Map.take(e, ["route_id", "route_short_name", "route_type"]) end)
     |> Enum.reduce(%{}, fn value, acc ->
       Map.put(acc, value["route_id"], %{
-        line_number: value["route_short_name"]
+        line_number: value["route_short_name"],
+        route_type: value["route_type"]
       })
     end)
     |> Enum.each(fn tuple -> :ets.insert(@routes_table_name, tuple) end)
