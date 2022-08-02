@@ -2,6 +2,7 @@ defmodule Digiby.Linjebuss do
   alias Digiby.Transport
   @maximum_walking_distance 2500
   @gtfs_adapter Application.get_env(:digiby, :gtfs) || GTFS
+
   def list_transports(date, options) do
     trips = @gtfs_adapter.get_buses(date)
 
@@ -81,10 +82,12 @@ defmodule Digiby.Linjebuss do
             best_pickup_bus_stop[:arrival_time]
           )
 
-        trip
-        |> Map.put(:bussstop_closest_to_start, best_pickup_bus_stop)
-        |> Map.put(:busstop_closest_to_stop, best_drop_off_bus_stop)
-        |> filter_superflous_stops()
+        if best_drop_off_bus_stop,
+          do:
+            trip
+            |> Map.put(:bussstop_closest_to_start, best_pickup_bus_stop)
+            |> Map.put(:busstop_closest_to_stop, best_drop_off_bus_stop)
+            |> filter_superflous_stops()
       else
         nil
       end

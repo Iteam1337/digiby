@@ -31,5 +31,25 @@ defmodule Digiby.LinjebussTest do
       assert List.first(stops).stop_position.name == "Arjeplog Busstation"
       assert List.last(stops).stop_position.name == "Hällbacken_Arj"
     end
+
+    test "returns empty list if destination is out of range" do
+      [] =
+        Digiby.Linjebuss.list_transports(
+          "",
+          start_time: ~T[15:15:00],
+          from: @arjeplog_busstation,
+          to: @stockholms_stadshus
+        )
+    end
+
+    test "returns empty list if start point is out of range" do
+      [] =
+        Digiby.Linjebuss.list_transports(
+          "",
+          start_time: ~T[15:15:00],
+          from: @stockholms_stadshus,
+          to: @arjeplog_busstation
+        )
+    end
   end
 end
