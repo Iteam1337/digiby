@@ -4,14 +4,12 @@ defmodule Digiby.Linjebuss do
   @gtfs_adapter Application.get_env(:digiby, :gtfs) || GTFS
 
   def list_transports(date, options) do
-    trips = @gtfs_adapter.get_buses(date)
-
     start_time = Keyword.get(options, :start_time, ~T[00:00:00])
     from_position = Keyword.get(options, :from)
     to_position = Keyword.get(options, :to)
     end_time = Keyword.get(options, :end_time, ~T[23:59:59])
 
-    trips
+    @gtfs_adapter.get_buses(date)
     |> get_best_matches_for_trips(from_position, to_position, start_time, end_time)
     |> sort_matches()
     |> Enum.map(&bus_to_transport_struct/1)
@@ -22,7 +20,7 @@ defmodule Digiby.Linjebuss do
        ),
        do: %Transport{
          line_number: bus.line_number,
-         transportation_type: "Länstrafiken, stomlinje",
+         transportation_type: "Länstrafiken, #{route_type_to_redable(bus.route_type)}",
          travel_time: Time.diff(last_stop[:arrival_time], start_stop[:arrival_time]),
          cost: 900_000,
          departure: start_stop,
@@ -32,6 +30,9 @@ defmodule Digiby.Linjebuss do
            @gtfs_adapter.get_geometry(bus.shape_id)
            |> filter_geometry(start_stop.stop_position, last_stop.stop_position)
        }
+
+  defp route_type_to_redable("700"), do: "Stomlinje"
+  defp route_type_to_redable("1501"), do: "Anropsstyrd"
 
   defp filter_superflous_stops(
          %{bussstop_closest_to_start: start_stop, busstop_closest_to_stop: end_stop} = bus
