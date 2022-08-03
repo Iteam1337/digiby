@@ -41,6 +41,12 @@ const DatePickerField = ({
         showTimeSelect
         dateFormat="Pp"
         locale="sv"
+        timeCaption="Tid"
+        previousMonthAriaLabel="Tidigare månad"
+        previousMonthButtonLabel="Tidigare månad"
+        nextMonthAriaLabel="Nästa månad"
+        nextMonthButtonLabel="Nästa månad"
+        chooseDayAriaLabelPrefix="Välj"
         className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
       />
       <TimeIcon
