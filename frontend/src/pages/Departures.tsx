@@ -77,13 +77,13 @@ const Departures = () => {
   });
 
   return (
-    <section className=" mx-4 h-full bg-pm-background">
+    <>
       {data && (
         <>
           {dates.map((date: string, i: number) => {
             return (
               <div key={i}>
-                <h3 className="my-6 text-xl font-bold">
+                <h3 className="mb-6 text-xl font-bold">
                   {getDaysFromToday(date)}
                 </h3>
                 {data?.map((item, i) => {
@@ -96,7 +96,6 @@ const Departures = () => {
           })}
         </>
       )}
-
       {!loading && data?.length === 0 && (
         <div className=" flex flex-col items-center">
           <p>Ingen rutt hittades</p>
@@ -105,7 +104,7 @@ const Departures = () => {
           </a>
         </div>
       )}
-    </section>
+    </>
   );
 };
 

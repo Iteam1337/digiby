@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 
@@ -6,31 +5,18 @@ import { fromToAddressAtom } from '../utils/atoms';
 import ArrowIcon from '../icons/ArrowIcon';
 
 const Layout = ({ children }: { children: JSX.Element }) => {
-  const [homeScreen, setHomeScreen] = useState(true);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [fromToAddress] = useAtom(fromToAddressAtom);
 
-  useEffect(() => {
-    switch (pathname) {
-      case '/':
-        setHomeScreen(true);
-        break;
-      case '/departures':
-        setHomeScreen(false);
-        break;
-      case '/departure-details':
-        setHomeScreen(false);
-        break;
-      default:
-        break;
-    }
-  }, [pathname]);
-
   return (
     <>
-      <header className="relative z-10 w-full bg-pm-green p-6">
-        {!homeScreen && (
+      {pathname !== '/' && (
+        <header
+          className={`${
+            pathname === '/departure-details' && 'absolute z-10'
+          } w-full bg-pm-green p-6`}
+        >
           <div className="mx-auto max-w-screen-sm  ">
             <button onClick={() => navigate(-1)} className="absolute top-8">
               <ArrowIcon className="fill-pm-white" />
@@ -48,14 +34,16 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               </p>
             </div>
           </div>
-        )}
-      </header>
+        </header>
+      )}
       <main
         className={`${
-          homeScreen ? 'bg-pm-green' : 'bg-pm-background'
-        }  h-full min-h-screen w-full pt-6 `}
+          pathname === '/' ? ' bg-pm-green' : 'bg-pm-background'
+        } h-full w-full`}
       >
-        <article className="mx-auto w-full max-w-screen-sm">{children}</article>
+        <section className="mx-auto w-full max-w-screen-sm px-6 pt-6">
+          {children}
+        </section>
       </main>
     </>
   );

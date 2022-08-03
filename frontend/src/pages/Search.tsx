@@ -60,9 +60,9 @@ const Search = () => {
   }
 
   return (
-    <section>
-      <h1 className="mx-6 mb-3 text-2xl font-bold text-white">Hej!</h1>
-      <h2 className="mx-6 mb-10 text-lg text-white">Hitta din nästa resa</h2>
+    <>
+      <h1 className="mb-3 mt-24 text-2xl font-bold text-white">Hej!</h1>
+      <h2 className="mb-10 text-lg text-white">Hitta din nästa resa</h2>
       <Formik
         initialValues={initialFormState}
         validationSchema={SignupSchema}
@@ -75,7 +75,7 @@ const Search = () => {
             autoComplete="off"
             method="get"
             onSubmit={handleSubmit}
-            className="mx-6 flex flex-col rounded-md bg-pm-white p-6"
+            className=" flex flex-col rounded-md bg-pm-white p-6"
           >
             <label htmlFor="from" className="mb-1 text-xs font-bold">
               Var är du?
@@ -114,7 +114,7 @@ const Search = () => {
           </form>
         )}
       </Formik>
-    </section>
+    </>
   );
 };
 
