@@ -31,7 +31,7 @@ const DeparturesDetails = () => {
 
   if (!departure) {
     return (
-      <div className=" flex flex-col items-center">
+      <div className=" flex flex-col items-center pt-6">
         <p>Ingen rutt hittades</p>
         <a className="underline" href="/">
           Tillbaka till sök
