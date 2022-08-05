@@ -17,6 +17,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
             <button
               onClick={() => navigate(-1)}
               className="absolute top-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-white focus-visible:ring-offset-8 focus-visible:ring-offset-pm-green"
+              aria-label="Gå tillbaka"
             >
               <ArrowIcon className="fill-pm-white" />
             </button>
