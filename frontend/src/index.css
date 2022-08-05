@@ -27,8 +27,9 @@ code {
     monospace;
 }
 
-summary::-webkit-details-marker {
-  display: none !important;
+details > summary::marker,
+details > summary::-webkit-details-marker {
+  display: none;
 }
 
 /* react-datepicker */
