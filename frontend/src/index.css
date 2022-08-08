@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --pm-green: #13c57b;
+  --pm-grey: #f1f3f5;
+  --pm-dark-grey: #737475;
+  --pm-light-grey: #f0f2f4;
+  --pm-black: #1f1f1f;
+  --pm-white: #fdfeff;
+  --pm-background: #e5e5e5;
+}
+
 body {
   margin: 0;
   height: 100vh;
