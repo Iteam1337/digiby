@@ -12,7 +12,7 @@ const LoadingCard = () => {
 
 const Loading = () => {
   return (
-    <section className="mx-4 h-full bg-pm-background">
+    <section className="mx-auto h-full w-full max-w-screen-sm bg-pm-background px-6 pt-6">
       <LoadingCard />
       <LoadingCard />
     </section>
