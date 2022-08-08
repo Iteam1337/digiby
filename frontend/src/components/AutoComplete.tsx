@@ -68,7 +68,7 @@ const AutoCompleteAddress = ({ name, placeholder }: Props) => {
               {({ active }) => (
                 <li
                   className={`${
-                    active ? 'bg-pm-dark-grey text-white' : 'text-black'
+                    active ? 'bg-pm-dark-grey text-pm-white' : 'text-pm-black'
                   } py-2 pl-2 text-xs`}
                 >
                   {address.address}
