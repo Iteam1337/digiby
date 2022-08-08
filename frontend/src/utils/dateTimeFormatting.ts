@@ -15,7 +15,7 @@ const getHoursAndMinutes = (stops: Array<any>) => {
   const arrivalTime = stops[stops.length - 1].arrival_time;
   const hoursAndMinutesArrival = arrivalTime.split(':', 2);
 
-  return `${hoursAndMinutesDeparture[0]}:${hoursAndMinutesDeparture[1]} — ${hoursAndMinutesArrival[0]}:${hoursAndMinutesArrival[1]}`;
+  return `${hoursAndMinutesDeparture[0]}:${hoursAndMinutesDeparture[1]}–${hoursAndMinutesArrival[0]}:${hoursAndMinutesArrival[1]}`;
 };
 
 const humanizeTime = (timeInSeconds: number) => {
