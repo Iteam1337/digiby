@@ -12,13 +12,13 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   return (
     <>
       {pathname !== '/' && (
-        <header
-          className={`${
-            pathname === '/departure-details' && 'absolute z-10'
-          } w-full bg-pm-green p-6`}
-        >
-          <div className="mx-auto max-w-screen-sm  ">
-            <button onClick={() => navigate(-1)} className="absolute top-8">
+        <header className="w-full bg-pm-green p-6">
+          <div className="mx-auto max-w-screen-sm">
+            <button
+              onClick={() => navigate(-1)}
+              className="absolute top-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-white focus-visible:ring-offset-8 focus-visible:ring-offset-pm-green"
+              aria-label="Gå tillbaka"
+            >
               <ArrowIcon className="fill-pm-white" />
             </button>
             <div className="flex flex-col justify-center">
@@ -41,9 +41,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
           pathname === '/' ? ' bg-pm-green' : 'bg-pm-background'
         } h-full w-full`}
       >
-        <section className="mx-auto w-full max-w-screen-sm px-6 pt-6">
-          {children}
-        </section>
+        {children}
       </main>
     </>
   );

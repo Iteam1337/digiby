@@ -77,7 +77,7 @@ const Departures = () => {
   });
 
   return (
-    <>
+    <section className="mx-auto w-full max-w-screen-sm px-6 pt-6">
       {data && (
         <>
           {dates.map((date: string, i: number) => {
@@ -104,7 +104,7 @@ const Departures = () => {
           </a>
         </div>
       )}
-    </>
+    </section>
   );
 };
 
