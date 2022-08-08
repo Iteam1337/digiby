@@ -24,12 +24,12 @@ const Layout = ({ children }: { children: JSX.Element }) => {
             <div className="flex flex-col justify-center">
               <div className="flex justify-center">
                 {fromToAddress && (
-                  <h2 className="ml-4 text-center font-bold text-white">
+                  <h2 className="ml-4 text-center font-bold text-pm-white">
                     {fromToAddress.from + ' - ' + fromToAddress.to}
                   </h2>
                 )}
               </div>
-              <p className="text-center text-xs text-white">
+              <p className="text-center text-xs text-pm-white">
                 Tidigaste avgångar
               </p>
             </div>
