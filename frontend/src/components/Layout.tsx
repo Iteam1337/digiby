@@ -16,7 +16,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
           <div className="mx-auto max-w-screen-sm">
             <button
               onClick={() => navigate(-1)}
-              className="absolute top-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-white focus-visible:ring-offset-8 focus-visible:ring-offset-pm-green"
+              className="absolute top-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-white focus-visible:ring-offset-8 focus-visible:ring-offset-pm-green"
               aria-label="Gå tillbaka"
             >
               <ArrowIcon className="fill-pm-white" />
@@ -24,13 +24,15 @@ const Layout = ({ children }: { children: JSX.Element }) => {
             <div className="flex flex-col justify-center">
               <div className="flex justify-center">
                 {fromToAddress && (
-                  <h2 className="ml-4 text-center font-bold text-white">
-                    {fromToAddress.from + ' - ' + fromToAddress.to}
-                  </h2>
+                  <p className="ml-4 text-center font-bold text-white">
+                    {fromToAddress.from + '–' + fromToAddress.to}
+                  </p>
                 )}
               </div>
-              <p className="text-center text-xs text-white">
-                Tidigaste avgångar
+              <p className="text-center text-xs text-white" aria-hidden="true">
+                {pathname === '/departure-details'
+                  ? 'Vald avgång'
+                  : 'Tidigaste avgångar'}
               </p>
             </div>
           </div>

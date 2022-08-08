@@ -46,7 +46,7 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
           <DragIcon className="visible fill-pm-dark-grey md:invisible" /> */}
         </div>
         <div className="flex justify-between">
-          <p className="font-bold">{departure.line_number}</p>
+          <h2 className="font-bold">{departure.line_number}</h2>
           <p className="text-xs">{getHoursAndMinutes(departure.stops)}</p>
         </div>
         <div className="flex justify-between pb-6">
