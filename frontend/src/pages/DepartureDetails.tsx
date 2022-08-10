@@ -5,8 +5,22 @@ import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 
 import pin from '../icons/pin.svg';
 import startPin from '../icons/startPin.svg';
-import { departuresDetails } from '../utils/atoms';
+import { departuresDetails, departuresAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
+
+// type Feature = {
+//   type: string;
+//   properties: { color: number[] };
+//   geometry: {
+//     type: string;
+//     coordinates: LatLng[];
+//   };
+// };
+
+// type GeoJsonObject = {
+//   type: string;
+//   features: Feature[] | undefined;
+// };
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -17,16 +31,21 @@ const DeparturesDetails = () => {
     bearing: 0,
   });
   const [departure] = useAtom(departuresDetails);
+  const [departures] = useAtom(departuresAtom);
+
+  console.log('departures in details', departures);
+  console.log('departure in details', departure);
 
   useEffect(() => {
-    if (departure)
+    if (departure) {
       setMapState({
         longitude: parseFloat(departure.destination.stop_position.lng),
         latitude: parseFloat(departure.destination.stop_position.lat),
-        zoom: 7,
+        zoom: 12,
         pitch: 0,
         bearing: 0,
       });
+    }
   }, [departure]);
 
   if (!departure) {
@@ -44,12 +63,32 @@ const DeparturesDetails = () => {
   const startPosition = departure.stops[0].stop_position;
 
   const geoJsonObject = {
-    type: 'Feature',
-    geometry: {
-      type: 'LineString',
-      coordinates: departure?.geometry,
-    },
+    type: 'FeatureCollection',
+    features: departures.data
+      ?.filter((dep) => dep.geometry.length > 0)
+      .map((dep) => {
+        console.log('dep.departure.arrival_time', dep.departure.arrival_time);
+        return {
+          type: 'Feature',
+          properties: {
+            color:
+              dep.departure.arrival_time === departure.departure.arrival_time
+                ? [19, 197, 123]
+                : [200, 200, 200],
+          },
+          geometry: { type: 'LineString', coordinates: dep.geometry },
+        };
+      })
+      .sort(function (x, y) {
+        return x.properties.color == [19, 197, 123]
+          ? -1
+          : y.properties.color == [19, 197, 123]
+          ? 1
+          : 0;
+      }),
   };
+
+  console.log('geoJsonObject', geoJsonObject);
 
   const busLayer = new GeoJsonLayer({
     id: 'geojson-layer',
@@ -61,8 +100,8 @@ const DeparturesDetails = () => {
     pointType: 'circle',
     lineWidthScale: 1,
     lineWidthMinPixels: 1,
-    getFillColor: [19, 197, 123],
-    getLineColor: [19, 197, 123],
+    getFillColor: (d: any) => d.properties.color,
+    getLineColor: (d: any) => d.properties.color,
     getPointRadius: 100,
     getLineWidth: 2,
     getElevation: 3,
@@ -116,17 +155,19 @@ const DeparturesDetails = () => {
       {departure && (
         <>
           <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
-            <DeckGL
-              layers={[busLayer, stopPositionLayer, startPositionLayer]}
-              initialViewState={mapState}
-              controller={true}
-            >
-              <StaticMap
-                mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-                reuseMaps
-                mapStyle="mapbox://styles/mapbox/dark-v10"
-              />
-            </DeckGL>
+            {geoJsonObject?.features?.length && (
+              <DeckGL
+                layers={[busLayer, stopPositionLayer, startPositionLayer]}
+                initialViewState={mapState}
+                controller={true}
+              >
+                <StaticMap
+                  mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+                  reuseMaps
+                  mapStyle="mapbox://styles/mapbox/dark-v10"
+                />
+              </DeckGL>
+            )}
           </div>
           <DepartureInfo departure={departure} />
         </>
