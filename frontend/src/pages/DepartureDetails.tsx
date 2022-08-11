@@ -7,6 +7,7 @@ import pin from '../icons/pin.svg';
 import startPin from '../icons/startPin.svg';
 import { departuresDetails, departuresAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
+import { Departure } from '../utils/types';
 
 // type Feature = {
 //   type: string;
@@ -48,7 +49,7 @@ const DeparturesDetails = () => {
     }
   }, [departure]);
 
-  if (!departure) {
+  if (!departure || !departures.data) {
     return (
       <div className=" flex flex-col items-center pt-6">
         <p>Ingen rutt hittades</p>
@@ -59,8 +60,21 @@ const DeparturesDetails = () => {
     );
   }
 
-  const stopPosition = departure?.stops.slice(-1)[0].stop_position;
-  const startPosition = departure.stops[0].stop_position;
+  // const stopPosition = departure?.stops.slice(-1)[0].stop_position;
+  const stopPositions = departures.data.map((dep: Departure) => ({
+    coordinates: [
+      parseFloat(dep.stops.slice(-1)[0].stop_position.lng),
+      parseFloat(dep.stops.slice(-1)[0].stop_position.lat),
+    ],
+  }));
+
+  // const startPosition = departure.stops[0].stop_position;
+  const startPositions = departures.data.map((dep: Departure) => ({
+    coordinates: [
+      parseFloat(dep.stops[0].stop_position.lng),
+      parseFloat(dep.stops[0].stop_position.lat),
+    ],
+  }));
 
   const geoJsonObject = {
     type: 'FeatureCollection',
@@ -107,16 +121,11 @@ const DeparturesDetails = () => {
     getElevation: 3,
   });
 
+  console.log('stopPositions', stopPositions);
+
   const stopPositionLayer = new IconLayer({
-    id: 'icon-layer',
-    data: [
-      {
-        coordinates: [
-          parseFloat(stopPosition.lng),
-          parseFloat(stopPosition.lat),
-        ],
-      },
-    ],
+    id: 'stop-icon-layer',
+    data: stopPositions,
     getIcon: () => ({
       url: pin,
       mask: false,
@@ -130,14 +139,7 @@ const DeparturesDetails = () => {
 
   const startPositionLayer = new IconLayer({
     id: 'icon-layer',
-    data: [
-      {
-        coordinates: [
-          parseFloat(startPosition.lng),
-          parseFloat(startPosition.lat),
-        ],
-      },
-    ],
+    data: startPositions,
     getIcon: () => ({
       url: startPin,
       mask: false,
