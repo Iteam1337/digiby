@@ -17,14 +17,14 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
   return (
     <button
       onClick={() => handleClick()}
-      className="mb-4 w-full rounded-md bg-pm-white p-4"
+      className="mb-4 w-full rounded-md bg-pm-white p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey"
     >
       <div className="flex justify-between">
-        <p className="font-bold">
+        <h3 className="font-bold">
           {`${departure.transportation_type} ${
             departure.line_number ? departure.line_number : ''
           }`}
-        </p>
+        </h3>
         <p>{getHoursAndMinutes(departure.stops)}</p>
       </div>
       <div className="flex justify-between pb-6">

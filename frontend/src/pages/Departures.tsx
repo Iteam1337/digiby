@@ -77,15 +77,16 @@ const Departures = () => {
   });
 
   return (
-    <section className=" mx-4 h-full bg-pm-background">
+    <section className="mx-auto w-full max-w-screen-sm px-6 pt-6">
+      <h1 className="sr-only">Tidigaste avgångar</h1>
       {data && (
         <>
           {dates.map((date: string, i: number) => {
             return (
               <div key={i}>
-                <h3 className="my-6 text-xl font-bold">
+                <h2 className="mb-6 text-xl font-bold">
                   {getDaysFromToday(date)}
-                </h3>
+                </h2>
                 {data?.map((item, i) => {
                   if (item.date === date) {
                     return <DeparturesCard key={i} departure={item} />;
@@ -96,7 +97,6 @@ const Departures = () => {
           })}
         </>
       )}
-
       {!loading && data?.length === 0 && (
         <div className=" flex flex-col items-center">
           <p>Ingen rutt hittades</p>

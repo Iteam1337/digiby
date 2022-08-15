@@ -25,9 +25,9 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
   };
 
   return (
-    <details className="absolute left-0 bottom-0 right-0 z-10 max-h-screen overflow-scroll rounded-t-md bg-pm-white">
+    <details className="absolute left-0 bottom-0 right-0 z-10 max-h-screen overflow-scroll rounded-t-md bg-pm-white ">
       <summary
-        className="mx-6 max-w-screen-sm cursor-pointer list-none pb-6 sm:mx-auto sm:w-full"
+        className="mx-6 h-[160px] max-w-screen-sm cursor-pointer list-none pb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey focus-visible:ring-offset-8 focus-visible:ring-offset-pm-white sm:mx-auto sm:w-full"
         onClick={() => setOpen(!open)}
       >
         <p className="sr-only">Information om din resa</p>
@@ -46,7 +46,7 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
           <DragIcon className="visible fill-pm-dark-grey md:invisible" /> */}
         </div>
         <div className="flex justify-between">
-          <p className="font-bold">{departure.line_number}</p>
+          <h2 className="font-bold">{departure.line_number}</h2>
           <p className="text-xs">{getHoursAndMinutes(departure.stops)}</p>
         </div>
         <div className="flex justify-between pb-6">

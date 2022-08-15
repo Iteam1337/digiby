@@ -2,9 +2,9 @@ FROM node:16.14-slim AS builder
 
 ARG VITE_MAPBOX_ACCESS_TOKEN
 WORKDIR /app
-ADD package*.json .
+ADD package*.json ./
 RUN npm ci
-ADD . .
+ADD . ./
 RUN npm run build
 
 FROM nginx:alpine AS runner

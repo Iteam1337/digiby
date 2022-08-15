@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import axios from 'axios';
 import { Combobox } from '@headlessui/react';
 import debounce from 'lodash.debounce';
@@ -60,16 +60,20 @@ const AutoCompleteAddress = ({ name, placeholder }: Props) => {
       />
       <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
       <Combobox.Options
-        className={'-10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey'}
+        className={'-10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey '}
       >
         {searchAddresses &&
           searchAddresses.map((address, i) => (
-            <Combobox.Option
-              key={i}
-              value={address}
-              className="py-2 pl-2 text-xs"
-            >
-              {address.address}
+            <Combobox.Option key={i} value={address} as={Fragment}>
+              {({ active }) => (
+                <li
+                  className={`${
+                    active ? 'bg-pm-dark-grey text-pm-white' : 'text-pm-black'
+                  } py-2 pl-2 text-xs`}
+                >
+                  {address.address}
+                </li>
+              )}
             </Combobox.Option>
           ))}
       </Combobox.Options>

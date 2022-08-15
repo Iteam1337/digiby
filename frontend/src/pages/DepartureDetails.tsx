@@ -31,7 +31,7 @@ const DeparturesDetails = () => {
 
   if (!departure) {
     return (
-      <div className=" flex flex-col items-center">
+      <div className=" flex flex-col items-center pt-6">
         <p>Ingen rutt hittades</p>
         <a className="underline" href="/">
           Tillbaka till sök
@@ -111,24 +111,27 @@ const DeparturesDetails = () => {
   });
 
   return (
-    <>
+    <section className="h-full w-full bg-pm-black">
+      <h1 className="sr-only">Vald avgång</h1>
       {departure && (
         <>
-          <DeckGL
-            layers={[busLayer, stopPositionLayer, startPositionLayer]}
-            initialViewState={mapState}
-            controller={true}
-          >
-            <StaticMap
-              mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-              reuseMaps
-              mapStyle="mapbox://styles/mapbox/dark-v10"
-            />
-          </DeckGL>
+          <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
+            <DeckGL
+              layers={[busLayer, stopPositionLayer, startPositionLayer]}
+              initialViewState={mapState}
+              controller={true}
+            >
+              <StaticMap
+                mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+                reuseMaps
+                mapStyle="mapbox://styles/mapbox/dark-v10"
+              />
+            </DeckGL>
+          </div>
           <DepartureInfo departure={departure} />
         </>
       )}
-    </>
+    </section>
   );
 };
 
