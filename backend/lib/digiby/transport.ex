@@ -4,6 +4,8 @@ defmodule Digiby.Transport do
     :transportation_type,
     :travel_time,
     :cost,
+    :agency,
+    :vehicle_type,
     departure: %Position{},
     destination: %Position{},
     stops: [],
