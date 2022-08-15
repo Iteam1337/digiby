@@ -18,9 +18,6 @@ const DeparturesDetails = () => {
   const [departure] = useAtom(departuresDetails);
   const [departures] = useAtom(departuresAtom);
 
-  console.log('departures in details', departures);
-  console.log('departure in details', departure);
-
   useEffect(() => {
     if (departure) {
       setMapState({
@@ -47,7 +44,7 @@ const DeparturesDetails = () => {
   const geoJsonObject = {
     type: 'FeatureCollection',
     features: departures.data
-      ?.filter((dep) => dep.geometry.length > 0)
+      .filter((dep) => dep.geometry.length > 0)
       .map((dep) => {
         return {
           type: 'Feature',
@@ -71,6 +68,7 @@ const DeparturesDetails = () => {
   };
 
   const positions = departures.data
+    .filter((dep) => dep.geometry.length > 0)
     .map((dep: Departure) => {
       return {
         coordinates: {
@@ -100,8 +98,6 @@ const DeparturesDetails = () => {
       return a.color[0][0] === 19 ? 1 : b.color[0][0] === 19 ? -1 : 0;
     });
 
-  positions.forEach((position) => console.log(position.color[0]));
-
   function createStopIcon(colorArr: number[][]) {
     return `
       <svg width="16" height="20" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -121,7 +117,7 @@ const DeparturesDetails = () => {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }
 
-  const busLayer = new GeoJsonLayer({
+  const routeLayer = new GeoJsonLayer({
     id: 'geojson-layer',
     data: geoJsonObject,
     pickable: true,
@@ -172,19 +168,17 @@ const DeparturesDetails = () => {
       {departure && (
         <>
           <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
-            {geoJsonObject?.features?.length && (
-              <DeckGL
-                layers={[busLayer, stopPositionLayer, startPositionLayer]}
-                initialViewState={mapState}
-                controller={true}
-              >
-                <StaticMap
-                  mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-                  reuseMaps
-                  mapStyle="mapbox://styles/mapbox/dark-v10"
-                />
-              </DeckGL>
-            )}
+            <DeckGL
+              layers={[routeLayer, stopPositionLayer, startPositionLayer]}
+              initialViewState={mapState}
+              controller={true}
+            >
+              <StaticMap
+                mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+                reuseMaps
+                mapStyle="mapbox://styles/mapbox/dark-v10"
+              />
+            </DeckGL>
           </div>
           <DepartureInfo departure={departure} />
         </>
