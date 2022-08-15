@@ -1,10 +1,11 @@
 defmodule Digiby.Fardtjanst do
   alias Digiby.Transport
+  @maximum_walking_distance 2500
 
   def list_transports(date, options) do
     start_time = Keyword.get(options, :start_time, ~T[00:00:00])
-    from_position = Keyword.get(options, :from)
-    to_position = Keyword.get(options, :to)
+    query_from_position = Keyword.get(options, :from)
+    query_to_position = Keyword.get(options, :to)
     end_time = Keyword.get(options, :end_time, ~T[23:59:59])
     {_year, month, day} = Date.to_erl(date)
 
@@ -35,12 +36,30 @@ defmodule Digiby.Fardtjanst do
 
       %{
         type: type,
-        start_stop: first_stop,
-        last_stop: last_stop,
+        start_stop:
+          first_stop
+          |> Map.put(
+            :meters_from_query_to_stop,
+            get_meters_between_positions(first_stop.stop_position, query_from_position)
+          ),
+        last_stop:
+          last_stop
+          |> Map.put(
+            :meters_from_query_to_stop,
+            get_meters_between_positions(last_stop.stop_position, query_to_position)
+          ),
         stop_times: [first_stop, last_stop]
       }
     end)
     |> Enum.map(&fardtjanst_to_transport_struct/1)
+    |> Enum.sort(fn %Transport{departure: departure1}, %Transport{departure: departure2} ->
+      departure1.meters_from_query_to_stop < departure2.meters_from_query_to_stop
+    end)
+
+    # |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
+    #   # && destination.meters_from_query_to_stop < @maximum_walking_distance
+    #   # departure.meters_from_query_to_stop < @maximum_walking_distance
+    # end)
   end
 
   defp fardtjanst_to_transport_struct(%{start_stop: start_stop, last_stop: last_stop} = trip),
@@ -57,4 +76,11 @@ defmodule Digiby.Fardtjanst do
       stops: trip.stop_times,
       geometry: []
     }
+
+  defp get_meters_between_positions(%{"lat" => lat1, "lng" => lng1}, pos2) do
+    Distance.GreatCircle.distance(
+      {lng1, lat1},
+      pos2
+    )
+  end
 end

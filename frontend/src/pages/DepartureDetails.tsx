@@ -40,8 +40,8 @@ const DeparturesDetails = () => {
     );
   }
 
-  const stopPosition = departure?.stops.slice(-1)[0].stop_position;
-  const startPosition = departure.stops[0].stop_position;
+  const stopPosition = departure.destination.stop_position;
+  const startPosition = departure.departure.stop_position;
 
   const geoJsonObject = {
     type: 'Feature',
