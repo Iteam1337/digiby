@@ -19,8 +19,6 @@ defmodule Osrm do
     |> Enum.sort(fn a, b -> a["duration"] < b["duration"] end)
     |> List.first()
     |> Map.update!("geometry", &decode_polyline/1)
-    |> Map.get("geometry")
-    |> Map.get("coordinates")
   end
 
   def decode_polyline(geometry) do

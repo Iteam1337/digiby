@@ -34,6 +34,9 @@ defmodule Digiby.Fardtjanst do
         |> Map.put(:arrival_time, departure_time)
         |> Map.put(:stop_position, to_stop_position)
 
+      %{"geometry" => geometry, "duration" => duration} =
+        Osrm.route(first_stop.stop_position, last_stop.stop_position)
+
       %{
         type: type,
         start_stop:
@@ -48,7 +51,9 @@ defmodule Digiby.Fardtjanst do
             :meters_from_query_to_stop,
             get_meters_between_positions(last_stop.stop_position, query_to_position)
           ),
-        stop_times: [first_stop, last_stop]
+        stop_times: [first_stop, last_stop],
+        travel_time: duration,
+        geometry: Map.get(geometry, "coordinates")
       }
     end)
     |> Enum.map(&fardtjanst_to_transport_struct/1)
@@ -62,20 +67,26 @@ defmodule Digiby.Fardtjanst do
     # end)
   end
 
-  defp fardtjanst_to_transport_struct(%{start_stop: start_stop, last_stop: last_stop} = trip),
-    do: %Transport{
-      line_number: nil,
-      agency: "Länstrafiken Norrbotten",
-      vehicle_type: "Liten bil",
-      transportation_type: trip.type,
-      # Time.diff(last_stop[:arrival_time], start_stop[:arrival_time]),
-      travel_time: 1,
-      cost: 900_000,
-      departure: start_stop,
-      destination: last_stop,
-      stops: trip.stop_times,
-      geometry: Osrm.route(start_stop.stop_position, last_stop.stop_position)
-    }
+  defp fardtjanst_to_transport_struct(
+         %{
+           start_stop: start_stop,
+           last_stop: last_stop,
+           geometry: geometry,
+           travel_time: travel_time
+         } = trip
+       ),
+       do: %Transport{
+         line_number: nil,
+         agency: "Länstrafiken Norrbotten",
+         vehicle_type: "Liten bil",
+         transportation_type: trip.type,
+         travel_time: travel_time,
+         cost: 900_000,
+         departure: start_stop,
+         destination: last_stop,
+         stops: trip.stop_times,
+         geometry: geometry
+       }
 
   defp get_meters_between_positions(%{"lat" => lat1, "lng" => lng1}, pos2) do
     Distance.GreatCircle.distance(
