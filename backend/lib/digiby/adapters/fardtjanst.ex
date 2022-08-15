@@ -71,7 +71,7 @@ defmodule Digiby.Adapters.Fardtjanst do
                    ] ->
       %{
         departure_day: departure_day,
-        departure_time: departure_time,
+        departure_time: departure_time <> ":00",
         car_type: car_type,
         from_street: from_street,
         from_municipality: from_municipality,
