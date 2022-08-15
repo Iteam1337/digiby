@@ -20,11 +20,17 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
       className="mb-4 w-full rounded-md bg-pm-white p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey"
     >
       <div className="flex justify-between">
-        <h3 className="font-bold">{departure.line_number}</h3>
+        <h3 className="font-bold">
+          {`${departure.transportation_type} ${
+            departure.line_number ? departure.line_number : ''
+          }`}
+        </h3>
         <p>{getHoursAndMinutes(departure.stops)}</p>
       </div>
       <div className="flex justify-between pb-6">
-        <p className="text-xs">{departure.transportation_type}</p>
+        <p className="text-xs">
+          {departure.agency}, {departure.vehicle_type}{' '}
+        </p>
         <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
       </div>
       <div className="flex justify-end">

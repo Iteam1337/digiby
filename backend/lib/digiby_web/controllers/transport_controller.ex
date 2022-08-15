@@ -35,7 +35,22 @@ defmodule DigibyWeb.TransportController do
     time = (time <> ":00") |> Time.from_iso8601!()
 
     query_date = input_date_to_elixir_date(date)
+    {transports_query_day, transports_tomorrow} = get_linjebusses(query_date, time, from, to)
 
+    fardtjanst =
+      Digiby.Fardtjanst.list_transports(
+        query_date,
+        start_time: time,
+        from: from,
+        to: to
+      )
+
+    render(conn, "index.json",
+      transports: Enum.concat([transports_query_day, fardtjanst, transports_tomorrow])
+    )
+  end
+
+  def get_linjebusses(query_date, time, from, to) do
     transports_query_day =
       Linjebuss.list_transports(
         query_date |> Date.to_string() |> String.replace("-", ""),
@@ -56,7 +71,7 @@ defmodule DigibyWeb.TransportController do
         Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
       end)
 
-    render(conn, "index.json", transports: Enum.concat(transports_query_day, transports_tomorrow))
+    {transports_query_day, transports_tomorrow}
   end
 
   @doc """

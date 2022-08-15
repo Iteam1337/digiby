@@ -47,6 +47,7 @@ defmodule Digiby.MixProject do
       {:cors_plug, "~> 3.0.3"},
       {:nimble_csv, "~> 1.2.0"},
       {:flow, "~> 1.2.0"},
+      {:httpoison, "~> 1.8.2"},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
