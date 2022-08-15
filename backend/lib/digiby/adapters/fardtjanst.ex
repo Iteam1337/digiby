@@ -85,7 +85,7 @@ defmodule Digiby.Adapters.Fardtjanst do
     |> Flow.map(fn trip ->
       trip
       |> Map.put_new_lazy(:type, fn ->
-        if is_sjukresa?(trip), do: "Sjukresa", else: "Färdtjanst"
+        if is_sjukresa?(trip), do: "Sjukresa", else: "Färdtjänst"
       end)
       |> Map.update!(:from_street, &replace_sjukresa_sam_prefix/1)
       |> Map.update!(:from_street, &replace_other_sam_prefixes/1)
