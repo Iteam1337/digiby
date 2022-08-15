@@ -38,6 +38,8 @@ type LatLng = [number, number];
 export type Departure = {
   date: string;
   cost: number;
+  agency: string;
+  vehicle_type: string;
   departure: Travelinfo;
   destination: Travelinfo;
   line_number: string;
