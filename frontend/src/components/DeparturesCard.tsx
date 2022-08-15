@@ -28,7 +28,9 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
         <p>{getHoursAndMinutes(departure.stops)}</p>
       </div>
       <div className="flex justify-between pb-6">
-        <p className="text-xs">{departure.agency}</p>
+        <p className="text-xs">
+          {departure.agency}, {departure.vehicle_type}{' '}
+        </p>
         <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
       </div>
       <div className="flex justify-end">

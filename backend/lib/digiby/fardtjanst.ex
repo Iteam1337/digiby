@@ -66,7 +66,7 @@ defmodule Digiby.Fardtjanst do
     do: %Transport{
       line_number: nil,
       agency: "Länstrafiken Norrbotten",
-      vehicle_type: "",
+      vehicle_type: "Liten bil",
       transportation_type: trip.type,
       # Time.diff(last_stop[:arrival_time], start_stop[:arrival_time]),
       travel_time: 1,
