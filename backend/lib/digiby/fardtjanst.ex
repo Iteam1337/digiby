@@ -74,7 +74,7 @@ defmodule Digiby.Fardtjanst do
       departure: start_stop,
       destination: last_stop,
       stops: trip.stop_times,
-      geometry: []
+      geometry: Osrm.route(start_stop.stop_position, last_stop.stop_position)
     }
 
   defp get_meters_between_positions(%{"lat" => lat1, "lng" => lng1}, pos2) do
