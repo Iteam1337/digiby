@@ -37,6 +37,11 @@ defmodule Digiby.Fardtjanst do
       %{"geometry" => geometry, "duration" => duration} =
         Osrm.route(first_stop.stop_position, last_stop.stop_position)
 
+      last_stop =
+        Map.update!(last_stop, :arrival_time, fn start_time ->
+          Time.from_iso8601!(start_time) |> Time.add(trunc(duration)) |> Time.truncate(:second)
+        end)
+
       %{
         type: type,
         start_stop:
@@ -57,8 +62,10 @@ defmodule Digiby.Fardtjanst do
       }
     end)
     |> Enum.map(&fardtjanst_to_transport_struct/1)
-    |> Enum.sort(fn %Transport{departure: departure1}, %Transport{departure: departure2} ->
-      departure1.meters_from_query_to_stop < departure2.meters_from_query_to_stop
+    |> Enum.sort(fn %Transport{departure: departure1, destination: destination1},
+                    %Transport{departure: departure2, destination: destination2} ->
+      departure1.meters_from_query_to_stop + destination1.meters_from_query_to_stop <
+        departure2.meters_from_query_to_stop + destination2.meters_from_query_to_stop
     end)
 
     # |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
