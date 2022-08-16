@@ -68,6 +68,23 @@ const DeparturesDetails = () => {
       }),
   };
 
+  const userRoute = {
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [
+        [
+          parseFloat(fromTo.coordinates.lng),
+          parseFloat(fromTo.coordinates.lat),
+        ],
+        [
+          parseFloat(departure.departure.stop_position.lng),
+          parseFloat(departure.departure.stop_position.lat),
+        ],
+      ],
+    },
+  };
+
   const positions = departures.data
     .filter((dep) => dep.departure.arrival_time && dep.destination.arrival_time)
     .map((dep: Departure) => {
@@ -136,7 +153,7 @@ const DeparturesDetails = () => {
   }
 
   const routesLayer = new GeoJsonLayer({
-    id: 'geojson-layer',
+    id: 'routes-layer',
     data: routes,
     pickable: true,
     stroked: false,
@@ -167,7 +184,7 @@ const DeparturesDetails = () => {
   });
 
   const startPositionLayer = new IconLayer({
-    id: 'icon-layer',
+    id: 'start-icon-layer',
     data: positions,
     getIcon: (d: any) => ({
       url: svgToDataURL(createRouteStartIcon(d.color)),
@@ -181,7 +198,7 @@ const DeparturesDetails = () => {
   });
 
   const userStartPositionLayer = new IconLayer({
-    id: 'icon-layer',
+    id: 'user-start-icon-layer',
     data: positions,
     getIcon: (d: any) => ({
       url: svgToDataURL(createUserStartIcon(d.color)),
@@ -194,8 +211,26 @@ const DeparturesDetails = () => {
     getSize: () => 10,
   });
 
+  const userRouteLayer = new GeoJsonLayer({
+    id: 'user-route-layer',
+    data: userRoute,
+    pickable: true,
+    stroked: false,
+    filled: true,
+    extruded: true,
+    pointType: 'circle',
+    lineWidthScale: 1,
+    lineWidthMinPixels: 1,
+    getFillColor: [253, 254, 255],
+    getLineColor: [253, 254, 255],
+    getPointRadius: 100,
+    getLineWidth: 2,
+    getElevation: 3,
+  });
+
   const layers = [
     routesLayer,
+    userRouteLayer,
     userStartPositionLayer,
     startPositionLayer,
     stopPositionLayer,
