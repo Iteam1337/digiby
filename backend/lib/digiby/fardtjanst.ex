@@ -1,9 +1,14 @@
 defmodule Digiby.Fardtjanst do
   alias Digiby.Transport
   @maximum_walking_distance 2500
+  # Travel time in seconds
+  @max_extra_travel_time_for_fardtjanst 360
 
   def list_transports(date, options) do
-    start_time = Keyword.get(options, :start_time, ~T[00:00:00])
+    start_time =
+      Keyword.get(options, :start_time, ~T[00:00:00])
+      |> IO.inspect(label: "start time")
+
     query_from_position = Keyword.get(options, :from)
     query_to_position = Keyword.get(options, :to)
     end_time = Keyword.get(options, :end_time, ~T[23:59:59])
@@ -13,35 +18,53 @@ defmodule Digiby.Fardtjanst do
     new_date = Date.from_erl!({2019, month, day})
 
     Digiby.Adapters.Fardtjanst.get_transports(Date.to_string(new_date))
+    |> Enum.filter(fn %{"from_position" => departure, "to_position" => destination} ->
+      {query_to_lng, query_to_lat} = query_to_position
+
+      before_duration = Osrm.route([departure, destination]) |> Map.get("duration")
+
+      after_duration =
+        Osrm.route([
+          departure,
+          %{"lat" => query_to_lat, "lng" => query_to_lng},
+          destination
+        ])
+        |> Map.get("duration")
+
+      after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
+    end)
     |> Enum.map(fn %{
                      "type" => type,
                      "from_position" => from_position,
                      "from_street" => from_street,
                      "departure_time" => departure_time,
-                     "to_position" => to_position,
                      "to_street" => to_street,
                      "id" => id
                    } ->
       from_stop_position = Map.put(from_position, :name, from_street)
-      to_stop_position = Map.put(to_position, :name, to_street)
+
+      {query_to_lng, query_to_lat} = query_to_position
+
+      to_stop_position =
+        Map.put(%{"lat" => query_to_lat, "lng" => query_to_lng}, :name, to_street)
 
       first_stop =
         Map.new()
         |> Map.put(:arrival_time, departure_time)
         |> Map.put(:stop_position, from_stop_position)
 
+      %{"duration" => duration, "geometry" => geometry} =
+        Osrm.route(first_stop.stop_position, to_stop_position)
+
       last_stop =
         Map.new()
-        |> Map.put(:arrival_time, departure_time)
         |> Map.put(:stop_position, to_stop_position)
-
-      %{"geometry" => geometry, "duration" => duration} =
-        Osrm.route(first_stop.stop_position, last_stop.stop_position)
-
-      last_stop =
-        Map.update!(last_stop, :arrival_time, fn start_time ->
-          Time.from_iso8601!(start_time) |> Time.add(trunc(duration)) |> Time.truncate(:second)
-        end)
+        |> Map.put_new(
+          :arrival_time,
+          Time.from_iso8601!(departure_time)
+          |> Time.add(trunc(duration))
+          |> Time.truncate(:second)
+        )
 
       %{
         id: id,
@@ -63,17 +86,14 @@ defmodule Digiby.Fardtjanst do
         geometry: Map.get(geometry, "coordinates")
       }
     end)
-    |> Enum.map(&fardtjanst_to_transport_struct/1)
-    |> Enum.sort(fn %Transport{departure: departure1, destination: destination1},
-                    %Transport{departure: departure2, destination: destination2} ->
-      departure1.meters_from_query_to_stop + destination1.meters_from_query_to_stop <
-        departure2.meters_from_query_to_stop + destination2.meters_from_query_to_stop
+    |> Enum.filter(fn %{start_stop: departure} ->
+      Time.compare(Time.from_iso8601!(departure.arrival_time), start_time) == :gt
     end)
-
-    # |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
-    #   # && destination.meters_from_query_to_stop < @maximum_walking_distance
-    #   # departure.meters_from_query_to_stop < @maximum_walking_distance
-    # end)
+    |> Enum.sort_by(
+      fn %{start_stop: destination1} -> Time.from_iso8601!(destination1.arrival_time) end,
+      Time
+    )
+    |> Enum.map(&fardtjanst_to_transport_struct/1)
   end
 
   defp fardtjanst_to_transport_struct(
