@@ -173,24 +173,20 @@ const DeparturesDetails = () => {
   return (
     <section className="h-full w-full bg-pm-black">
       <h1 className="sr-only">Vald avgång</h1>
-      {departure && (
-        <>
-          <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
-            <DeckGL
-              layers={[routeLayer, stopPositionLayer, startPositionLayer]}
-              initialViewState={mapState}
-              controller={true}
-            >
-              <StaticMap
-                mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-                reuseMaps
-                mapStyle="mapbox://styles/mapbox/dark-v10"
-              />
-            </DeckGL>
-          </div>
-          <DepartureInfo departure={departure} />
-        </>
-      )}
+      <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
+        <DeckGL
+          layers={[routeLayer, stopPositionLayer, startPositionLayer]}
+          initialViewState={mapState}
+          controller={true}
+        >
+          <StaticMap
+            mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+            reuseMaps
+            mapStyle="mapbox://styles/mapbox/dark-v10"
+          />
+        </DeckGL>
+      </div>
+      <DepartureInfo departure={departure} />
     </section>
   );
 };
