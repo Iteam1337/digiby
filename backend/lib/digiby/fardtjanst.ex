@@ -5,7 +5,10 @@ defmodule Digiby.Fardtjanst do
   @max_extra_travel_time_for_fardtjanst 360
 
   def list_transports(date, options) do
-    start_time = Keyword.get(options, :start_time, ~T[00:00:00])
+    start_time =
+      Keyword.get(options, :start_time, ~T[00:00:00])
+      |> IO.inspect(label: "start time")
+
     query_from_position = Keyword.get(options, :from)
     query_to_position = Keyword.get(options, :to)
     end_time = Keyword.get(options, :end_time, ~T[23:59:59])
@@ -66,10 +69,12 @@ defmodule Digiby.Fardtjanst do
       }
     end)
     |> Enum.map(&fardtjanst_to_transport_struct/1)
-    |> Enum.sort(fn %Transport{departure: departure1, destination: destination1},
-                    %Transport{departure: departure2, destination: destination2} ->
-      departure1.meters_from_query_to_stop + destination1.meters_from_query_to_stop <
-        departure2.meters_from_query_to_stop + destination2.meters_from_query_to_stop
+    |> Enum.sort_by(
+      fn %Transport{destination: destination1} -> destination1.arrival_time end,
+      Time
+    )
+    |> Enum.filter(fn %Transport{departure: departure} ->
+      Time.compare(Time.from_iso8601!(departure.arrival_time), start_time) == :gt
     end)
     |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
       {query_to_lng, query_to_lat} = query_to_position
