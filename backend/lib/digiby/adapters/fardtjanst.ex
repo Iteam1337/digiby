@@ -91,6 +91,7 @@ defmodule Digiby.Adapters.Fardtjanst do
       |> Map.update!(:from_street, &replace_other_sam_prefixes/1)
       |> Map.update!(:to_street, &replace_sjukresa_sam_prefix/1)
       |> Map.update!(:to_street, &replace_other_sam_prefixes/1)
+      |> Map.put_new_lazy(:id, &generate_id/0)
       |> Map.drop([:line_nr])
     end)
     |> Flow.map(fn trip ->
@@ -163,5 +164,16 @@ defmodule Digiby.Adapters.Fardtjanst do
           do: String.replace(str, Regex.compile!("^" <> prefix <> " "), value <> " ")
       end
     )
+  end
+
+  defp generate_id() do
+    min = String.to_integer("100000", 36)
+    max = String.to_integer("ZZZZZZ", 36)
+
+    max
+    |> Kernel.-(min)
+    |> :rand.uniform()
+    |> Kernel.+(min)
+    |> Integer.to_string(36)
   end
 end
