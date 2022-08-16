@@ -35,6 +35,7 @@ defmodule Digiby.Fardtjanst do
     end)
     |> Enum.map(fn %{
                      "type" => type,
+                     "car_type" => car_type,
                      "from_position" => from_position,
                      "from_street" => from_street,
                      "departure_time" => departure_time,
@@ -69,6 +70,7 @@ defmodule Digiby.Fardtjanst do
       %{
         id: id,
         type: type,
+        car_type: car_type,
         start_stop:
           first_stop
           |> Map.put(
@@ -96,6 +98,9 @@ defmodule Digiby.Fardtjanst do
     |> Enum.map(&fardtjanst_to_transport_struct/1)
   end
 
+  defp car_type_to_readable("AN"), do: "Personbil"
+  defp car_type_to_readable("S1"), do: "Specialfordon"
+
   defp fardtjanst_to_transport_struct(
          %{
            start_stop: start_stop,
@@ -108,7 +113,7 @@ defmodule Digiby.Fardtjanst do
          id: trip.id,
          line_number: nil,
          agency: "Länstrafiken Norrbotten",
-         vehicle_type: "Liten bil",
+         vehicle_type: car_type_to_readable(trip.car_type),
          transportation_type: trip.type,
          travel_time: travel_time,
          cost: 900_000,
