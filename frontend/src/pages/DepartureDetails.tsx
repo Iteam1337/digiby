@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 
-import { departuresDetails, departuresAtom } from '../utils/atoms';
+import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
 
@@ -17,6 +17,7 @@ const DeparturesDetails = () => {
   });
   const [departure] = useAtom(departuresDetails);
   const [departures] = useAtom(departuresAtom);
+  const [fromTo] = useAtom(fromToAtom);
 
   useEffect(() => {
     if (departure) {
@@ -41,7 +42,7 @@ const DeparturesDetails = () => {
     );
   }
 
-  const geoJsonObject = {
+  const routes = {
     type: 'FeatureCollection',
     features: departures.data
       .filter((dep) => dep.geometry.length > 0)
@@ -67,15 +68,21 @@ const DeparturesDetails = () => {
       }),
   };
 
-  geoJsonObject.features.forEach((element) =>
-    console.log('route color', element.properties.color)
-  );
-
   const positions = departures.data
     .filter((dep) => dep.departure.arrival_time && dep.destination.arrival_time)
     .map((dep: Departure) => {
       return {
-        coordinates: {
+        userCoordinates: {
+          from: [
+            parseFloat(fromTo.coordinates.lng),
+            parseFloat(fromTo.coordinates.lat),
+          ],
+          to: [
+            parseFloat(dep.stops[0].stop_position.lng),
+            parseFloat(dep.stops[0].stop_position.lat),
+          ],
+        },
+        routeCoordinates: {
           from: [
             parseFloat(dep.stops[0].stop_position.lng),
             parseFloat(dep.stops[0].stop_position.lat),
@@ -102,10 +109,6 @@ const DeparturesDetails = () => {
       return a.color[0][0] === 19 ? 1 : b.color[0][0] === 19 ? -1 : 0;
     });
 
-  geoJsonObject.features.forEach((element) =>
-    console.log('icon color', element.properties.color)
-  );
-
   function createStopIcon(colorArr: number[][]) {
     return `
       <svg width="16" height="20" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,10 +117,17 @@ const DeparturesDetails = () => {
     `;
   }
 
-  function createStartIcon(colorArr: number[][]) {
+  function createRouteStartIcon(colorArr: number[][]) {
     return `
       <svg width="10" height="10" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="2.5" cy="2.5" r="2" fill="rgb(${colorArr[1]})" stroke="rgb(${colorArr[0]})"/>
+</svg>`;
+  }
+
+  function createUserStartIcon(colorArr: number[][]) {
+    return `
+      <svg width="10" height="10" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="2.5" cy="2.5" r="2" fill="rgb(${colorArr[0]})" stroke="rgb(${colorArr[0]})"/>
 </svg>`;
   }
 
@@ -125,9 +135,9 @@ const DeparturesDetails = () => {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }
 
-  const routeLayer = new GeoJsonLayer({
+  const routesLayer = new GeoJsonLayer({
     id: 'geojson-layer',
-    data: geoJsonObject,
+    data: routes,
     pickable: true,
     stroked: false,
     filled: true,
@@ -152,7 +162,7 @@ const DeparturesDetails = () => {
       height: 20,
     }),
     sizeScale: 1,
-    getPosition: (d: any) => d.coordinates.to,
+    getPosition: (d: any) => d.routeCoordinates.to,
     getSize: () => 20,
   });
 
@@ -160,25 +170,42 @@ const DeparturesDetails = () => {
     id: 'icon-layer',
     data: positions,
     getIcon: (d: any) => ({
-      url: svgToDataURL(createStartIcon(d.color)),
+      url: svgToDataURL(createRouteStartIcon(d.color)),
       mask: false,
       width: 10,
       height: 10,
     }),
     sizeScale: 1,
-    getPosition: (d: any) => d.coordinates.from,
+    getPosition: (d: any) => d.routeCoordinates.from,
     getSize: () => 10,
   });
+
+  const userStartPositionLayer = new IconLayer({
+    id: 'icon-layer',
+    data: positions,
+    getIcon: (d: any) => ({
+      url: svgToDataURL(createUserStartIcon(d.color)),
+      mask: false,
+      width: 10,
+      height: 10,
+    }),
+    sizeScale: 1,
+    getPosition: (d: any) => d.userCoordinates.from,
+    getSize: () => 10,
+  });
+
+  const layers = [
+    routesLayer,
+    userStartPositionLayer,
+    startPositionLayer,
+    stopPositionLayer,
+  ];
 
   return (
     <section className="h-full w-full bg-pm-black">
       <h1 className="sr-only">Vald avgång</h1>
       <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
-        <DeckGL
-          layers={[routeLayer, stopPositionLayer, startPositionLayer]}
-          initialViewState={mapState}
-          controller={true}
-        >
+        <DeckGL layers={layers} initialViewState={mapState} controller={true}>
           <StaticMap
             mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
             reuseMaps
