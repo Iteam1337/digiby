@@ -20,7 +20,9 @@ defmodule Digiby.Linjebuss do
        ),
        do: %Transport{
          line_number: bus.line_number,
-         transportation_type: "Länstrafiken, #{route_type_to_redable(bus.route_type)}",
+         vehicle_type: "Buss",
+         agency: "Länstrafiken Norrbotten",
+         transportation_type: transportation_type_to_readable(bus.route_type),
          travel_time: Time.diff(last_stop[:arrival_time], start_stop[:arrival_time]),
          cost: 900_000,
          departure: start_stop,
@@ -31,8 +33,8 @@ defmodule Digiby.Linjebuss do
            |> filter_geometry(start_stop.stop_position, last_stop.stop_position)
        }
 
-  defp route_type_to_redable("700"), do: "Stomlinje"
-  defp route_type_to_redable("1501"), do: "Anropsstyrd"
+  defp transportation_type_to_readable("700"), do: "Buss"
+  defp transportation_type_to_readable("1501"), do: "Anropsstyrd Buss"
 
   defp filter_superflous_stops(
          %{bussstop_closest_to_start: start_stop, busstop_closest_to_stop: end_stop} = bus

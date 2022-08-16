@@ -67,6 +67,10 @@ const DeparturesDetails = () => {
       }),
   };
 
+  geoJsonObject.features.forEach((element) =>
+    console.log('route color', element.properties.color)
+  );
+
   const positions = departures.data
     .filter((dep) => dep.geometry.length > 0)
     .map((dep: Departure) => {
@@ -97,6 +101,10 @@ const DeparturesDetails = () => {
     .sort((a, b) => {
       return a.color[0][0] === 19 ? 1 : b.color[0][0] === 19 ? -1 : 0;
     });
+
+  geoJsonObject.features.forEach((element) =>
+    console.log('icon color', element.properties.color)
+  );
 
   function createStopIcon(colorArr: number[][]) {
     return `

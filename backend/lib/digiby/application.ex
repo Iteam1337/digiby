@@ -10,6 +10,11 @@ defmodule Digiby.Application do
     {loading_time, :ok} = :timer.tc(fn -> GTFS.load_cache_in_ets() end)
     IO.inspect(loading_time / 1_000_000, label: "loading cache in seconds")
 
+    {loading_time_fardtjanst, :ok} =
+      :timer.tc(fn -> Digiby.Adapters.Fardtjanst.load_fardtjanst() end)
+
+    IO.inspect(loading_time_fardtjanst / 1_000_000, label: "loading fardtjanst cache in seconds")
+
     children = [
       # Start the Telemetry supervisor
       DigibyWeb.Telemetry,
