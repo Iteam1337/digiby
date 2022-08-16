@@ -40,8 +40,7 @@ defmodule Digiby.Fardtjanst do
         |> Map.put(:arrival_time, departure_time)
         |> Map.put(:stop_position, to_stop_position)
 
-      %{"geometry" => geometry, "duration" => duration} =
-        Osrm.route(first_stop.stop_position, last_stop.stop_position)
+      %{"duration" => duration} = Osrm.route(first_stop.stop_position, last_stop.stop_position)
 
       last_stop =
         Map.update!(last_stop, :arrival_time, fn start_time ->
@@ -64,19 +63,13 @@ defmodule Digiby.Fardtjanst do
             get_meters_between_positions(last_stop.stop_position, query_to_position)
           ),
         stop_times: [first_stop, last_stop],
-        travel_time: duration,
-        geometry: Map.get(geometry, "coordinates")
+        travel_time: duration
       }
     end)
-    |> Enum.map(&fardtjanst_to_transport_struct/1)
-    |> Enum.sort_by(
-      fn %Transport{destination: destination1} -> destination1.arrival_time end,
-      Time
-    )
-    |> Enum.filter(fn %Transport{departure: departure} ->
+    |> Enum.filter(fn %{start_stop: departure} ->
       Time.compare(Time.from_iso8601!(departure.arrival_time), start_time) == :gt
     end)
-    |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
+    |> Enum.filter(fn %{start_stop: departure, last_stop: destination} ->
       {query_to_lng, query_to_lat} = query_to_position
 
       before_duration =
@@ -92,6 +85,21 @@ defmodule Digiby.Fardtjanst do
 
       after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
     end)
+    |> Enum.sort_by(
+      fn %{start_stop: destination1} -> Time.from_iso8601!(destination1.arrival_time) end,
+      Time
+    )
+    |> Enum.map(fn %{start_stop: departure} = trip ->
+      Map.put_new_lazy(trip, :geometry, fn ->
+        {query_to_lng, query_to_lat} = query_to_position
+
+        Osrm.route(departure.stop_position, %{"lat" => query_to_lat, "lng" => query_to_lng})
+        |> IO.inspect()
+        |> Map.get("geometry")
+        |> Map.get("coordinates")
+      end)
+    end)
+    |> Enum.map(&fardtjanst_to_transport_struct/1)
   end
 
   defp fardtjanst_to_transport_struct(
