@@ -19,6 +19,7 @@ defmodule Digiby.Linjebuss do
          %{bussstop_closest_to_start: start_stop, busstop_closest_to_stop: last_stop} = bus
        ),
        do: %Transport{
+         id: bus.trip_id,
          line_number: bus.line_number,
          vehicle_type: "Buss",
          agency: "Länstrafiken Norrbotten",

@@ -19,7 +19,8 @@ defmodule Digiby.Fardtjanst do
                      "from_street" => from_street,
                      "departure_time" => departure_time,
                      "to_position" => to_position,
-                     "to_street" => to_street
+                     "to_street" => to_street,
+                     "id" => id
                    } ->
       from_stop_position = Map.put(from_position, :name, from_street)
       to_stop_position = Map.put(to_position, :name, to_street)
@@ -43,6 +44,7 @@ defmodule Digiby.Fardtjanst do
         end)
 
       %{
+        id: id,
         type: type,
         start_stop:
           first_stop
@@ -83,6 +85,7 @@ defmodule Digiby.Fardtjanst do
          } = trip
        ),
        do: %Transport{
+         id: trip.id,
          line_number: nil,
          agency: "Länstrafiken Norrbotten",
          vehicle_type: "Liten bil",
