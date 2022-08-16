@@ -1,6 +1,8 @@
 defmodule Digiby.Fardtjanst do
   alias Digiby.Transport
   @maximum_walking_distance 2500
+  # Travel time in seconds
+  @max_extra_travel_time_for_fardtjanst 360
 
   def list_transports(date, options) do
     start_time = Keyword.get(options, :start_time, ~T[00:00:00])
@@ -69,11 +71,22 @@ defmodule Digiby.Fardtjanst do
       departure1.meters_from_query_to_stop + destination1.meters_from_query_to_stop <
         departure2.meters_from_query_to_stop + destination2.meters_from_query_to_stop
     end)
+    |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
+      {query_to_lng, query_to_lat} = query_to_position
 
-    # |> Enum.filter(fn %Transport{departure: departure, destination: destination} ->
-    #   # && destination.meters_from_query_to_stop < @maximum_walking_distance
-    #   # departure.meters_from_query_to_stop < @maximum_walking_distance
-    # end)
+      before_duration =
+        Osrm.route([departure.stop_position, destination.stop_position]) |> Map.get("duration")
+
+      after_duration =
+        Osrm.route([
+          departure.stop_position,
+          %{"lat" => query_to_lat, "lng" => query_to_lng},
+          destination.stop_position
+        ])
+        |> Map.get("duration")
+
+      after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
+    end)
   end
 
   defp fardtjanst_to_transport_struct(
