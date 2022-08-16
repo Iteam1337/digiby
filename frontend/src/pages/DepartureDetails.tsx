@@ -72,7 +72,7 @@ const DeparturesDetails = () => {
   );
 
   const positions = departures.data
-    .filter((dep) => dep.geometry.length > 0)
+    .filter((dep) => dep.departure.arrival_time && dep.destination.arrival_time)
     .map((dep: Departure) => {
       return {
         coordinates: {
