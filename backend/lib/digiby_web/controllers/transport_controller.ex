@@ -44,9 +44,22 @@ defmodule DigibyWeb.TransportController do
         from: from,
         to: to
       )
+      |> Enum.map(fn transport -> Map.put(transport, :date, Date.to_string(query_date)) end)
+
+    fardtjanst_tomorrow =
+      Digiby.Fardtjanst.list_transports(
+        query_date |> Date.add(1),
+        start_time: time,
+        from: from,
+        to: to
+      )
+      |> Enum.map(fn transport ->
+        Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
+      end)
 
     render(conn, "index.json",
-      transports: Enum.concat([transports_query_day, fardtjanst, transports_tomorrow])
+      transports:
+        Enum.concat([transports_query_day, fardtjanst, transports_tomorrow, fardtjanst_tomorrow])
     )
   end
 

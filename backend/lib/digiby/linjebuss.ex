@@ -19,6 +19,7 @@ defmodule Digiby.Linjebuss do
          %{bussstop_closest_to_start: start_stop, busstop_closest_to_stop: last_stop} = bus
        ),
        do: %Transport{
+         id: bus.trip_id,
          line_number: bus.line_number,
          vehicle_type: "Buss",
          agency: "Länstrafiken Norrbotten",
@@ -54,12 +55,18 @@ defmodule Digiby.Linjebuss do
   defp filter_geometry(geometry, start_coord, stop_coord),
     do:
       geometry
-      |> Enum.drop_while(fn coord ->
-        coord != Enum.map([start_coord.lng, start_coord.lat], &String.to_float/1)
+      |> Enum.drop_while(fn [lng, lat] ->
+        Distance.GreatCircle.distance(
+          {lng, lat},
+          {String.to_float(start_coord.lng), String.to_float(start_coord.lat)}
+        ) > 5
       end)
       |> Enum.reverse()
-      |> Enum.drop_while(fn coord ->
-        coord != Enum.map([stop_coord.lng, stop_coord.lat], &String.to_float/1)
+      |> Enum.drop_while(fn [lng, lat] ->
+        Distance.GreatCircle.distance(
+          {lng, lat},
+          {String.to_float(stop_coord.lng), String.to_float(stop_coord.lat)}
+        ) > 5
       end)
       |> Enum.reverse()
 
