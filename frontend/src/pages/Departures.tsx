@@ -4,23 +4,18 @@ import { useSearchParams } from 'react-router-dom';
 import { differenceInDays } from 'date-fns';
 
 import Loading from '../components/Loading';
-import { departuresAtom, fromToAddressAtom } from '../utils/atoms';
+import { departuresAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
 import { formatDate } from '../utils/dateTimeFormatting';
 
 const Departures = () => {
   const [departures, getDepartures] = useAtom(departuresAtom);
-  const [_fromToAddress, setFromToAddress] = useAtom(fromToAddressAtom);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const fromAddress = searchParams.get('fromAddress');
     const toAddress = searchParams.get('toAddress');
-    if (fromAddress && toAddress) {
-      setFromToAddress({ from: fromAddress, to: toAddress });
-    }
-
     const fromLat = searchParams.get('fromLat');
     const fromLng = searchParams.get('fromLng');
     const toLat = searchParams.get('toLat');

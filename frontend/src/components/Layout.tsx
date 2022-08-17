@@ -1,13 +1,13 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 
-import { fromToAddressAtom } from '../utils/atoms';
+import { fromToAtom } from '../utils/atoms';
 import ArrowIcon from '../icons/ArrowIcon';
 
 const Layout = ({ children }: { children: JSX.Element }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [fromToAddress] = useAtom(fromToAddressAtom);
+  const [fromTo] = useAtom(fromToAtom);
 
   return (
     <>
@@ -23,9 +23,9 @@ const Layout = ({ children }: { children: JSX.Element }) => {
             </button>
             <div className="flex flex-col justify-center">
               <div className="flex justify-center">
-                {fromToAddress && (
+                {fromTo && (
                   <p className="ml-4 text-center font-bold text-white">
-                    {fromToAddress.from + '–' + fromToAddress.to}
+                    {fromTo.from.address + '–' + fromTo.to.address}
                   </p>
                 )}
               </div>

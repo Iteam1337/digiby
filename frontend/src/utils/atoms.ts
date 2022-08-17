@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-import { Departure, DepartureSearchParams } from './types';
+import { Departure, DepartureSearchParams, LngLat } from './types';
 import getTransports from './getTransports';
 
 export type DeparturesData = {
@@ -34,8 +34,11 @@ export const departuresAtom = atom(
 export const departuresDetails = atom<Departure | null>(null);
 
 type FromTo = {
-  from?: string;
-  to?: string;
+  from: { address: string; coordinates: LngLat };
+  to: { address: string; coordinates: LngLat };
 };
 
-export const fromToAddressAtom = atom<FromTo>({ from: '', to: '' });
+export const fromToAtom = atom<FromTo>({
+  from: { address: '', coordinates: [0, 0] },
+  to: { address: '', coordinates: [0, 0] },
+});

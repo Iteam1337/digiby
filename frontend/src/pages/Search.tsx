@@ -3,25 +3,30 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate, createSearchParams } from 'react-router-dom';
+import { useAtom } from 'jotai';
 
 import { FormData, FormattedState } from '../utils/types';
 import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
 import { formatDate, formatTime } from '../utils/dateTimeFormatting';
+import { fromToAtom } from '../utils/atoms';
 
 const Search = () => {
   const [startDate, setStartDate] = useState(new Date());
   const navigate = useNavigate();
+  const [fromTo, setFromTo] = useAtom(fromToAtom);
+
+  const { from, to } = fromTo;
 
   const initialFormState: FormData = {
     from: {
-      coordinates: [0, 0],
-      address: '',
+      coordinates: from.coordinates,
+      address: from.address,
     },
     to: {
-      coordinates: [0, 0],
-      address: '',
+      coordinates: to.coordinates,
+      address: to.address,
     },
     date: new Date(),
   };
@@ -42,6 +47,17 @@ const Search = () => {
       time: formatTime(formState.date),
       date: formatDate(formState.date),
     };
+
+    setFromTo({
+      from: {
+        address: formattedState.from.address,
+        coordinates: formattedState.from.coordinates,
+      },
+      to: {
+        address: formattedState.to.address,
+        coordinates: formattedState.from.coordinates,
+      },
+    });
 
     navigate({
       pathname: 'departures',
@@ -81,7 +97,11 @@ const Search = () => {
               Var är du?
             </label>
             <div>
-              <AutoCompleteAddress name="from" placeholder="Välj start" />
+              <AutoCompleteAddress
+                name="from"
+                placeholder="Välj start"
+                previousSearch={fromTo.from}
+              />
             </div>
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="from.address" />
@@ -90,7 +110,11 @@ const Search = () => {
               Till
             </label>
             <div>
-              <AutoCompleteAddress name="to" placeholder="Välj mål" />
+              <AutoCompleteAddress
+                name="to"
+                placeholder="Välj mål"
+                previousSearch={fromTo.to}
+              />
             </div>
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="to.address" />
