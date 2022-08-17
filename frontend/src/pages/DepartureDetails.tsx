@@ -95,18 +95,18 @@ const DeparturesDetails = () => {
             parseFloat(fromTo.coordinates.lat),
           ],
           to: [
-            parseFloat(dep.stops[0].stop_position.lng),
-            parseFloat(dep.stops[0].stop_position.lat),
+            parseFloat(dep.destination.stop_position.lng),
+            parseFloat(dep.destination.stop_position.lat),
           ],
         },
         routeCoordinates: {
           from: [
-            parseFloat(dep.stops[0].stop_position.lng),
-            parseFloat(dep.stops[0].stop_position.lat),
+            parseFloat(dep.departure.stop_position.lng),
+            parseFloat(dep.departure.stop_position.lat),
           ],
           to: [
-            parseFloat(dep.stops.slice(-1)[0].stop_position.lng),
-            parseFloat(dep.stops.slice(-1)[0].stop_position.lat),
+            parseFloat(dep.destination.stop_position.lng),
+            parseFloat(dep.destination.stop_position.lat),
           ],
         },
         // todo: check <id> instead of <arrival_time> when <id> endpoint is available from api.
