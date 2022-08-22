@@ -164,6 +164,7 @@ defmodule GTFS do
     |> File.stream!(read_ahead: 10_000)
     |> NimbleCSV.RFC4180.parse_stream()
     |> Flow.from_enumerable(stages: 4)
+    |> IO.inspect(label: "log")
     |> Flow.map(fn [id, lat, lon, _, _] ->
       :ets.insert(
         @shapes_table_name,
