@@ -1,4 +1,6 @@
 defmodule Digiby.Adapters.Fardtjanst do
+  alias Digiby.Adapters.Pelias
+
   @sjukrese_prefix %{
     "HC" => "hälsocentral",
     "SJ" => "sjukhus",
@@ -116,16 +118,35 @@ defmodule Digiby.Adapters.Fardtjanst do
     IO.write(new_file, "]")
   end
 
+  def search_for_coordinates(search_strings) do
+    {:ok, pid} = Task.Supervisor.start_link()
+
+    Enum.map(search_strings, fn str ->
+      Task.Supervisor.async_nolink(pid, fn -> Pelias.search(str) end)
+    end)
+    |> Enum.map(&Task.yield(&1, 50_000))
+    |> Enum.map(fn
+      {:ok, res} -> res
+      _ -> %{}
+    end)
+    |> Enum.map(fn res -> Map.get(res, "features") end)
+    |> Enum.reject(&is_nil/1)
+    |> List.first()
+  end
+
   def to_coord(street_name, municipality) do
     res =
-      Digiby.Adapters.Pelias.structured_search(street_name <> " 1", municipality)
+      Pelias.structured_search(street_name <> " 1", municipality)
       |> Map.get("features")
 
     res =
       if res == [],
         do:
-          Digiby.Adapters.Pelias.search(street_name <> " 1 " <> municipality)
-          |> Map.get("features"),
+          search_for_coordinates([
+            street_name <> " 1 " <> municipality,
+            street_name <> municipality,
+            street_name <> " 1 "
+          ]),
         else: res
 
     pos =

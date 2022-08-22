@@ -4,10 +4,45 @@ defmodule Digiby.Fardtjanst do
   # Travel time in seconds
   @max_extra_travel_time_for_fardtjanst 360
 
+  def filter_trips_too_far_from_original_trip(
+        %{
+          "from_position" => %{"lat" => depLat, "lng" => depLng},
+          "to_position" => %{"lat" => destLat, "lng" => destLng}
+        },
+        _,
+        _
+      )
+      when is_nil(depLat) or is_nil(depLng) or is_nil(destLat) or
+             is_nil(destLng),
+      do: false
+
+  def filter_trips_too_far_from_original_trip(
+        %{
+          "from_position" => departure,
+          "to_position" => destination
+        },
+        query_from_position,
+        query_to_position
+      ) do
+    {query_to_lng, query_to_lat} = query_to_position
+    {query_from_lng, query_from_lat} = query_from_position
+
+    before_duration = Osrm.route([departure, destination]) |> Map.get("duration")
+
+    after_duration =
+      Osrm.route([
+        departure,
+        %{"lat" => query_from_lat, "lng" => query_from_lng},
+        destination,
+        %{"lat" => query_to_lat, "lng" => query_to_lng}
+      ])
+      |> Map.get("duration")
+
+    after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
+  end
+
   def list_transports(date, options) do
-    start_time =
-      Keyword.get(options, :start_time, ~T[00:00:00])
-      |> IO.inspect(label: "start time")
+    start_time = Keyword.get(options, :start_time, ~T[00:00:00])
 
     query_from_position = Keyword.get(options, :from)
     query_to_position = Keyword.get(options, :to)
@@ -18,6 +53,7 @@ defmodule Digiby.Fardtjanst do
     new_date = Date.from_erl!({2019, month, day})
 
     Digiby.Adapters.Fardtjanst.get_transports(Date.to_string(new_date))
+<<<<<<< Updated upstream
     |> Enum.filter(fn %{"from_position" => departure, "to_position" => destination} ->
       {query_to_lng, query_to_lat} = query_to_position
 
@@ -33,6 +69,11 @@ defmodule Digiby.Fardtjanst do
 
       after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
     end)
+=======
+    |> Enum.filter(
+      &filter_trips_too_far_from_original_trip(&1, query_from_position, query_to_position)
+    )
+>>>>>>> Stashed changes
     |> Enum.map(fn %{
                      "type" => type,
                      "car_type" => car_type,
