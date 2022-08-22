@@ -14,8 +14,6 @@ const Departures = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const fromAddress = searchParams.get('fromAddress');
-    const toAddress = searchParams.get('toAddress');
     const fromLat = searchParams.get('fromLat');
     const fromLng = searchParams.get('fromLng');
     const toLat = searchParams.get('toLat');
@@ -52,11 +50,9 @@ const Departures = () => {
 
     if (diff === 0) {
       return 'Idag';
-    }
-    if (diff === 1) {
+    } else if (diff === 1) {
       return 'Imorgon';
-    }
-    if (diff > 1) {
+    } else {
       return date;
     }
   };
@@ -79,10 +75,12 @@ const Departures = () => {
           {dates.map((date: string, i: number) => {
             return (
               <div key={i}>
-                <h2 className="mb-6 text-xl font-bold">
-                  {getDaysFromToday(date)}
-                </h2>
-                {data?.map((item, i) => {
+                {date && (
+                  <h2 className="mb-6 text-xl font-bold">
+                    {getDaysFromToday(date)}
+                  </h2>
+                )}
+                {data.map((item, i) => {
                   if (item.date === date) {
                     return <DeparturesCard key={i} departure={item} />;
                   }

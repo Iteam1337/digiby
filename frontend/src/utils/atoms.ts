@@ -6,7 +6,7 @@ import getTransports from './getTransports';
 export type DeparturesData = {
   loading: boolean;
   error: string | null;
-  data: Departure[] | null;
+  data: Departure | null;
 };
 
 const fetchDepartures = atom<DeparturesData>({
