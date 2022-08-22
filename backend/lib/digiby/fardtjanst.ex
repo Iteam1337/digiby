@@ -56,14 +56,16 @@ defmodule Digiby.Fardtjanst do
 <<<<<<< Updated upstream
     |> Enum.filter(fn %{"from_position" => departure, "to_position" => destination} ->
       {query_to_lng, query_to_lat} = query_to_position
+      {query_from_lng, query_from_lat} = query_from_position
 
       before_duration = Osrm.route([departure, destination]) |> Map.get("duration")
 
       after_duration =
         Osrm.route([
           departure,
-          %{"lat" => query_to_lat, "lng" => query_to_lng},
-          destination
+          %{"lat" => query_from_lat, "lng" => query_from_lng},
+          destination,
+          %{"lat" => query_to_lat, "lng" => query_to_lng}
         ])
         |> Map.get("duration")
 
@@ -77,15 +79,17 @@ defmodule Digiby.Fardtjanst do
     |> Enum.map(fn %{
                      "type" => type,
                      "car_type" => car_type,
-                     "from_position" => from_position,
+                     "from_position" => _from_position,
                      "from_street" => from_street,
                      "departure_time" => departure_time,
                      "to_street" => to_street,
                      "id" => id
                    } ->
-      from_stop_position = Map.put(from_position, :name, from_street)
-
+      {query_from_lng, query_from_lat} = query_from_position
       {query_to_lng, query_to_lat} = query_to_position
+
+      from_stop_position =
+        Map.put(%{"lat" => query_from_lat, "lng" => query_from_lng}, :name, from_street)
 
       to_stop_position =
         Map.put(%{"lat" => query_to_lat, "lng" => query_to_lng}, :name, to_street)

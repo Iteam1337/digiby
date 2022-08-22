@@ -49,6 +49,8 @@ export type Departure = {
   geometry: LatLng[];
 };
 
+export type Departures = Departure[];
+
 export type DepartureSearchParams = {
   fromLat: string;
   fromLng: string;
