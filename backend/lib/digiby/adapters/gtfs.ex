@@ -158,6 +158,8 @@ defmodule GTFS do
   end
 
   defp load_shapes do
+    IO.inspect(:ets.last(@shapes_table_name))
+
     Path.expand("./data/norrbotten/shapes.txt", File.cwd!())
     |> File.stream!(read_ahead: 10_000)
     |> NimbleCSV.RFC4180.parse_stream()
