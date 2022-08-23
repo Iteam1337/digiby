@@ -33,9 +33,8 @@ defmodule Digiby.Adapters.Fardtjanst do
   }
 
   def get_transports(date) do
-    :ets.lookup(:fardtjanst, date)
-    |> List.first()
-    |> elem(1)
+    fardtjanst = :ets.lookup(:fardtjanst, date)
+    if fardtjanst == [], do: [], else: List.first(fardtjanst) |> elem(1)
   end
 
   def load_fardtjanst do
