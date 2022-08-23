@@ -6,6 +6,7 @@ import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
+import Section from '../components/Section';
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -237,7 +238,7 @@ const DeparturesDetails = () => {
   ];
 
   return (
-    <section className="h-full w-full bg-pm-black">
+    <Section details>
       <h1 className="sr-only">Vald avgång</h1>
       <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
         <DeckGL layers={layers} initialViewState={mapState} controller={true}>
@@ -249,7 +250,7 @@ const DeparturesDetails = () => {
         </DeckGL>
       </div>
       <DepartureInfo departure={departure} />
-    </section>
+    </Section>
   );
 };
 

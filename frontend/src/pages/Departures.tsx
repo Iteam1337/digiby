@@ -8,6 +8,7 @@ import { departuresAtom, fromToAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
 import { formatDate } from '../utils/dateTimeFormatting';
+import Section from '../components/Section';
 
 const Departures = () => {
   const [departures, getDepartures] = useAtom(departuresAtom);
@@ -78,37 +79,39 @@ const Departures = () => {
   });
 
   return (
-    <section className="mx-auto w-full max-w-screen-sm px-6 pt-6">
+    <Section departures>
       <h1 className="sr-only">Tidigaste avgångar</h1>
-      {data && (
-        <>
-          {dates.map((date: string, i: number) => {
-            return (
-              <div key={i}>
-                {date && (
-                  <h2 className="mb-6 text-xl font-bold">
-                    {getDaysFromToday(date)}
-                  </h2>
-                )}
-                {data.map((item, i) => {
-                  if (item.date === date) {
-                    return <DeparturesCard key={i} departure={item} />;
-                  }
-                })}
-              </div>
-            );
-          })}
-        </>
-      )}
-      {!loading && data?.length === 0 && (
-        <div className=" flex flex-col items-center">
-          <p>Ingen rutt hittades</p>
-          <a className="underline" href="/">
-            Tillbaka till sök
-          </a>
-        </div>
-      )}
-    </section>
+      <>
+        {data && (
+          <>
+            {dates.map((date: string, i: number) => {
+              return (
+                <div key={i}>
+                  {date && (
+                    <h2 className="mb-6 text-xl font-bold">
+                      {getDaysFromToday(date)}
+                    </h2>
+                  )}
+                  {data.map((item, i) => {
+                    if (item.date === date) {
+                      return <DeparturesCard key={i} departure={item} />;
+                    }
+                  })}
+                </div>
+              );
+            })}
+          </>
+        )}
+        {!loading && data?.length === 0 && (
+          <div className=" flex flex-col items-center">
+            <p>Ingen rutt hittades</p>
+            <a className="underline" href="/">
+              Tillbaka till sök
+            </a>
+          </div>
+        )}
+      </>
+    </Section>
   );
 };
 
