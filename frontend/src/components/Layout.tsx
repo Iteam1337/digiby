@@ -11,7 +11,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
 
   return (
     <>
-      {pathname !== '/' && (
+      {pathname !== '/' && fromTo.address.from && (
         <header className="w-full bg-pm-green p-6">
           <div className="mx-auto max-w-screen-sm">
             <button
