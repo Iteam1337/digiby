@@ -25,7 +25,7 @@ jobs:
           cp k8s/config.yaml ${HOME}/.kube/config
           cd ${HOME}/.kube
           sed -i 's;$KUBE_CLUSTER_SERVER;${{ secrets.KUBE_CLUSTER_SERVER }};g' config
-          sed -i 's;$KUBE_CLUSTER_CERTIFICATE;${{ secrets.KUBE_ITEAM_CLUSTER_CERTIFICATE }};g' config
+          sed -i 's;$KUBE_CLUSTER_CERTIFICATE;${{ secrets.KUBE_CLUSTER_CERTIFICATE }};g' config
           sed -i 's;$KUBE_CERTIFICATE_DATA;${{ secrets.KUBE_CERTIFICATE_DATA }};g' config
           sed -i 's;$KUBE_KEY_DATA;${{ secrets.KUBE_KEY_DATA }};g' config
       - name: build-and-deploy
