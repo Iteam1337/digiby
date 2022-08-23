@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { differenceInDays } from 'date-fns';
 
 import Loading from '../components/Loading';
@@ -9,11 +9,13 @@ import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
 import { formatDate } from '../utils/dateTimeFormatting';
 import Section from '../components/Section';
+import Button from '../components/Button';
 
 const Departures = () => {
   const [departures, getDepartures] = useAtom(departuresAtom);
   const [_fromTo, setFromTo] = useAtom(fromToAtom);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fromAddress = searchParams.get('fromAddress');
@@ -52,7 +54,24 @@ const Departures = () => {
   }
 
   if (!loading && error) {
-    return <span>Försök igen...</span>;
+    return (
+      <Section departures>
+        <h1 className="mb-3 mt-24 text-center text-2xl font-bold text-pm-black">
+          Inga resor hittades
+        </h1>
+        <p className="text-center">
+          Vi hittade inga resor genom er sökning. Prova att ändra hållplats,
+          tid, dag eller försök senare.
+        </p>
+        <div className="text-center">
+          <Button
+            text="Tillbaka till sökningen"
+            type="button"
+            onClick={() => navigate(-1)}
+          />
+        </div>
+      </Section>
+    );
   }
 
   const getDaysFromToday = (date: string) => {
