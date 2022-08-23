@@ -9,7 +9,7 @@ import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
 import { formatDate } from '../utils/dateTimeFormatting';
 import Section from '../components/Section';
-import Button from '../components/Button';
+import EmptyStates from '../components/EmptyStates';
 
 const Departures = () => {
   const [departures, getDepartures] = useAtom(departuresAtom);
@@ -55,22 +55,13 @@ const Departures = () => {
 
   if (!loading && error) {
     return (
-      <Section departures>
-        <h1 className="mb-3 mt-24 text-center text-2xl font-bold text-pm-black">
-          Inga resor hittades
-        </h1>
-        <p className="text-center">
-          Vi hittade inga resor genom er sökning. Prova att ändra hållplats,
-          tid, dag eller försök senare.
-        </p>
-        <div className="text-center">
-          <Button
-            text="Tillbaka till sökningen"
-            type="button"
-            onClick={() => navigate(-1)}
-          />
-        </div>
-      </Section>
+      <EmptyStates
+        heading="Inga resor hittades"
+        text="Vi hittade inga resor genom er sökning. Prova att ändra hållplats,
+    tid, dag eller försök senare."
+        buttonText="Tillbaka till sökningen"
+        onClick={() => navigate(-1)}
+      />
     );
   }
 

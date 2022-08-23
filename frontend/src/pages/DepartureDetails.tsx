@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
+import { useNavigate } from 'react-router-dom';
 
 import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
 import Section from '../components/Section';
+import EmptyStates from '../components/EmptyStates';
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -19,6 +21,7 @@ const DeparturesDetails = () => {
   const [departure] = useAtom(departuresDetails);
   const [departures] = useAtom(departuresAtom);
   const [fromTo] = useAtom(fromToAtom);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (departure) {
@@ -34,12 +37,12 @@ const DeparturesDetails = () => {
 
   if (!departure || !departures.data) {
     return (
-      <div className=" flex flex-col items-center pt-6">
-        <p>Ingen rutt hittades</p>
-        <a className="underline" href="/">
-          Tillbaka till sök
-        </a>
-      </div>
+      <EmptyStates
+        heading="Något blev fel"
+        text="Sidan du letar efter är för närvarande inte tillgänglig."
+        buttonText="Tillbaka till startsidan"
+        onClick={() => navigate('/')}
+      />
     );
   }
 
