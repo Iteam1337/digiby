@@ -8,7 +8,7 @@ spec:
         - digiby.iteam.services
       secretName: digiby-prod-tls
   rules:
-    - host: digiby.iteam.services 
+    - host: digiby.iteam.services
       http:
         paths:
           - path: /api
