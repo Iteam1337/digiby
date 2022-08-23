@@ -23,7 +23,7 @@ defmodule GTFS do
       ],
       &Task.async/1
     )
-    |> Enum.each(&Task.await(&1, 50_000))
+    |> Enum.each(&Task.await(&1, 5000_000))
     |> then(fn _ -> load_stop_times() end)
   end
 
