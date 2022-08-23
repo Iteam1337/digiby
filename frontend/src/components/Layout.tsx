@@ -23,9 +23,9 @@ const Layout = ({ children }: { children: JSX.Element }) => {
             </button>
             <div className="flex flex-col justify-center">
               <div className="flex justify-center">
-                {fromTo.address && (
+                {fromTo && (
                   <p className="ml-4 text-center font-bold text-white">
-                    {fromTo.address.from + '–' + fromTo.address.to}
+                    {fromTo.from.address + '–' + fromTo.to.address}
                   </p>
                 )}
               </div>

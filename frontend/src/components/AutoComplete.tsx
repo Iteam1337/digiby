@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment } from 'react';
+import { useState, useMemo, Fragment, useEffect } from 'react';
 import axios from 'axios';
 import { Combobox } from '@headlessui/react';
 import debounce from 'lodash.debounce';
@@ -25,12 +25,17 @@ const getAddress = (
 type Props = {
   name: string;
   placeholder: string;
+  previousSearch: Address;
 };
 
-const AutoCompleteAddress = ({ name, placeholder }: Props) => {
+const AutoCompleteAddress = ({ name, placeholder, previousSearch }: Props) => {
   const [searchAddresses, setSearchAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>();
   const { setFieldValue } = useFormikContext();
+
+  useEffect(() => {
+    if (previousSearch) setSelectedAddress(previousSearch);
+  }, [previousSearch]);
 
   const searchWithDebounce = useMemo(
     () => debounce((q) => getAddress(q, setSearchAddresses), 300),
