@@ -5,10 +5,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - digiby.predictivemovement.se
+        - digiby.iteam.services
       secretName: digiby-prod-tls
   rules:
-    - host: digiby.predictivemovement.se
+    - host: digiby.iteam.services 
       http:
         paths:
           - path: /api
