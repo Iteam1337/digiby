@@ -111,8 +111,8 @@ const DeparturesDetails = () => {
             parseFloat(dep.departure.stop_position.lat),
           ],
           to: [
-            parseFloat(dep.destination.stop_position.lng),
-            parseFloat(dep.destination.stop_position.lat),
+            parseFloat(departure.destination.stop_position.lng),
+            parseFloat(departure.destination.stop_position.lat),
           ],
         },
         // todo: check <id> instead of <arrival_time> when <id> endpoint is available from api.
@@ -120,7 +120,7 @@ const DeparturesDetails = () => {
           dep.departure.arrival_time === departure.departure.arrival_time
             ? [
                 [19, 197, 123],
-                [255, 255, 255],
+                [52, 51, 50],
               ]
             : [
                 [200, 200, 200],
@@ -140,18 +140,8 @@ const DeparturesDetails = () => {
     `;
   }
 
-  function createRouteStartIcon(colorArr: number[][]) {
-    return `
-      <svg width="10" height="10" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="2.5" cy="2.5" r="2" fill="rgb(${colorArr[1]})" stroke="rgb(${colorArr[0]})"/>
-</svg>`;
-  }
-
   function createUserStartIcon(colorArr: number[][]) {
-    return `
-      <svg width="10" height="10" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="2.5" cy="2.5" r="2" fill="rgb(${colorArr[0]})" stroke="rgb(${colorArr[0]})"/>
-</svg>`;
+    return `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M9 14C11.7614 14 14 11.7614 14 9C14 6.23858 11.7614 4 9 4C6.23858 4 4 6.23858 4 9C4 11.7614 6.23858 14 9 14Z" fill="rgb(${colorArr[1]})" stroke="rgb(${colorArr[0]})" stroke-width="5"/></svg>`;
   }
 
   function svgToDataURL(svg: string) {
@@ -166,12 +156,14 @@ const DeparturesDetails = () => {
     filled: true,
     extruded: true,
     pointType: 'circle',
+    lineCapRounded: true,
+    lineJointRounded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 3,
     getFillColor: (d: any) => d.properties.color,
     getLineColor: (d: any) => d.properties.color,
     getPointRadius: 100,
-    getLineWidth: 2,
+    getLineWidth: 3,
     getElevation: 3,
   });
 
@@ -189,32 +181,18 @@ const DeparturesDetails = () => {
     getSize: () => 20,
   });
 
-  const startPositionLayer = new IconLayer({
-    id: 'start-icon-layer',
-    data: positions,
-    getIcon: (d: any) => ({
-      url: svgToDataURL(createRouteStartIcon(d.color)),
-      mask: false,
-      width: 10,
-      height: 10,
-    }),
-    sizeScale: 1,
-    getPosition: (d: any) => d.routeCoordinates.from,
-    getSize: () => 10,
-  });
-
   const userStartPositionLayer = new IconLayer({
     id: 'user-start-icon-layer',
     data: positions,
     getIcon: (d: any) => ({
       url: svgToDataURL(createUserStartIcon(d.color)),
       mask: false,
-      width: 10,
-      height: 10,
+      width: 18,
+      height: 18,
     }),
     sizeScale: 1,
     getPosition: (d: any) => d.userCoordinates.from,
-    getSize: () => 10,
+    getSize: () => 18,
   });
 
   const userRouteLayer = new GeoJsonLayer({
@@ -225,12 +203,14 @@ const DeparturesDetails = () => {
     filled: true,
     extruded: true,
     pointType: 'circle',
+    lineCapRounded: true,
+    lineJointRounded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 3,
     getFillColor: [253, 254, 255],
     getLineColor: [253, 254, 255],
     getPointRadius: 100,
-    getLineWidth: 2,
+    getLineWidth: 3,
     getElevation: 3,
   });
 
@@ -238,7 +218,6 @@ const DeparturesDetails = () => {
     routesLayer,
     userRouteLayer,
     userStartPositionLayer,
-    startPositionLayer,
     stopPositionLayer,
   ];
 
