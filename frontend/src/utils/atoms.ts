@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 
-import { Departure, DepartureSearchParams, LngLat } from './types';
+import { Departure, Departures, DepartureSearchParams, LngLat } from './types';
 import getTransports from './getTransports';
 
 export type DeparturesData = {
   loading: boolean;
   error: string | null;
-  data: Departure | null;
+  data: Departures | null;
 };
 
 const fetchDepartures = atom<DeparturesData>({

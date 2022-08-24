@@ -73,10 +73,7 @@ const DeparturesDetails = () => {
     geometry: {
       type: 'LineString',
       coordinates: [
-        [
-          parseFloat(fromTo.coordinates.lng),
-          parseFloat(fromTo.coordinates.lat),
-        ],
+        [fromTo.from.coordinates[0], fromTo.from.coordinates[1]],
         [
           parseFloat(departure.departure.stop_position.lng),
           parseFloat(departure.departure.stop_position.lat),
@@ -90,10 +87,7 @@ const DeparturesDetails = () => {
     .map((dep: Departure) => {
       return {
         userCoordinates: {
-          from: [
-            parseFloat(fromTo.coordinates.lng),
-            parseFloat(fromTo.coordinates.lat),
-          ],
+          from: [fromTo.from.coordinates[0], fromTo.from.coordinates[1]],
           to: [
             parseFloat(dep.destination.stop_position.lng),
             parseFloat(dep.destination.stop_position.lat),
