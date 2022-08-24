@@ -40,16 +40,16 @@ kind: Ingress
 metadata:
   name: backend-ingress
   annotations:
-    kubernetes.io/ingress.class: "public"
+    kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   tls:
     - hosts:
-        - digiby.predictivemovement.se
+        - digiby.iteam.services
       secretName: digiby-stage-tls
   rules:
-    - host: digiby.predictivemovement.se
+    - host: digiby.iteam.services
       http:
         paths:
           - path: /api

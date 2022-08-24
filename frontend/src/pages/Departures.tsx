@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { differenceInDays } from 'date-fns';
 
 import Loading from '../components/Loading';
-import { departuresAtom, fromToAtom } from '../utils/atoms';
+import { departuresAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
 import { formatDate } from '../utils/dateTimeFormatting';
@@ -13,26 +13,16 @@ import EmptyStates from '../components/EmptyStates';
 
 const Departures = () => {
   const [departures, getDepartures] = useAtom(departuresAtom);
-  const [_fromTo, setFromTo] = useAtom(fromToAtom);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fromAddress = searchParams.get('fromAddress');
-    const toAddress = searchParams.get('toAddress');
     const fromLat = searchParams.get('fromLat');
     const fromLng = searchParams.get('fromLng');
     const toLat = searchParams.get('toLat');
     const toLng = searchParams.get('toLng');
     const date = searchParams.get('date');
     const time = searchParams.get('time');
-
-    if (fromAddress && toAddress && fromLat && fromLng) {
-      setFromTo({
-        address: { from: fromAddress, to: toAddress },
-        coordinates: { lat: fromLat, lng: fromLng },
-      });
-    }
 
     if (fromLat && fromLng && toLat && toLng && time && date) {
       const departureSearchParams: DepartureSearchParams = {

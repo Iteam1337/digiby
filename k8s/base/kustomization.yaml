@@ -8,4 +8,4 @@ resources:
   - frontend.yaml
 
 # namespace to deploy all Resources to
-namespace: digiby 
+namespace: digiby

@@ -78,8 +78,8 @@ const DeparturesDetails = () => {
       type: 'LineString',
       coordinates: [
         [
-          parseFloat(fromTo.coordinates.lng),
-          parseFloat(fromTo.coordinates.lat),
+          parseFloat(fromTo.from.coordinates[0].toString()),
+          parseFloat(fromTo.from.coordinates[1].toString()),
         ],
         [
           parseFloat(departure.departure.stop_position.lng),
@@ -95,9 +95,11 @@ const DeparturesDetails = () => {
       return {
         userCoordinates: {
           from: [
-            parseFloat(fromTo.coordinates.lng),
-            parseFloat(fromTo.coordinates.lat),
+            parseFloat(fromTo.from.coordinates[0].toString()),
+            parseFloat(fromTo.from.coordinates[1].toString()),
           ],
+          // todo: add fromTo.to.coordinates as final destination
+          // when we add walking distance from last stop on route
           to: [
             parseFloat(dep.destination.stop_position.lng),
             parseFloat(dep.destination.stop_position.lat),

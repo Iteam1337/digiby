@@ -1,6 +1,6 @@
 export type Address = {
-  coordinates: [lon: number, lat: number];
   address: string;
+  coordinates: LngLat;
 };
 
 export type FormattedState = {
@@ -33,7 +33,7 @@ type Stop = {
   stop_position: StopPosition;
 };
 
-type LatLng = [number, number];
+export type LngLat = [number, number];
 
 export type Departure = {
   date: string;
@@ -46,7 +46,7 @@ export type Departure = {
   stops: Stop[];
   transportation_type: string;
   travel_time: number;
-  geometry: LatLng[];
+  geometry: LngLat[];
 };
 
 export type Departures = Departure[];

@@ -163,8 +163,6 @@ defmodule GTFS do
     |> NimbleCSV.RFC4180.parse_stream()
     |> Flow.from_enumerable(stages: 4)
     |> Enum.map(fn [id, lat, lon, _, _] ->
-      IO.inspect(:ets.last(@shapes_table_name))
-
       :ets.insert(
         @shapes_table_name,
         {id,

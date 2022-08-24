@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { DepartureSearchParams } from './types';
 
-const url = 'https://digiby.predictivemovement.se/api/transports';
+const url = 'https://digiby.iteam.services/api/transports';
 // https://digiby.predictivemovement.se/api/transports?fromLat=67.838153&fromLng=20.273026&toLat=67.648362&toLng=21.046703
 
 export default async function getTransports(data: DepartureSearchParams) {
