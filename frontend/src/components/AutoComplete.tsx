@@ -30,12 +30,10 @@ type Props = {
 
 const AutoCompleteAddress = ({ name, placeholder, previousSearch }: Props) => {
   const [searchAddresses, setSearchAddresses] = useState<Address[]>([]);
-  const [selectedAddress, setSelectedAddress] = useState<Address>();
+  const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(
+    previousSearch
+  );
   const { setFieldValue } = useFormikContext();
-
-  useEffect(() => {
-    if (previousSearch) setSelectedAddress(previousSearch);
-  }, [previousSearch]);
 
   const searchWithDebounce = useMemo(
     () => debounce((q) => getAddress(q, setSearchAddresses), 300),
