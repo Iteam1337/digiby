@@ -69,10 +69,10 @@ defmodule Digiby.Fardtjanst do
       {query_to_lng, query_to_lat} = query_to_position
 
       from_stop_position =
-        Map.put(%{"lat" => query_from_lat, "lng" => query_from_lng}, :name, from_street)
+        Map.put(%{"lat" => query_from_lat, "lng" => query_from_lng}, :name, "Min position")
 
       to_stop_position =
-        Map.put(%{"lat" => query_to_lat, "lng" => query_to_lng}, :name, to_street)
+        Map.put(%{"lat" => query_to_lat, "lng" => query_to_lng}, :name, "Destination")
 
       first_stop =
         Map.new()
