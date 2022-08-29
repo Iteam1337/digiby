@@ -79,10 +79,12 @@ const BookingModal = ({ close, confirmButtonText, children }: Props) => {
       ref={ref}
     >
       <div className="fixed top-1/4 left-1/2 translate-y-[-50%] translate-x-[-50%]">
-        <div className="flex-column color-pm-black md:width-1/2 z-30 h-auto w-[70vw] rounded-md bg-pm-white p-5">
+        <div className="flex-column md:width-1/2 z-30 h-auto w-[70vw] rounded-md bg-pm-white p-5">
           {children}
-          <Button type="button" onClick={close} text="Tillbaka" />
-          <Button type="button" onClick={close} text={confirmButtonText} />
+          <div className="mt-4 flex space-x-5">
+            <Button type="button" onClick={close} text="Tillbaka" transparent />
+            <Button type="button" onClick={close} text={confirmButtonText} />
+          </div>
         </div>
       </div>
     </div>

@@ -60,10 +60,12 @@ const DepartureInfo = ({
           <p className="text-xs">{departure.transportation_type}</p>
           <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
         </div>
-        <div className="flex h-auto w-auto justify-between">
-          <Button type="button" onClick={openModal} text="Boka resa" />
+        <div className="flex h-auto w-auto items-center justify-between">
           {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
           <p className="font-bold">200 SEK</p>
+          <div className="w-30">
+            <Button type="button" onClick={openModal} text="Boka resa" />
+          </div>
         </div>
       </summary>
       <div className="mx-6 flex max-w-screen-sm border-t border-t-pm-black pt-6 sm:mx-auto sm:w-full">
