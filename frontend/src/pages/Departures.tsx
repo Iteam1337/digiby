@@ -103,12 +103,13 @@ const Departures = () => {
           </>
         )}
         {!loading && data?.length === 0 && (
-          <div className=" flex flex-col items-center">
-            <p>Ingen rutt hittades</p>
-            <a className="underline" href="/">
-              Tillbaka till sök
-            </a>
-          </div>
+          <EmptyStates
+            heading="Inga resor hittades"
+            text="Vi hittade inga resor genom er sökning. Prova att ändra hållplats,
+      tid, dag eller försök senare."
+            buttonText="Tillbaka till sökningen"
+            onClick={() => navigate(-1)}
+          />
         )}
       </>
     </Section>
