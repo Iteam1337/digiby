@@ -4,8 +4,15 @@ import ArrowIcon from '../icons/ArrowIcon';
 import { getHoursAndMinutes, humanizeTime } from '../utils/dateTimeFormatting';
 // import DragIcon from '../icons/DragIcon';
 import { Departure } from '../utils/types';
+import Button from './Button';
 
-const DepartureInfo = ({ departure }: { departure: Departure }) => {
+const DepartureInfo = ({
+  departure,
+  openModal,
+}: {
+  departure: Departure;
+  openModal: () => void;
+}) => {
   const [open, setOpen] = useState(false);
 
   const myPositionTime = (distance: number, arrival: string) => {
@@ -53,7 +60,8 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
           <p className="text-xs">{departure.transportation_type}</p>
           <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
         </div>
-        <div className="flex justify-end">
+        <div className="flex h-auto w-auto justify-between">
+          <Button type="button" onClick={openModal} text="Boka resa" />
           {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
           <p className="font-bold">200 SEK</p>
         </div>

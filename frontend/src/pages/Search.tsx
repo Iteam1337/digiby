@@ -134,7 +134,9 @@ const Search = () => {
             <span className="mt-2 mr-6 text-xs">
               <ErrorMessage name="date" />
             </span>
-            <Button type="submit" text="Hitta resa" />
+            <div className="mt-12 flex justify-center">
+              <Button type="submit" text="Hitta resa" />
+            </div>
           </form>
         )}
       </Formik>

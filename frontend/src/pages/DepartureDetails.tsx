@@ -6,6 +6,7 @@ import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
+import BookingModal from '../components/BookingModal';
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -18,6 +19,8 @@ const DeparturesDetails = () => {
   const [departure] = useAtom(departuresDetails);
   const [departures] = useAtom(departuresAtom);
   const [fromTo] = useAtom(fromToAtom);
+
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (departure) {
@@ -41,6 +44,17 @@ const DeparturesDetails = () => {
       </div>
     );
   }
+
+  const toggleModal = () => {
+    const body = document.body;
+    if (!showModal) {
+      body.style.overflow = 'hidden';
+      setShowModal(true);
+    } else {
+      body.style.overflow = '';
+      setShowModal(false);
+    }
+  };
 
   const routes = {
     type: 'FeatureCollection',
@@ -242,6 +256,11 @@ const DeparturesDetails = () => {
     <section className="h-full w-full bg-pm-black">
       <h1 className="sr-only">Vald avgång</h1>
       <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
+        {showModal && (
+          <BookingModal close={toggleModal} confirmButtonText="Okej">
+            <p>Information text</p>
+          </BookingModal>
+        )}
         <DeckGL layers={layers} initialViewState={mapState} controller={true}>
           <StaticMap
             mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
@@ -250,7 +269,7 @@ const DeparturesDetails = () => {
           />
         </DeckGL>
       </div>
-      <DepartureInfo departure={departure} />
+      <DepartureInfo departure={departure} openModal={toggleModal} />
     </section>
   );
 };
