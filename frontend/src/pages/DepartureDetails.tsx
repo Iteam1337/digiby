@@ -7,6 +7,94 @@ import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
 import BookingModal from '../components/BookingModal';
+import Button from '../components/Button';
+
+const ModalContent = ({
+  type,
+  from,
+  to,
+  seats,
+  close,
+}: {
+  type: string;
+  from: string;
+  to: string;
+  seats: number;
+  close: () => void;
+}) => {
+  const [amount, setAmount] = useState(1);
+
+  const handleClick = (method: string) => {
+    if (method === 'add' && amount <= seats - 1) setAmount(amount + 1);
+    if (method === 'subtr' && amount >= 2) setAmount(amount - 1);
+  };
+
+  if (type === 'Anropsstyrd Buss') {
+    return (
+      <>
+        <h2 className="mb-3 text-xl">Boka anropsstyrd resa</h2>
+        <p className="mb-3 text-xs">
+          Denna resa efterfrågestyrd och beställs senast 17:00 en dag före
+          resdagen.
+        </p>
+        <p className="mb-3 text-xs">
+          Bokning sker via Länstrafikens kundtjänst:{' '}
+          <a className="font-bold underline" href="tel:0771-100 110">
+            0771-100 110
+          </a>
+          .
+        </p>
+        <div className="flex justify-end">
+          <div className="mt-6 w-1/2 sm:w-1/4">
+            <Button type="button" onClick={close} text="Okej" />
+          </div>
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <h2 className="mb-3 text-xl">Boka plats i {type.toLowerCase()}</h2>
+      <p className="mb-3 text-xs">
+        Denna resa betalas direkt i bilen efter genomförd resa.
+      </p>
+      <p className="text-xs">
+        Från <b>{from}</b>
+      </p>
+      <p className="mb-6 text-xs">
+        Till <b>{to}</b>
+      </p>
+      <p className="mb-6 text-xs">
+        {/* todo: add amount from api */}
+        <b>X</b> av <b>{seats}</b> platser tillgängliga
+      </p>
+      <div className="flex items-center justify-between space-x-5">
+        <p className="text-xs">Boka plats</p>
+        <div className="flex items-center rounded-md bg-pm-grey">
+          <button
+            className="h-10 w-12 text-xl"
+            type="button"
+            onClick={() => handleClick('subtr')}
+          >
+            –
+          </button>
+          <p className="w-6 text-center text-xs font-bold">{amount}</p>
+          <button
+            className="h-10 w-12 text-xl"
+            type="button"
+            onClick={() => handleClick('add')}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div className="mt-6 flex space-x-5">
+        <Button type="button" onClick={close} text="Tillbaka" transparent />
+        <Button type="button" onClick={close} text="Boka" />
+      </div>
+    </>
+  );
+};
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -252,13 +340,24 @@ const DeparturesDetails = () => {
     stopPositionLayer,
   ];
 
+  // const showBooking = departure.transportation_type !== 'Buss';
+
   return (
     <section className="h-full w-full bg-pm-black">
       <h1 className="sr-only">Vald avgång</h1>
       <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
         {showModal && (
-          <BookingModal close={toggleModal} confirmButtonText="Okej">
-            <p>Information text</p>
+          <BookingModal close={toggleModal}>
+            <ModalContent
+              close={toggleModal}
+              from={departure.departure.stop_position.name}
+              to={departure.destination.stop_position.name}
+              //todo: use api endpoint
+              seats={10}
+              //todo: comment back below when done with modal content
+              type={'Anropsstyrd Buss'}
+              // type={departure.transportation_type}
+            />
           </BookingModal>
         )}
         <DeckGL layers={layers} initialViewState={mapState} controller={true}>
@@ -269,7 +368,13 @@ const DeparturesDetails = () => {
           />
         </DeckGL>
       </div>
-      <DepartureInfo departure={departure} openModal={toggleModal} />
+      <DepartureInfo
+        showBooking={true}
+        //todo: comment back below when done with modal content
+        // showBooking={showBooking}
+        departure={departure}
+        openModal={toggleModal}
+      />
     </section>
   );
 };

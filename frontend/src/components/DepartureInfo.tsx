@@ -9,9 +9,11 @@ import Button from './Button';
 const DepartureInfo = ({
   departure,
   openModal,
+  showBooking,
 }: {
   departure: Departure;
   openModal: () => void;
+  showBooking: boolean;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -63,9 +65,11 @@ const DepartureInfo = ({
         <div className="flex h-auto w-auto items-center justify-between">
           {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
           <p className="font-bold">200 SEK</p>
-          <div className="w-30">
-            <Button type="button" onClick={openModal} text="Boka resa" />
-          </div>
+          {showBooking && (
+            <div className="w-30">
+              <Button type="button" onClick={openModal} text="Boka resa" />
+            </div>
+          )}
         </div>
       </summary>
       <div className="mx-6 flex max-w-screen-sm border-t border-t-pm-black pt-6 sm:mx-auto sm:w-full">

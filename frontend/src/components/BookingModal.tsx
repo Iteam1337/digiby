@@ -1,14 +1,11 @@
 import { useRef, useEffect, useState } from 'react';
 
-import Button from './Button';
-
 type Props = {
   close: () => void;
-  confirmButtonText: string;
   children: JSX.Element;
 };
 
-const BookingModal = ({ close, confirmButtonText, children }: Props) => {
+const BookingModal = ({ close, children }: Props) => {
   const [focusableElements, setFocusableElements] = useState<
     HTMLElement[] | undefined
   >();
@@ -78,13 +75,9 @@ const BookingModal = ({ close, confirmButtonText, children }: Props) => {
       className={`absolute inset-x-1/2 bg-[rgb(0,0,0,0.5)] top-[calc(50%+${scrollY}px)] left-1/2 z-20 h-screen w-screen translate-x-[-50%]`}
       ref={ref}
     >
-      <div className="fixed top-1/4 left-1/2 translate-y-[-50%] translate-x-[-50%]">
-        <div className="flex-column md:width-1/2 z-30 h-auto w-[70vw] rounded-md bg-pm-white p-5">
+      <div className="fixed top-1/3 left-1/2 flex w-full translate-y-[-50%] translate-x-[-50%] justify-center">
+        <div className="flex-column mx-auto w-4/5 max-w-screen-sm rounded-md bg-pm-white p-5">
           {children}
-          <div className="mt-4 flex space-x-5">
-            <Button type="button" onClick={close} text="Tillbaka" transparent />
-            <Button type="button" onClick={close} text={confirmButtonText} />
-          </div>
         </div>
       </div>
     </div>
