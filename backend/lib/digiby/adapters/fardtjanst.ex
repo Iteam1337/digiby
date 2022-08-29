@@ -40,7 +40,7 @@ defmodule Digiby.Adapters.Fardtjanst do
   def load_fardtjanst do
     table_name = :fardtjanst
     :ets.new(table_name, [:set, :public, :named_table])
-    {:ok, file} = File.read("./data/fardtjanst/arjeplog-2019.json")
+    {:ok, file} = File.read("./data/fardtjanst/jokkmokk-2019.json")
 
     file
     |> Jason.decode!()
@@ -49,10 +49,10 @@ defmodule Digiby.Adapters.Fardtjanst do
   end
 
   def convert_to_json do
-    new_file = File.open!("./data/fardtjanst/arjeplog-2019.json", [:utf8, :write])
+    new_file = File.open!("./data/fardtjanst/jokkmokk-2019.json", [:utf8, :write])
     IO.write(new_file, "[")
 
-    Path.expand("./data/fardtjanst/arjeplog-2019.csv", File.cwd!())
+    Path.expand("./data/fardtjanst/jokkmokk-2019.csv", File.cwd!())
     |> File.stream!(read_ahead: 10_000)
     |> NimbleCSV.RFC4180.parse_stream()
     |> Flow.from_enumerable(stages: 5)
