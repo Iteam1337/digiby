@@ -42,3 +42,5 @@ export const fromToAtom = atom<FromTo>({
   from: { address: '', coordinates: [0, 0] },
   to: { address: '', coordinates: [0, 0] },
 });
+
+export const bookingsAtom = atom<string[]>([]);

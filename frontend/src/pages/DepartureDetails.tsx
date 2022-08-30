@@ -3,7 +3,12 @@ import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
 
-import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
+import {
+  departuresDetails,
+  departuresAtom,
+  fromToAtom,
+  bookingsAtom,
+} from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
 import BookingModal from '../components/BookingModal';
@@ -14,17 +19,21 @@ const ModalContent = ({
   from,
   to,
   seats,
+  id,
   close,
+  handleBooking,
 }: {
   type: string;
   from: string;
   to: string;
   seats: number;
+  id: string;
   close: () => void;
+  handleBooking: (id: string) => void;
 }) => {
   const [amount, setAmount] = useState(1);
 
-  const handleClick = (method: string) => {
+  const amountControl = (method: string) => {
     if (method === 'add' && amount <= seats - 1) setAmount(amount + 1);
     if (method === 'subtr' && amount >= 2) setAmount(amount - 1);
   };
@@ -74,7 +83,7 @@ const ModalContent = ({
           <button
             className="h-10 w-12 text-xl"
             type="button"
-            onClick={() => handleClick('subtr')}
+            onClick={() => amountControl('subtr')}
           >
             –
           </button>
@@ -82,7 +91,7 @@ const ModalContent = ({
           <button
             className="h-10 w-12 text-xl"
             type="button"
-            onClick={() => handleClick('add')}
+            onClick={() => amountControl('add')}
           >
             +
           </button>
@@ -90,7 +99,7 @@ const ModalContent = ({
       </div>
       <div className="mt-6 flex space-x-5">
         <Button type="button" onClick={close} text="Tillbaka" transparent />
-        <Button type="button" onClick={close} text="Boka" />
+        <Button type="button" onClick={() => handleBooking(id)} text="Boka" />
       </div>
     </>
   );
@@ -107,8 +116,8 @@ const DeparturesDetails = () => {
   const [departure] = useAtom(departuresDetails);
   const [departures] = useAtom(departuresAtom);
   const [fromTo] = useAtom(fromToAtom);
-
   const [showModal, setShowModal] = useState(false);
+  const [bookings, setBookings] = useAtom(bookingsAtom);
 
   useEffect(() => {
     if (departure) {
@@ -143,6 +152,18 @@ const DeparturesDetails = () => {
       setShowModal(false);
     }
   };
+
+  const previouslyBooked = bookings.find((item) => item === departure.id);
+
+  const handleBooking = (id: string) => {
+    if (!previouslyBooked) setBookings([...bookings, id]);
+    else if (previouslyBooked) {
+      const arr = bookings.filter((item) => item !== id);
+      setBookings(arr);
+    } else return;
+  };
+
+  console.log(bookings);
 
   const routes = {
     type: 'FeatureCollection',
@@ -350,8 +371,10 @@ const DeparturesDetails = () => {
               //todo: use api endpoint
               seats={10}
               //todo: comment back below when done with modal content
-              type={'Anropsstyrd Buss'}
+              type={'Sjukresa'}
               // type={departure.transportation_type}
+              id={departure.id}
+              handleBooking={handleBooking}
             />
           </BookingModal>
         )}
@@ -369,6 +392,8 @@ const DeparturesDetails = () => {
         // showBooking={showBooking}
         departure={departure}
         openModal={toggleModal}
+        handleBooking={handleBooking}
+        previouslyBooked={previouslyBooked}
       />
     </section>
   );

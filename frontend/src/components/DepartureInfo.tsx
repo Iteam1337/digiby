@@ -10,10 +10,14 @@ const DepartureInfo = ({
   departure,
   openModal,
   showBooking,
+  handleBooking,
+  previouslyBooked,
 }: {
   departure: Departure;
   openModal: () => void;
   showBooking: boolean;
+  handleBooking: (id: string) => void;
+  previouslyBooked: string | undefined;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -67,7 +71,16 @@ const DepartureInfo = ({
           <p className="font-bold">200 SEK</p>
           {showBooking && (
             <div className="w-30">
-              <Button type="button" onClick={openModal} text="Boka resa" />
+              {previouslyBooked ? (
+                <Button
+                  type="button"
+                  onClick={() => handleBooking(departure.id)}
+                  text="Bokad"
+                  outline
+                />
+              ) : (
+                <Button type="button" onClick={openModal} text="Boka resa" />
+              )}
             </div>
           )}
         </div>
