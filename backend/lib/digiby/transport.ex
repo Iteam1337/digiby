@@ -4,6 +4,7 @@ defmodule Digiby.Transport do
     :line_number,
     :transportation_type,
     :travel_time,
+    :date,
     :cost,
     :agency,
     :vehicle_type,

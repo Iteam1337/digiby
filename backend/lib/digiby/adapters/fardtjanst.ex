@@ -40,7 +40,7 @@ defmodule Digiby.Adapters.Fardtjanst do
   def load_fardtjanst do
     table_name = :fardtjanst
     :ets.new(table_name, [:set, :public, :named_table])
-    {:ok, file} = File.read("./data/fardtjanst/arjeplog-2019.json")
+    {:ok, file} = File.read("./data/fardtjanst/jokkmokk-2019.json")
 
     file
     |> Jason.decode!()
@@ -49,10 +49,10 @@ defmodule Digiby.Adapters.Fardtjanst do
   end
 
   def convert_to_json do
-    new_file = File.open!("./data/fardtjanst/arjeplog-2019.json", [:utf8, :write])
+    new_file = File.open!("./data/fardtjanst/jokkmokk-2019.json", [:utf8, :write])
     IO.write(new_file, "[")
 
-    Path.expand("./data/fardtjanst/arjeplog-2019.csv", File.cwd!())
+    Path.expand("./data/fardtjanst/jokkmokk-2019.csv", File.cwd!())
     |> File.stream!(read_ahead: 10_000)
     |> NimbleCSV.RFC4180.parse_stream()
     |> Flow.from_enumerable(stages: 5)
@@ -128,9 +128,7 @@ defmodule Digiby.Adapters.Fardtjanst do
       {:ok, res} -> res
       _ -> %{}
     end)
-    |> Enum.map(fn res -> Map.get(res, "features") end)
-    |> Enum.reject(&is_nil/1)
-    |> List.first()
+    |> Enum.map(fn res -> Map.get(res, "features") |> List.first() end)
   end
 
   def to_coord(street_name, municipality) do
@@ -139,14 +137,16 @@ defmodule Digiby.Adapters.Fardtjanst do
       |> Map.get("features")
 
     res =
-      if res == [],
-        do:
-          search_for_coordinates([
-            street_name <> " 1 " <> municipality,
-            street_name <> municipality,
-            street_name <> " 1 "
-          ]),
-        else: res
+      if res == [] do
+        search_for_coordinates([
+          street_name <> " 1 " <> municipality,
+          street_name <> municipality,
+          street_name <> " 1 "
+        ])
+        |> Enum.reject(&is_nil/1)
+      else
+        res
+      end
 
     pos =
       res
