@@ -59,14 +59,18 @@ defmodule DigibyWeb.TransportController do
 
     samakning = Digiby.Samakning.list_transports(query_date, from: from, to: to)
 
+    samakning_tomorrow =
+      Digiby.Samakning.list_transports(query_date |> Date.add(1), from: from, to: to)
+
     render(conn, "index.json",
       transports:
         Enum.concat([
           transports_query_day,
           fardtjanst,
+          samakning,
           transports_tomorrow,
           fardtjanst_tomorrow,
-          samakning
+          samakning_tomorrow
         ])
     )
   end
