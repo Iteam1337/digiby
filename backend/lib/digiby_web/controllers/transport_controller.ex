@@ -68,14 +68,12 @@ defmodule DigibyWeb.TransportController do
 
     render(conn, "index.json",
       transports:
-        Enum.concat([
-          transports_query_day,
-          fardtjanst,
-          samakning,
-          transports_tomorrow,
-          fardtjanst_tomorrow,
-          samakning_tomorrow
-        ])
+        Enum.concat(
+          Enum.concat([transports_query_day, fardtjanst, samakning])
+          |> Enum.sort_by(& &1.departure.arrival_time),
+          Enum.concat([transports_tomorrow, fardtjanst_tomorrow, samakning_tomorrow])
+          |> Enum.sort_by(& &1.departure.arrival_time)
+        )
     )
   end
 
