@@ -35,70 +35,50 @@ defmodule DigibyWeb.TransportController do
     time = (time <> ":00") |> Time.from_iso8601!()
 
     query_date = input_date_to_elixir_date(date)
-    {transports_query_day, transports_tomorrow} = get_linjebusses(query_date, time, from, to)
 
-    fardtjanst =
-      Digiby.Fardtjanst.list_transports(
-        query_date,
-        start_time: time,
-        from: from,
-        to: to
-      )
-      |> Enum.map(fn transport -> Map.put(transport, :date, Date.to_string(query_date)) end)
-
-    fardtjanst_tomorrow =
-      Digiby.Fardtjanst.list_transports(
-        query_date |> Date.add(1),
-        start_time: time,
-        from: from,
-        to: to
-      )
-      |> Enum.map(fn transport ->
-        Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
+    res =
+      [
+        {
+          &Digiby.Fardtjanst.list_transports/2,
+          query_date,
+          [start_time: time, from: from, to: to]
+        },
+        {
+          &Digiby.Fardtjanst.list_transports/2,
+          query_date |> Date.add(1),
+          [start_time: time, from: from, to: to]
+        },
+        {&Digiby.Samakning.list_transports/2, query_date, [from: from, to: to, start_time: time]},
+        {&Digiby.Samakning.list_transports/2, query_date |> Date.add(1),
+         [from: from, to: to, end_time: time]},
+        {
+          &Digiby.Linjebuss.list_transports/2,
+          query_date,
+          [
+            start_time: time,
+            from: from,
+            to: to
+          ]
+        },
+        {
+          &Digiby.Linjebuss.list_transports/2,
+          query_date |> Date.add(1),
+          [
+            start_time: time,
+            from: from,
+            to: to
+          ]
+        }
+      ]
+      |> Flow.from_enumerable()
+      |> Flow.partition(stages: 2)
+      |> Flow.flat_map(fn {fun, date, opt} ->
+        fun.(date, opt)
+        |> Enum.map(fn transports -> Map.put(transports, :date, date) end)
       end)
+      |> Enum.sort_by(fn trip -> DateTime.new(trip.date, trip.departure.arrival_time) end)
 
-    samakning = Digiby.Samakning.list_transports(query_date, from: from, to: to, start_time: time)
-
-    samakning_tomorrow =
-      Digiby.Samakning.list_transports(query_date |> Date.add(1),
-        from: from,
-        to: to,
-        end_time: time
-      )
-
-    render(conn, "index.json",
-      transports:
-        Enum.concat(
-          Enum.concat([transports_query_day, fardtjanst, samakning])
-          |> Enum.sort_by(& &1.departure.arrival_time),
-          Enum.concat([transports_tomorrow, fardtjanst_tomorrow, samakning_tomorrow])
-          |> Enum.sort_by(& &1.departure.arrival_time)
-        )
-    )
-  end
-
-  def get_linjebusses(query_date, time, from, to) do
-    transports_query_day =
-      Linjebuss.list_transports(
-        query_date |> Date.to_string() |> String.replace("-", ""),
-        start_time: time,
-        from: from,
-        to: to
-      )
-      |> Enum.map(fn transport -> Map.put(transport, :date, Date.to_string(query_date)) end)
-
-    transports_tomorrow =
-      Linjebuss.list_transports(
-        query_date |> Date.add(1) |> Date.to_string() |> String.replace("-", ""),
-        end_time: time |> Time.add(1, :second),
-        from: from,
-        to: to
-      )
-      |> Enum.map(fn transport ->
-        Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
-      end)
-
-    {transports_query_day, transports_tomorrow}
+    render(conn, "index.json", transports: res)
   end
 
   @doc """
