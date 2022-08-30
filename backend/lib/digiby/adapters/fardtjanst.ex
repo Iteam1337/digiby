@@ -118,7 +118,6 @@ defmodule Digiby.Adapters.Fardtjanst do
   end
 
   def search_for_coordinates(search_strings) do
-    IO.inspect(search_strings)
     {:ok, pid} = Task.Supervisor.start_link()
 
     Enum.map(search_strings, fn str ->
