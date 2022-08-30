@@ -22,6 +22,7 @@ const ModalContent = ({
   id,
   close,
   handleBooking,
+  previouslyBooked,
 }: {
   type: string;
   from: string;
@@ -30,6 +31,7 @@ const ModalContent = ({
   id: string;
   close: () => void;
   handleBooking: (id: string, amount?: number) => void;
+  previouslyBooked: string | undefined;
 }) => {
   const [amount, setAmount] = useState(1);
 
@@ -63,48 +65,65 @@ const ModalContent = ({
   }
   return (
     <>
-      <h2 className="mb-3 text-xl">Boka plats i {type.toLowerCase()}</h2>
-      <p className="mb-3 text-xs">
-        Denna resa betalas direkt i bilen efter genomförd resa.
-      </p>
-      <p className="text-xs">
-        Från <b>{from}</b>
-      </p>
-      <p className="mb-6 text-xs">
-        Till <b>{to}</b>
-      </p>
-      <p className="mb-6 text-xs">
-        {/* todo: add available amount from api */}
-        <b>{seats[0]}</b> av <b>{seats[1]}</b> platser tillgängliga
-      </p>
-      <div className="flex items-center justify-between space-x-5">
-        <p className="text-xs">Boka plats</p>
-        <div className="flex items-center rounded-md bg-pm-grey">
-          <button
-            className="h-10 w-12 text-xl"
-            type="button"
-            onClick={() => amountControl('subtr')}
-          >
-            –
-          </button>
-          <p className="w-6 text-center text-xs font-bold">{amount}</p>
-          <button
-            className="h-10 w-12 text-xl"
-            type="button"
-            onClick={() => amountControl('add')}
-          >
-            +
-          </button>
-        </div>
-      </div>
-      <div className="mt-6 flex space-x-5">
-        <Button type="button" onClick={close} text="Tillbaka" transparent />
-        <Button
-          type="button"
-          onClick={() => handleBooking(id, amount)}
-          text="Boka"
-        />
-      </div>
+      {!previouslyBooked ? (
+        <>
+          <h2 className="mb-3 text-xl">Boka plats i {type.toLowerCase()}</h2>
+          <p className="mb-3 text-xs">
+            Denna resa betalas direkt i bilen efter genomförd resa.
+          </p>
+          <p className="text-xs">
+            Från <b>{from}</b>
+          </p>
+          <p className="mb-6 text-xs">
+            Till <b>{to}</b>
+          </p>
+          <p className="mb-6 text-xs">
+            {/* todo: add available amount from api */}
+            <b>{seats[0]}</b> av <b>{seats[1]}</b> platser tillgängliga
+          </p>
+          <div className="flex items-center justify-between space-x-5">
+            <p className="text-xs">Boka plats</p>
+            <div className="flex items-center rounded-md bg-pm-grey">
+              <button
+                className="h-10 w-12 text-xl"
+                type="button"
+                onClick={() => amountControl('subtr')}
+              >
+                –
+              </button>
+              <p className="w-6 text-center text-xs font-bold">{amount}</p>
+              <button
+                className="h-10 w-12 text-xl"
+                type="button"
+                onClick={() => amountControl('add')}
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <div className="mt-6 flex space-x-5">
+            <Button type="button" onClick={close} text="Tillbaka" transparent />
+            <Button
+              type="button"
+              onClick={() => handleBooking(id, amount)}
+              text="Boka"
+            />{' '}
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 className="mb-3 text-xl">Klart!</h2>
+          <p className="mb-3 text-xs">
+            Du har bokat en plats till denna resa. Du betalar direkt i bilen
+            efter genomförd resa.
+          </p>
+          <div className="flex justify-end">
+            <div className="mt-6 w-1/2 sm:w-1/4">
+              <Button type="button" onClick={close} text="Okej" />
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };
@@ -158,7 +177,6 @@ const DeparturesDetails = () => {
   };
 
   const previouslyBooked = bookings.find((item) => item.id === departure.id);
-  console.log(previouslyBooked);
 
   const handleBooking = (id: string, amount?: number) => {
     if (!previouslyBooked && amount)
@@ -168,8 +186,6 @@ const DeparturesDetails = () => {
       setBookings(arr);
     } else return;
   };
-
-  console.log(bookings);
 
   const routes = {
     type: 'FeatureCollection',
@@ -382,6 +398,7 @@ const DeparturesDetails = () => {
               // type={departure.transportation_type}
               id={departure.id}
               handleBooking={handleBooking}
+              previouslyBooked={previouslyBooked?.id}
             />
           </BookingModal>
         )}
