@@ -47,6 +47,7 @@ export type Departure = {
   transportation_type: string;
   travel_time: number;
   geometry: LngLat[];
+  id: string;
 };
 
 export type Departures = Departure[];

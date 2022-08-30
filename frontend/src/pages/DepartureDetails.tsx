@@ -152,11 +152,7 @@ const DeparturesDetails = () => {
         return {
           type: 'Feature',
           properties: {
-            color:
-              // todo: check <id> instead of <arrival_time> when <id> endpoint is available from api.
-              dep.departure.arrival_time === departure.departure.arrival_time
-                ? [19, 197, 123]
-                : [200, 200, 200],
+            color: dep.id === departure.id ? [19, 197, 123] : [200, 200, 200],
           },
           geometry: { type: 'LineString', coordinates: dep.geometry },
         };
@@ -213,9 +209,8 @@ const DeparturesDetails = () => {
             parseFloat(dep.destination.stop_position.lat),
           ],
         },
-        // todo: check <id> instead of <arrival_time> when <id> endpoint is available from api.
         color:
-          dep.departure.arrival_time === departure.departure.arrival_time
+          dep.id === departure.id
             ? [
                 [19, 197, 123],
                 [255, 255, 255],
