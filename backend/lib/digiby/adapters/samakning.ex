@@ -1,9 +1,13 @@
 defmodule Digiby.Adapters.Samakning do
+  @central_vuollerim %{lat: 66.429942, lng: 20.604759}
+  @harads %{lat: 66.082736, lng: 20.961049}
+
   def get_transports(_date) do
-    generate_transports(10)
+    generate_transports(5, @central_vuollerim, @harads)
+    |> Enum.concat(generate_transports(5, @harads, @central_vuollerim))
   end
 
-  def generate_transports(amount) do
+  def generate_transports(amount, start, stop) do
     Enum.map(1..amount, fn _ ->
       time_offset = Enum.random(1..20)
       start_time = Time.from_iso8601!("06:50:00Z") |> Time.add(time_offset * 60)
@@ -11,12 +15,12 @@ defmodule Digiby.Adapters.Samakning do
 
       from = %{
         arrival_time: Calendar.strftime(start_time, "%H:%M:%S"),
-        stop_position: random(%{lat: 66.429942, lng: 20.604759})
+        stop_position: random(start)
       }
 
       to = %{
         arrival_time: Calendar.strftime(stop_time, "%H:%M:%S"),
-        stop_position: random(%{lat: 66.082736, lng: 20.961049})
+        stop_position: random(stop)
       }
 
       %{
