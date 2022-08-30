@@ -77,6 +77,7 @@ const DepartureInfo = ({
                   onClick={() => handleBooking(departure.id)}
                   text="Bokad"
                   outline
+                  icon
                 />
               ) : (
                 <Button type="button" onClick={openModal} text="Boka resa" />
