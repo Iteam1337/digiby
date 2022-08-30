@@ -3,7 +3,7 @@ defmodule DigibyWeb.TransportController do
 
   alias Digiby.Linjebuss
 
-  action_fallback DigibyWeb.FallbackController
+  action_fallback(DigibyWeb.FallbackController)
 
   # @kiruna_polisstation {20.222821, 67.857271}
   # @forsamlingshemmet {20.236833, 67.851933}
@@ -57,9 +57,23 @@ defmodule DigibyWeb.TransportController do
         Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
       end)
 
+    samakning = Digiby.Samakning.list_transports(query_date, from: from, to: to, start_time: time)
+
+    samakning_tomorrow =
+      Digiby.Samakning.list_transports(query_date |> Date.add(1),
+        from: from,
+        to: to,
+        end_time: time
+      )
+
     render(conn, "index.json",
       transports:
-        Enum.concat([transports_query_day, fardtjanst, transports_tomorrow, fardtjanst_tomorrow])
+        Enum.concat(
+          Enum.concat([transports_query_day, fardtjanst, samakning])
+          |> Enum.sort_by(& &1.departure.arrival_time),
+          Enum.concat([transports_tomorrow, fardtjanst_tomorrow, samakning_tomorrow])
+          |> Enum.sort_by(& &1.departure.arrival_time)
+        )
     )
   end
 

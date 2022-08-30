@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
 import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
+import { useNavigate } from 'react-router-dom';
 
 import {
   departuresDetails,
@@ -11,6 +12,8 @@ import {
 } from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
+import Section from '../components/Section';
+import EmptyStates from '../components/EmptyStates';
 import BookingModal from '../components/BookingModal';
 import Button from '../components/Button';
 
@@ -141,6 +144,7 @@ const DeparturesDetails = () => {
   const [fromTo] = useAtom(fromToAtom);
   const [showModal, setShowModal] = useState(false);
   const [bookings, setBookings] = useAtom(bookingsAtom);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (departure) {
@@ -156,12 +160,12 @@ const DeparturesDetails = () => {
 
   if (!departure || !departures.data) {
     return (
-      <div className=" flex flex-col items-center pt-6">
-        <p>Ingen rutt hittades</p>
-        <a className="underline" href="/">
-          Tillbaka till sök
-        </a>
-      </div>
+      <EmptyStates
+        heading="Något blev fel"
+        text="Sidan du letar efter är för närvarande inte tillgänglig."
+        buttonText="Tillbaka till startsidan"
+        onClick={() => navigate('/')}
+      />
     );
   }
 
@@ -248,15 +252,15 @@ const DeparturesDetails = () => {
             parseFloat(dep.departure.stop_position.lat),
           ],
           to: [
-            parseFloat(dep.destination.stop_position.lng),
-            parseFloat(dep.destination.stop_position.lat),
+            parseFloat(departure.destination.stop_position.lng),
+            parseFloat(departure.destination.stop_position.lat),
           ],
         },
         color:
           dep.id === departure.id
             ? [
                 [19, 197, 123],
-                [255, 255, 255],
+                [52, 51, 50],
               ]
             : [
                 [200, 200, 200],
@@ -276,18 +280,8 @@ const DeparturesDetails = () => {
     `;
   }
 
-  function createRouteStartIcon(colorArr: number[][]) {
-    return `
-      <svg width="10" height="10" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="2.5" cy="2.5" r="2" fill="rgb(${colorArr[1]})" stroke="rgb(${colorArr[0]})"/>
-</svg>`;
-  }
-
   function createUserStartIcon(colorArr: number[][]) {
-    return `
-      <svg width="10" height="10" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="2.5" cy="2.5" r="2" fill="rgb(${colorArr[0]})" stroke="rgb(${colorArr[0]})"/>
-</svg>`;
+    return `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M9 14C11.7614 14 14 11.7614 14 9C14 6.23858 11.7614 4 9 4C6.23858 4 4 6.23858 4 9C4 11.7614 6.23858 14 9 14Z" fill="rgb(${colorArr[1]})" stroke="rgb(${colorArr[0]})" stroke-width="5"/></svg>`;
   }
 
   function svgToDataURL(svg: string) {
@@ -302,12 +296,14 @@ const DeparturesDetails = () => {
     filled: true,
     extruded: true,
     pointType: 'circle',
+    lineCapRounded: true,
+    lineJointRounded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 3,
     getFillColor: (d: any) => d.properties.color,
     getLineColor: (d: any) => d.properties.color,
     getPointRadius: 100,
-    getLineWidth: 2,
+    getLineWidth: 3,
     getElevation: 3,
   });
 
@@ -325,32 +321,18 @@ const DeparturesDetails = () => {
     getSize: () => 20,
   });
 
-  const startPositionLayer = new IconLayer({
-    id: 'start-icon-layer',
-    data: positions,
-    getIcon: (d: any) => ({
-      url: svgToDataURL(createRouteStartIcon(d.color)),
-      mask: false,
-      width: 10,
-      height: 10,
-    }),
-    sizeScale: 1,
-    getPosition: (d: any) => d.routeCoordinates.from,
-    getSize: () => 10,
-  });
-
   const userStartPositionLayer = new IconLayer({
     id: 'user-start-icon-layer',
     data: positions,
     getIcon: (d: any) => ({
       url: svgToDataURL(createUserStartIcon(d.color)),
       mask: false,
-      width: 10,
-      height: 10,
+      width: 18,
+      height: 18,
     }),
     sizeScale: 1,
     getPosition: (d: any) => d.userCoordinates.from,
-    getSize: () => 10,
+    getSize: () => 18,
   });
 
   const userRouteLayer = new GeoJsonLayer({
@@ -361,12 +343,14 @@ const DeparturesDetails = () => {
     filled: true,
     extruded: true,
     pointType: 'circle',
+    lineCapRounded: true,
+    lineJointRounded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 3,
     getFillColor: [253, 254, 255],
     getLineColor: [253, 254, 255],
     getPointRadius: 100,
-    getLineWidth: 2,
+    getLineWidth: 3,
     getElevation: 3,
   });
 
@@ -374,14 +358,13 @@ const DeparturesDetails = () => {
     routesLayer,
     userRouteLayer,
     userStartPositionLayer,
-    startPositionLayer,
     stopPositionLayer,
   ];
 
   // const showBooking = departure.transportation_type !== 'Buss';
 
   return (
-    <section className="h-full w-full bg-pm-black">
+    <Section details>
       <h1 className="sr-only">Vald avgång</h1>
       <div className="relative mx-[2px] h-[calc(100%-180px)] w-[calc(100%-4px)]">
         {showModal && (
@@ -419,7 +402,7 @@ const DeparturesDetails = () => {
         handleBooking={handleBooking}
         previouslyBooked={previouslyBooked?.id}
       />
-    </section>
+    </Section>
   );
 };
 

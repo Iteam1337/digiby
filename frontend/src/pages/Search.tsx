@@ -10,6 +10,7 @@ import AutoCompleteAddress from '../components/AutoComplete';
 import Button from '../components/Button';
 import DatePickerField from '../components/DatePickerField';
 import { formatDate, formatTime } from '../utils/dateTimeFormatting';
+import Section from '../components/Section';
 import { fromToAtom } from '../utils/atoms';
 
 const Search = () => {
@@ -76,7 +77,7 @@ const Search = () => {
   }
 
   return (
-    <section className="mx-auto h-full w-full max-w-screen-sm px-6 pt-6">
+    <Section>
       <h1 className="mb-3 mt-24 text-2xl font-bold text-pm-white">Hej!</h1>
       <h2 className="mb-10 text-lg text-pm-white">Hitta din nästa resa</h2>
       <Formik
@@ -140,7 +141,7 @@ const Search = () => {
           </form>
         )}
       </Formik>
-    </section>
+    </Section>
   );
 };
 

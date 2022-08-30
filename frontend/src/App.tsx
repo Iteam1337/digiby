@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import Search from './pages/Search';
 import Departures from './pages/Departures';
 import DeparturesDetails from './pages/DepartureDetails';
+import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,7 @@ function App() {
             <Route path="/" element={<Search />} />
             <Route path="/departures" element={<Departures />} />
             <Route path="/departure-details" element={<DeparturesDetails />} />
-            {/* <Route component={NotFound} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
       </BrowserRouter>
