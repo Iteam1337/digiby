@@ -9,7 +9,9 @@ defmodule Digiby.Linjebuss do
     to_position = Keyword.get(options, :to)
     end_time = Keyword.get(options, :end_time, ~T[23:59:59])
 
-    @gtfs_adapter.get_buses(date)
+    date
+    |> Calendar.strftime("%Y%m%d")
+    |> @gtfs_adapter.get_buses()
     |> get_best_matches_for_trips(from_position, to_position, start_time, end_time)
     |> sort_matches()
     |> Enum.map(&bus_to_transport_struct/1)
