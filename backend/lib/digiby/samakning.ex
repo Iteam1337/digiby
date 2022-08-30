@@ -51,6 +51,7 @@ defmodule Digiby.Samakning do
       |> Map.put(:departure, first_stop |> Map.put(:meters_from_query_to_stop, 0))
       |> Map.put(:destination, last_stop |> Map.put(:meters_from_query_to_stop, 0))
       |> Map.put(:stops, [first_stop, last_stop])
+      |> Map.put(:date, date)
     end)
     |> Enum.map(&to_transport_struct/1)
   end
@@ -73,8 +74,8 @@ defmodule Digiby.Samakning do
       Osrm.route([
         departure.stop_position,
         %{"lat" => query_from_lat, "lng" => query_from_lng},
-        destination.stop_position,
-        %{"lat" => query_to_lat, "lng" => query_to_lng}
+        %{"lat" => query_to_lat, "lng" => query_to_lng},
+        destination.stop_position
       ])
       |> Map.get("duration")
 
@@ -93,7 +94,8 @@ defmodule Digiby.Samakning do
       departure: trip.departure,
       destination: trip.destination,
       stops: trip.stops,
-      geometry: trip.geometry
+      geometry: trip.geometry,
+      date: trip.date
     }
   end
 end
