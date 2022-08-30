@@ -37,11 +37,19 @@ defmodule Digiby.Samakning do
           trip.departure_time
           |> Time.add(round(time_to_start))
         )
-        |> Map.put(:stop_position, %{"lat" => query_from_lat, "lng" => query_from_lng})
+        |> Map.put(:stop_position, %{
+          "lat" => query_from_lat,
+          "lng" => query_from_lng,
+          name: "Min position"
+        })
 
       last_stop =
         Map.new()
-        |> Map.put(:stop_position, %{"lat" => query_from_lat, "lng" => query_from_lng})
+        |> Map.put(:stop_position, %{
+          "lat" => query_from_lat,
+          "lng" => query_from_lng,
+          name: "Destination"
+        })
         |> Map.put_new(
           :arrival_time,
           trip.departure_time
@@ -90,7 +98,7 @@ defmodule Digiby.Samakning do
       line_number: nil,
       agency: "Privatperson",
       transportation_type: "Samåkning",
-      vehicle_type: "3 seats",
+      vehicle_type: "3 platser",
       travel_time: trip.travel_time,
       cost: 900_000,
       departure: trip.departure,
