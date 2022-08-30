@@ -2,13 +2,15 @@ defmodule Digiby.Samakning do
   alias Digiby.Transport
   @max_extra_travel_time_for_fardtjanst 3600
   def list_transports(date, options) do
-    _start_time = Keyword.get(options, :start_time, ~T[00:00:00])
-    _end_time = Keyword.get(options, :end_time, ~T[23:59:59])
+    start_time = Keyword.get(options, :start_time, ~T[00:00:00])
+    end_time = Keyword.get(options, :end_time, ~T[23:59:59])
 
     query_from_position = Keyword.get(options, :from)
     query_to_position = Keyword.get(options, :to)
 
     Digiby.Adapters.Samakning.get_transports(date)
+    |> Enum.filter(fn trip -> Time.compare(trip.departure_time, start_time) == :gt end)
+    |> Enum.filter(fn trip -> Time.compare(trip.departure_time, end_time) == :lt end)
     |> Enum.filter(
       &filter_trips_too_far_from_original_trip(&1, query_from_position, query_to_position)
     )

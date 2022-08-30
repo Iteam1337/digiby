@@ -57,10 +57,14 @@ defmodule DigibyWeb.TransportController do
         Map.put(transport, :date, query_date |> Date.add(1) |> Date.to_string())
       end)
 
-    samakning = Digiby.Samakning.list_transports(query_date, from: from, to: to)
+    samakning = Digiby.Samakning.list_transports(query_date, from: from, to: to, start_time: time)
 
     samakning_tomorrow =
-      Digiby.Samakning.list_transports(query_date |> Date.add(1), from: from, to: to)
+      Digiby.Samakning.list_transports(query_date |> Date.add(1),
+        from: from,
+        to: to,
+        end_time: time
+      )
 
     render(conn, "index.json",
       transports:
