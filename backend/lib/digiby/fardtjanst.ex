@@ -2,7 +2,7 @@ defmodule Digiby.Fardtjanst do
   alias Digiby.Transport
   @maximum_walking_distance 2500
   # Travel time in seconds
-  @max_extra_travel_time_for_fardtjanst 3360
+  @max_extra_travel_time_for_fardtjanst 360
 
   def filter_trips_too_far_from_original_trip(
         %{
