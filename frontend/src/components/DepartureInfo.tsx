@@ -16,7 +16,7 @@ const DepartureInfo = ({
   departure: Departure;
   openModal: () => void;
   showBooking: boolean;
-  handleBooking: (id: string) => void;
+  handleBooking: (id: string, amount?: number) => void;
   previouslyBooked: string | undefined;
 }) => {
   const [open, setOpen] = useState(false);

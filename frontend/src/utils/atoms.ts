@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
 import { Departure, Departures, DepartureSearchParams, LngLat } from './types';
 import getTransports from './getTransports';
@@ -43,4 +44,7 @@ export const fromToAtom = atom<FromTo>({
   to: { address: '', coordinates: [0, 0] },
 });
 
-export const bookingsAtom = atom<string[]>([]);
+export const bookingsAtom = atomWithStorage<{ id: string; seats: number }[]>(
+  'bookings',
+  []
+);

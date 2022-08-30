@@ -26,15 +26,15 @@ const ModalContent = ({
   type: string;
   from: string;
   to: string;
-  seats: number;
+  seats: number[];
   id: string;
   close: () => void;
-  handleBooking: (id: string) => void;
+  handleBooking: (id: string, amount?: number) => void;
 }) => {
   const [amount, setAmount] = useState(1);
 
   const amountControl = (method: string) => {
-    if (method === 'add' && amount <= seats - 1) setAmount(amount + 1);
+    if (method === 'add' && amount <= seats[0] - 1) setAmount(amount + 1);
     if (method === 'subtr' && amount >= 2) setAmount(amount - 1);
   };
 
@@ -74,8 +74,8 @@ const ModalContent = ({
         Till <b>{to}</b>
       </p>
       <p className="mb-6 text-xs">
-        {/* todo: add amount from api */}
-        <b>X</b> av <b>{seats}</b> platser tillgängliga
+        {/* todo: add available amount from api */}
+        <b>{seats[0]}</b> av <b>{seats[1]}</b> platser tillgängliga
       </p>
       <div className="flex items-center justify-between space-x-5">
         <p className="text-xs">Boka plats</p>
@@ -99,7 +99,11 @@ const ModalContent = ({
       </div>
       <div className="mt-6 flex space-x-5">
         <Button type="button" onClick={close} text="Tillbaka" transparent />
-        <Button type="button" onClick={() => handleBooking(id)} text="Boka" />
+        <Button
+          type="button"
+          onClick={() => handleBooking(id, amount)}
+          text="Boka"
+        />
       </div>
     </>
   );
@@ -153,12 +157,14 @@ const DeparturesDetails = () => {
     }
   };
 
-  const previouslyBooked = bookings.find((item) => item === departure.id);
+  const previouslyBooked = bookings.find((item) => item.id === departure.id);
+  console.log(previouslyBooked);
 
-  const handleBooking = (id: string) => {
-    if (!previouslyBooked) setBookings([...bookings, id]);
+  const handleBooking = (id: string, amount?: number) => {
+    if (!previouslyBooked && amount)
+      setBookings([...bookings, { id: id, seats: amount }]);
     else if (previouslyBooked) {
-      const arr = bookings.filter((item) => item !== id);
+      const arr = bookings.filter((item) => item.id !== id);
       setBookings(arr);
     } else return;
   };
@@ -368,8 +374,9 @@ const DeparturesDetails = () => {
               close={toggleModal}
               from={departure.departure.stop_position.name}
               to={departure.destination.stop_position.name}
-              //todo: use api endpoint
-              seats={10}
+              // todo: use api endpoints when available
+              // [available, total]
+              seats={[2, 4]}
               //todo: comment back below when done with modal content
               type={'Sjukresa'}
               // type={departure.transportation_type}
@@ -393,7 +400,7 @@ const DeparturesDetails = () => {
         departure={departure}
         openModal={toggleModal}
         handleBooking={handleBooking}
-        previouslyBooked={previouslyBooked}
+        previouslyBooked={previouslyBooked?.id}
       />
     </section>
   );
