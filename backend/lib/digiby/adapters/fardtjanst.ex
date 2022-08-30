@@ -49,8 +49,8 @@ defmodule Digiby.Adapters.Fardtjanst do
   end
 
   def convert_to_json do
-    # new_file = File.open!("./data/fardtjanst/jokkmokk-2019.json", [:utf8, :write])
-    # IO.write(new_file, "[")
+    new_file = File.open!("./data/fardtjanst/jokkmokk-2019.json", [:utf8, :write])
+    IO.write(new_file, "[")
 
     Path.expand("./data/fardtjanst/jokkmokk-2019.csv", File.cwd!())
     |> File.stream!(read_ahead: 10_000)
@@ -109,12 +109,12 @@ defmodule Digiby.Adapters.Fardtjanst do
         Date.from_erl!({year, month, day})
       end)
     end)
-    # |> Flow.map(fn trip ->
-    #   IO.write(new_file, Jason.encode!(trip) <> ",\n")
-    # end)
+    |> Flow.map(fn trip ->
+      IO.write(new_file, Jason.encode!(trip) <> ",\n")
+    end)
     |> Enum.take(5)
 
-    # IO.write(new_file, "]")
+    IO.write(new_file, "]")
   end
 
   def search_for_coordinates(search_strings) do
@@ -139,18 +139,12 @@ defmodule Digiby.Adapters.Fardtjanst do
 
     res =
       if res == [] do
-        res =
-          search_for_coordinates([
-            street_name <> " 1 " <> municipality,
-            street_name <> municipality,
-            street_name <> " 1 "
-          ])
-          |> Enum.reject(&is_nil/1)
-
-        if street_name === "SNICKARGRÄND",
-          do: IO.inspect(Enum.map(res, fn e -> Map.get(e, "geometry") end))
-
-        res
+        search_for_coordinates([
+          street_name <> " 1 " <> municipality,
+          street_name <> municipality,
+          street_name <> " 1 "
+        ])
+        |> Enum.reject(&is_nil/1)
       else
         res
       end
