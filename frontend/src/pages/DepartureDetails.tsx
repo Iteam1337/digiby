@@ -255,7 +255,11 @@ const DeparturesDetails = () => {
   return (
     <Section details>
       <h1 className="sr-only">Vald avgång</h1>
-      <div className="relative mx-[2px] h-[calc(100%-180px)] w-[calc(100%-4px)]">
+      <div
+        className={`relative mx-[2px] ${
+          showBooking ? 'h-[calc(100%-180px)]' : 'h-[calc(100%-160px)]'
+        }  w-[calc(100%-4px)]`}
+      >
         {showModal && (
           <BookingModal close={toggleModal}>
             <BookingModalContent

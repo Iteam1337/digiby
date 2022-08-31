@@ -18,7 +18,7 @@ const EmptyStates = ({
         {heading}
       </h1>
       <p className="text-center">{text}</p>
-      <div className="text-center">
+      <div className="mt-10 text-center">
         <Button text={buttonText} type="button" onClick={onClick} />
       </div>
     </Section>
