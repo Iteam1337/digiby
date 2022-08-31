@@ -97,7 +97,7 @@ const DepartureInfo = ({
             </p>
           )}
           {departure.stops.map((stop) => (
-            <div key={stop.arrival_time} className="">
+            <div key={stop.stop_position.name} className="">
               <p className="text-xs">{stop.arrival_time.substring(0, 5)}</p>
             </div>
           ))}
@@ -115,7 +115,7 @@ const DepartureInfo = ({
           )}
           {departure.stops.map((stop, i) => {
             return (
-              <div className="flex flex-col" key={stop.arrival_time}>
+              <div className="flex flex-col" key={stop.stop_position.name}>
                 <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
                 <div className="divide flex h-[30px] divide-x-2 divide-pm-dark-grey">
                   {i < departure.stops.length - 1 && (
@@ -134,7 +134,7 @@ const DepartureInfo = ({
             <p className="text-xs">Min position</p>
           )}
           {departure.stops.map((stop) => (
-            <div key={stop.arrival_time} className="">
+            <div key={stop.stop_position.name}>
               <p className="text-xs">{stop.stop_position.name}</p>
             </div>
           ))}
