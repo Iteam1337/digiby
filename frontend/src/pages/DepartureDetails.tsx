@@ -33,8 +33,6 @@ const DeparturesDetails = () => {
   const [bookings, setBookings] = useAtom(bookingsAtom);
   const navigate = useNavigate();
 
-  console.log(departure);
-
   useEffect(() => {
     if (departure) {
       setMapState({
