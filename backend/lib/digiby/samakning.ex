@@ -9,26 +9,29 @@ defmodule Digiby.Samakning do
     query_to_position = Keyword.get(options, :to)
 
     Digiby.Adapters.Samakning.get_transports(date)
-    |> Enum.filter(fn trip -> Time.compare(trip.departure_time, start_time) == :gt end)
-    |> Enum.filter(fn trip -> Time.compare(trip.departure_time, end_time) == :lt end)
-    |> Enum.filter(
+    |> Flow.from_enumerable(stages: 100)
+    |> Flow.partition()
+    |> Flow.filter(fn trip -> Time.compare(trip.departure_time, start_time) == :gt end)
+    |> Flow.filter(fn trip -> Time.compare(trip.departure_time, end_time) == :lt end)
+    |> Flow.filter(
       &filter_trips_too_far_from_original_trip(&1, query_from_position, query_to_position)
     )
-    |> Enum.map(fn trip ->
+    |> Flow.map(fn trip ->
       {query_from_lng, query_from_lat} = query_from_position
       {query_to_lng, query_to_lat} = query_to_position
 
-      %{"duration" => duration, "geometry" => geometry} =
-        Osrm.route(%{"lat" => query_from_lat, "lng" => query_from_lng}, %{
-          "lat" => query_to_lat,
-          "lng" => query_to_lng
-        })
-
-      %{"duration" => time_to_start} =
-        Osrm.route(trip.departure.stop_position, %{
-          "lat" => query_from_lat,
-          "lng" => query_from_lng
-        })
+      [%{"duration" => duration, "geometry" => geometry}, %{"duration" => time_to_start}] =
+        [
+          %{
+            from: %{"lat" => query_from_lat, "lng" => query_from_lng},
+            to: %{"lat" => query_to_lat, "lng" => query_to_lng}
+          },
+          %{
+            from: trip.departure.stop_position,
+            to: %{"lat" => query_from_lat, "lng" => query_from_lng}
+          }
+        ]
+        |> Enum.map(fn %{from: from, to: to} -> Osrm.route(from, to) end)
 
       first_stop =
         Map.new()
@@ -77,19 +80,24 @@ defmodule Digiby.Samakning do
     {query_to_lng, query_to_lat} = query_to_position
     {query_from_lng, query_from_lat} = query_from_position
 
-    before_duration =
-      Osrm.route([departure.stop_position, destination.stop_position]) |> Map.get("duration")
+    extra_time_to_pickup_passenger =
+      [
+        [departure.stop_position, destination.stop_position],
+        [
+          departure.stop_position,
+          %{"lat" => query_from_lat, "lng" => query_from_lng},
+          %{"lat" => query_to_lat, "lng" => query_to_lng},
+          destination.stop_position
+        ]
+      ]
+      |> Flow.from_enumerable(stages: 2)
+      |> Flow.partition()
+      |> Flow.map(&Osrm.route/1)
+      |> Enum.reduce(0, fn %{"duration" => duration}, before_duration ->
+        duration - before_duration
+      end)
 
-    after_duration =
-      Osrm.route([
-        departure.stop_position,
-        %{"lat" => query_from_lat, "lng" => query_from_lng},
-        %{"lat" => query_to_lat, "lng" => query_to_lng},
-        destination.stop_position
-      ])
-      |> Map.get("duration")
-
-    after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
+    extra_time_to_pickup_passenger < @max_extra_travel_time_for_fardtjanst
   end
 
   def to_transport_struct(trip) do

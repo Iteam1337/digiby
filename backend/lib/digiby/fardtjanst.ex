@@ -27,18 +27,24 @@ defmodule Digiby.Fardtjanst do
     {query_to_lng, query_to_lat} = query_to_position
     {query_from_lng, query_from_lat} = query_from_position
 
-    before_duration = Osrm.route([departure, destination]) |> Map.get("duration")
+    extra_time_to_pickup_passenger =
+      [
+        [departure, destination],
+        [
+          departure,
+          %{"lat" => query_from_lat, "lng" => query_from_lng},
+          %{"lat" => query_to_lat, "lng" => query_to_lng},
+          destination
+        ]
+      ]
+      |> Flow.from_enumerable(stages: 10)
+      |> Flow.partition(stages: 15)
+      |> Flow.map(&Osrm.route/1)
+      |> Enum.reduce(0, fn %{"duration" => duration}, before_duration ->
+        duration - before_duration
+      end)
 
-    after_duration =
-      Osrm.route([
-        departure,
-        %{"lat" => query_from_lat, "lng" => query_from_lng},
-        destination,
-        %{"lat" => query_to_lat, "lng" => query_to_lng}
-      ])
-      |> Map.get("duration")
-
-    after_duration - before_duration < @max_extra_travel_time_for_fardtjanst
+    extra_time_to_pickup_passenger < @max_extra_travel_time_for_fardtjanst
   end
 
   def list_transports(date, options) do
@@ -53,16 +59,15 @@ defmodule Digiby.Fardtjanst do
     new_date = Date.from_erl!({2019, month, day})
 
     Digiby.Adapters.Fardtjanst.get_transports(Date.to_string(new_date))
-    |> Enum.filter(
+    |> Flow.from_enumerable()
+    |> Flow.partition(stages: 200)
+    |> Flow.filter(
       &filter_trips_too_far_from_original_trip(&1, query_from_position, query_to_position)
     )
-    |> Enum.map(fn %{
+    |> Flow.map(fn %{
                      "type" => type,
                      "car_type" => car_type,
-                     "from_position" => _from_position,
-                     "from_street" => from_street,
                      "departure_time" => departure_time,
-                     "to_street" => to_street,
                      "id" => id
                    } ->
       {query_from_lng, query_from_lat} = query_from_position
@@ -76,11 +81,12 @@ defmodule Digiby.Fardtjanst do
 
       first_stop =
         Map.new()
-        |> Map.put(:arrival_time, departure_time)
+        # arrival_time should be departure_time + what it takes to get there
+        |> Map.put(:arrival_time, Time.from_iso8601!(departure_time))
         |> Map.put(:stop_position, from_stop_position)
 
       %{"duration" => duration, "geometry" => geometry} =
-        Osrm.route(first_stop.stop_position, to_stop_position)
+        Osrm.route(from_stop_position, to_stop_position)
 
       last_stop =
         Map.new()
@@ -88,8 +94,7 @@ defmodule Digiby.Fardtjanst do
         |> Map.put_new(
           :arrival_time,
           Time.from_iso8601!(departure_time)
-          |> Time.add(trunc(duration))
-          |> Time.truncate(:second)
+          |> Time.add(duration)
         )
 
       %{
@@ -114,12 +119,8 @@ defmodule Digiby.Fardtjanst do
       }
     end)
     |> Enum.filter(fn %{start_stop: departure} ->
-      Time.compare(Time.from_iso8601!(departure.arrival_time), start_time) == :gt
+      Time.compare(departure.arrival_time, start_time) == :gt
     end)
-    |> Enum.sort_by(
-      fn %{start_stop: destination1} -> Time.from_iso8601!(destination1.arrival_time) end,
-      Time
-    )
     |> Enum.map(&fardtjanst_to_transport_struct/1)
   end
 
