@@ -39,8 +39,8 @@ defmodule Digiby.Fardtjanst do
       ]
       |> Flow.from_enumerable(stages: 10)
       |> Flow.partition(stages: 15)
-      |> Flow.map(&Osrm.route/1)
-      |> Enum.reduce(0, fn %{"duration" => duration}, before_duration ->
+      |> Flow.map(&Osrm.get_duration/1)
+      |> Enum.reduce(0, fn duration, before_duration ->
         duration - before_duration
       end)
 

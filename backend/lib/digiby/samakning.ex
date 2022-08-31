@@ -9,8 +9,8 @@ defmodule Digiby.Samakning do
     query_to_position = Keyword.get(options, :to)
 
     Digiby.Adapters.Samakning.get_transports(date)
-    |> Flow.from_enumerable(stages: 100)
-    |> Flow.partition()
+    |> Flow.from_enumerable()
+    |> Flow.partition(stages: 100)
     |> Flow.filter(fn trip -> Time.compare(trip.departure_time, start_time) == :gt end)
     |> Flow.filter(fn trip -> Time.compare(trip.departure_time, end_time) == :lt end)
     |> Flow.filter(
@@ -20,18 +20,17 @@ defmodule Digiby.Samakning do
       {query_from_lng, query_from_lat} = query_from_position
       {query_to_lng, query_to_lat} = query_to_position
 
-      [%{"duration" => duration, "geometry" => geometry}, %{"duration" => time_to_start}] =
-        [
-          %{
-            from: %{"lat" => query_from_lat, "lng" => query_from_lng},
-            to: %{"lat" => query_to_lat, "lng" => query_to_lng}
-          },
-          %{
-            from: trip.departure.stop_position,
-            to: %{"lat" => query_from_lat, "lng" => query_from_lng}
-          }
-        ]
-        |> Enum.map(fn %{from: from, to: to} -> Osrm.route(from, to) end)
+      time_to_start =
+        Osrm.get_duration([
+          trip.departure.stop_position,
+          %{"lat" => query_from_lat, "lng" => query_from_lng}
+        ])
+
+      %{"duration" => duration, "geometry" => geometry} =
+        Osrm.route([
+          %{"lat" => query_from_lat, "lng" => query_from_lng},
+          %{"lat" => query_to_lat, "lng" => query_to_lng}
+        ])
 
       first_stop =
         Map.new()
@@ -90,10 +89,10 @@ defmodule Digiby.Samakning do
           destination.stop_position
         ]
       ]
-      |> Flow.from_enumerable(stages: 2)
-      |> Flow.partition()
-      |> Flow.map(&Osrm.route/1)
-      |> Enum.reduce(0, fn %{"duration" => duration}, before_duration ->
+      |> Flow.from_enumerable()
+      |> Flow.partition(stages: 2)
+      |> Flow.map(&Osrm.get_duration/1)
+      |> Enum.reduce(0, fn duration, before_duration ->
         duration - before_duration
       end)
 
