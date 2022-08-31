@@ -60,10 +60,10 @@ const BookingModalContent = ({
             Denna resa betalas direkt i bilen efter genomförd resa.
           </p>
           <p className="text-xs">
-            Från <b>{from}</b>
+            Avgång <b>{from}</b>
           </p>
           <p className="mb-6 text-xs">
-            Till <b>{to}</b>
+            Ändhållplats <b>{to}</b>
           </p>
           <p className="mb-6 text-xs">
             {/* todo: add available amount from api */}
