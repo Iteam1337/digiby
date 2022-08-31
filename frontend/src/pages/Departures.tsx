@@ -35,7 +35,7 @@ const Departures = () => {
       };
       getDepartures(departureSearchParams);
     }
-  }, [searchParams]);
+  }, [searchParams, getDepartures]);
 
   const { loading, data, error } = departures;
 

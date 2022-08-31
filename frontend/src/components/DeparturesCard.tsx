@@ -6,7 +6,7 @@ import { departuresDetails } from '../utils/atoms';
 import { getHoursAndMinutes, humanizeTime } from '../utils/dateTimeFormatting';
 
 const DeparturesCard = ({ departure }: { departure: Departure }) => {
-  const [details, setDetails] = useAtom(departuresDetails);
+  const [_details, setDetails] = useAtom(departuresDetails);
   const navigate = useNavigate();
 
   const handleClick = () => {

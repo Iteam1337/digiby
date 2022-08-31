@@ -10,7 +10,7 @@ const Button = ({
 }: {
   text: string;
   type: 'button' | 'reset' | 'submit' | undefined;
-  onClick: () => void;
+  onClick?: () => void;
   transparent?: boolean;
   outline?: boolean;
   icon?: boolean;

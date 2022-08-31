@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
-import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
+import Deckgl from '@deck.gl/react';
+import { GeoJsonLayer, IconLayer } from '@deck.gl/layers';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -272,13 +273,13 @@ const DeparturesDetails = () => {
             />
           </BookingModal>
         )}
-        <DeckGL layers={layers} initialViewState={mapState} controller={true}>
+        <Deckgl layers={layers} initialViewState={mapState} controller={true}>
           <StaticMap
             mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
             reuseMaps
             mapStyle="mapbox://styles/mapbox/dark-v10"
           />
-        </DeckGL>
+        </Deckgl>
       </div>
       <DepartureInfo
         showBooking={showBooking}
