@@ -15,6 +15,8 @@ defmodule Digiby.Application do
 
     IO.inspect(loading_time_fardtjanst / 1_000_000, label: "loading fardtjanst cache in seconds")
 
+    Digiby.Adapters.Samakning.load_transports()
+
     children = [
       # Start the Telemetry supervisor
       DigibyWeb.Telemetry,
