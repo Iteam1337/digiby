@@ -72,7 +72,7 @@ const BookingModal = ({ close, children }: Props) => {
 
   return (
     <div
-      className={`absolute inset-x-1/2 bg-[rgb(0,0,0,0.5)] top-[calc(50%+${scrollY}px)] left-1/2 z-20 h-screen w-screen translate-x-[-50%]`}
+      className={`absolute inset-x-1/2 bg-[rgb(187,190,199,0.8)] top-[calc(50%+${scrollY}px)] left-1/2 z-20 h-screen w-screen translate-x-[-50%]`}
       ref={ref}
     >
       <div className="fixed top-1/3 left-1/2 flex w-full translate-y-[-50%] translate-x-[-50%] justify-center">

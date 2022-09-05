@@ -47,11 +47,11 @@ const DatePickerField = ({
         nextMonthAriaLabel="Nästa månad"
         nextMonthButtonLabel="Nästa månad"
         chooseDayAriaLabelPrefix="Välj"
-        className="w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+        className="w-full rounded-md bg-pm-grey-primary py-2 pl-8 pr-3 text-xs"
       />
       <TimeIcon
         className={`absolute mt-[-22px] ml-[8px] ${
-          open ? 'fill-pm-black' : 'fill-pm-dark-grey'
+          open ? 'fill-pm-black' : 'fill-pm-grey-secondary'
         }`}
       />
     </div>

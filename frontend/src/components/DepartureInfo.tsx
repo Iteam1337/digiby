@@ -42,23 +42,23 @@ const DepartureInfo = ({
       <summary
         className={`mx-6 ${
           showBooking ? 'h-[180px]' : 'h-[160px]'
-        } max-w-screen-sm cursor-pointer list-none pb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey focus-visible:ring-offset-8 focus-visible:ring-offset-pm-white sm:mx-auto sm:w-full`}
+        } max-w-screen-sm cursor-pointer list-none pb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-grey-secondary focus-visible:ring-offset-8 focus-visible:ring-offset-pm-white sm:mx-auto sm:w-full`}
         onClick={() => setOpen(!open)}
       >
         <p className="sr-only">Information om din resa</p>
         <div className="flex w-full justify-center py-3" aria-hidden="true">
           <ArrowIcon
-            className={` fill-pm-dark-grey ${
+            className={` fill-pm-grey-secondary ${
               open ? 'rotate-[270deg]' : 'rotate-90'
             } overflow-y-scroll`}
           />
           {/* todo: add swipte functionality to open details */}
           {/* <ArrowIcon
-            className={`invisible fill-pm-dark-grey md:visible ${
+            className={`invisible fill-pm-grey-secondary md:visible ${
               open ? 'rotate-[270deg]' : 'rotate-90'
             } overflow-y-scroll`}
           />
-          <DragIcon className="visible fill-pm-dark-grey md:invisible" /> */}
+          <DragIcon className="visible fill-pm-grey-secondary md:invisible" /> */}
         </div>
         <div className="flex justify-between">
           <h2 className="font-bold">
@@ -116,8 +116,8 @@ const DepartureInfo = ({
           {departure.departure.meters_from_query_to_stop < 10000 &&
             departure.departure.meters_from_query_to_stop > 0 && (
               <div className="flex flex-col">
-                <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
-                <div className="divide flex h-[30px] divide-x-2 divide-dotted divide-pm-dark-grey">
+                <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-grey-secondary" />
+                <div className="divide flex h-[30px] divide-x-2 divide-dotted divide-pm-grey-secondary">
                   <div className=" w-[16px]" />
                   <div className=" w-[16px]" />
                 </div>
@@ -126,8 +126,8 @@ const DepartureInfo = ({
           {departure.stops.map((stop, i) => {
             return (
               <div className="flex flex-col" key={stop.stop_position.name}>
-                <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
-                <div className="divide flex h-[30px] divide-x-2 divide-pm-dark-grey">
+                <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-grey-secondary" />
+                <div className="divide flex h-[30px] divide-x-2 divide-pm-grey-secondary">
                   {i < departure.stops.length - 1 && (
                     <>
                       <div className=" w-[16px]" />
