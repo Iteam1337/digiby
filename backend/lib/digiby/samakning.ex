@@ -89,9 +89,7 @@ defmodule Digiby.Samakning do
           destination.stop_position
         ]
       ]
-      |> Flow.from_enumerable()
-      |> Flow.partition(stages: 2)
-      |> Flow.map(&Osrm.get_duration/1)
+      |> Enum.map(&Osrm.get_duration/1)
       |> Enum.reduce(0, fn duration, before_duration ->
         duration - before_duration
       end)
