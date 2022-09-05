@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import StaticMap from 'react-map-gl';
-import DeckGL, { GeoJsonLayer, IconLayer } from 'deck.gl';
+import Deckgl from '@deck.gl/react';
+import { GeoJsonLayer, IconLayer } from '@deck.gl/layers';
 import { useNavigate } from 'react-router-dom';
 
-import { departuresDetails, departuresAtom, fromToAtom } from '../utils/atoms';
+import {
+  departuresDetails,
+  departuresAtom,
+  fromToAtom,
+  bookingsAtom,
+} from '../utils/atoms';
 import DepartureInfo from '../components/DepartureInfo';
 import { Departure } from '../utils/types';
 import Section from '../components/Section';
 import EmptyStates from '../components/EmptyStates';
+import BookingModal from '../components/BookingModal';
+import BookingModalContent from '../components/BookingModalContent';
 
 const DeparturesDetails = () => {
   const [mapState, setMapState] = useState({
@@ -21,6 +29,8 @@ const DeparturesDetails = () => {
   const [departure] = useAtom(departuresDetails);
   const [departures] = useAtom(departuresAtom);
   const [fromTo] = useAtom(fromToAtom);
+  const [showModal, setShowModal] = useState(false);
+  const [bookings, setBookings] = useAtom(bookingsAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,6 +56,28 @@ const DeparturesDetails = () => {
     );
   }
 
+  const toggleModal = () => {
+    const body = document.body;
+    if (!showModal) {
+      body.style.overflow = 'hidden';
+      setShowModal(true);
+    } else {
+      body.style.overflow = '';
+      setShowModal(false);
+    }
+  };
+
+  const previouslyBooked = bookings.find((item) => item.id === departure.id);
+
+  const handleBooking = (id: string, amount?: number) => {
+    if (!previouslyBooked && amount)
+      setBookings([...bookings, { id: id, seats: amount }]);
+    else if (previouslyBooked) {
+      const arr = bookings.filter((item) => item.id !== id);
+      setBookings(arr);
+    } else return;
+  };
+
   const routes = {
     type: 'FeatureCollection',
     features: departures.data
@@ -54,11 +86,7 @@ const DeparturesDetails = () => {
         return {
           type: 'Feature',
           properties: {
-            color:
-              // todo: check <id> instead of <arrival_time> when <id> endpoint is available from api.
-              dep.departure.arrival_time === departure.departure.arrival_time
-                ? [19, 197, 123]
-                : [200, 200, 200],
+            color: dep.id === departure.id ? [19, 197, 123] : [200, 200, 200],
           },
           geometry: { type: 'LineString', coordinates: dep.geometry },
         };
@@ -115,9 +143,8 @@ const DeparturesDetails = () => {
             parseFloat(departure.destination.stop_position.lat),
           ],
         },
-        // todo: check <id> instead of <arrival_time> when <id> endpoint is available from api.
         color:
-          dep.departure.arrival_time === departure.departure.arrival_time
+          dep.id === departure.id
             ? [
                 [19, 197, 123],
                 [52, 51, 50],
@@ -221,19 +248,48 @@ const DeparturesDetails = () => {
     stopPositionLayer,
   ];
 
+  const showBooking = departure.transportation_type !== 'Buss';
+
   return (
     <Section details>
       <h1 className="sr-only">Vald avgång</h1>
-      <div className="relative mx-[2px] h-[calc(100%-160px)] w-[calc(100%-4px)]">
-        <DeckGL layers={layers} initialViewState={mapState} controller={true}>
+      <div
+        className={`relative mx-[2px] ${
+          showBooking ? 'h-[calc(100%-180px)]' : 'h-[calc(100%-160px)]'
+        }  w-[calc(100%-4px)]`}
+      >
+        {showModal && (
+          <BookingModal close={toggleModal}>
+            <BookingModalContent
+              close={toggleModal}
+              from={departure.departure.stop_position.name}
+              to={departure.destination.stop_position.name}
+              // todo: use api endpoints when available
+              // [available, total]
+              seats={[2, 4]}
+              //todo: comment back below when done with modal content
+              type={departure.transportation_type}
+              id={departure.id}
+              handleBooking={handleBooking}
+              previouslyBooked={previouslyBooked?.id}
+            />
+          </BookingModal>
+        )}
+        <Deckgl layers={layers} initialViewState={mapState} controller={true}>
           <StaticMap
             mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
             reuseMaps
             mapStyle="mapbox://styles/mapbox/dark-v10"
           />
-        </DeckGL>
+        </Deckgl>
       </div>
-      <DepartureInfo departure={departure} />
+      <DepartureInfo
+        showBooking={showBooking}
+        departure={departure}
+        openModal={toggleModal}
+        handleBooking={handleBooking}
+        previouslyBooked={previouslyBooked?.id}
+      />
     </Section>
   );
 };
