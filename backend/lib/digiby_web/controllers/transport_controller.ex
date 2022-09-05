@@ -70,9 +70,7 @@ defmodule DigibyWeb.TransportController do
           ]
         }
       ]
-      |> Flow.from_enumerable()
-      |> Flow.partition(stages: 2)
-      |> Flow.flat_map(fn {fun, date, opt} ->
+      |> Enum.flat_map(fn {fun, date, opt} ->
         fun.(date, opt)
         |> Enum.map(fn transports -> Map.put(transports, :date, date) end)
       end)
