@@ -105,10 +105,7 @@ const DeparturesDetails = () => {
     geometry: {
       type: 'LineString',
       coordinates: [
-        [
-          parseFloat(fromTo.from.coordinates[0].toString()),
-          parseFloat(fromTo.from.coordinates[1].toString()),
-        ],
+        fromTo.from.coordinates,
         [
           parseFloat(departure.departure.stop_position.lng),
           parseFloat(departure.departure.stop_position.lat),
@@ -122,10 +119,7 @@ const DeparturesDetails = () => {
     .map((dep: Departure) => {
       return {
         userCoordinates: {
-          from: [
-            parseFloat(fromTo.from.coordinates[0].toString()),
-            parseFloat(fromTo.from.coordinates[1].toString()),
-          ],
+          from: fromTo.from.coordinates,
           // todo: add fromTo.to.coordinates as final destination
           // when we add walking distance from last stop on route
           to: [

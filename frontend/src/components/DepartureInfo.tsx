@@ -61,11 +61,17 @@ const DepartureInfo = ({
           <DragIcon className="visible fill-pm-dark-grey md:invisible" /> */}
         </div>
         <div className="flex justify-between">
-          <h2 className="font-bold">{departure.line_number}</h2>
+          <h2 className="font-bold">
+            {`${departure.transportation_type} ${
+              departure.line_number ? departure.line_number : ''
+            }`}
+          </h2>
           <p className="text-xs">{getHoursAndMinutes(departure.stops)}</p>
         </div>
         <div className="flex justify-between pb-6">
-          <p className="text-xs">{departure.transportation_type}</p>
+          <p className="text-xs">
+            {departure.agency}, {departure.vehicle_type}
+          </p>
           <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
         </div>
         <div className="flex h-auto w-auto items-center justify-between">
@@ -90,14 +96,15 @@ const DepartureInfo = ({
       </summary>
       <div className="mx-6 flex max-w-screen-sm border-t border-t-pm-black pt-6 sm:mx-auto sm:w-full">
         <div className="flex flex-col gap-6">
-          {departure.departure.meters_from_query_to_stop < 10000 && (
-            <p className="text-xs">
-              {myPositionTime(
-                departure.departure.meters_from_query_to_stop,
-                departure.stops[0].arrival_time
-              )}
-            </p>
-          )}
+          {departure.departure.meters_from_query_to_stop < 10000 &&
+            departure.departure.meters_from_query_to_stop > 0 && (
+              <p className="text-xs">
+                {myPositionTime(
+                  departure.departure.meters_from_query_to_stop,
+                  departure.stops[0].arrival_time
+                )}
+              </p>
+            )}
           {departure.stops.map((stop) => (
             <div key={stop.stop_position.name} className="">
               <p className="text-xs">{stop.arrival_time.substring(0, 5)}</p>
@@ -106,15 +113,16 @@ const DepartureInfo = ({
         </div>
 
         <div className="mt-[4px] flex flex-col" aria-hidden="true">
-          {departure.departure.meters_from_query_to_stop < 10000 && (
-            <div className="flex flex-col">
-              <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
-              <div className="divide flex h-[30px] divide-x-2 divide-dotted divide-pm-dark-grey">
-                <div className=" w-[16px]" />
-                <div className=" w-[16px]" />
+          {departure.departure.meters_from_query_to_stop < 10000 &&
+            departure.departure.meters_from_query_to_stop > 0 && (
+              <div className="flex flex-col">
+                <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
+                <div className="divide flex h-[30px] divide-x-2 divide-dotted divide-pm-dark-grey">
+                  <div className=" w-[16px]" />
+                  <div className=" w-[16px]" />
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {departure.stops.map((stop, i) => {
             return (
               <div className="flex flex-col" key={stop.stop_position.name}>
@@ -132,9 +140,10 @@ const DepartureInfo = ({
           })}
         </div>
         <div className="flex flex-col gap-6">
-          {departure.departure.meters_from_query_to_stop < 10000 && (
-            <p className="text-xs">Min position</p>
-          )}
+          {departure.departure.meters_from_query_to_stop < 10000 &&
+            departure.departure.meters_from_query_to_stop > 0 && (
+              <p className="text-xs">Min position</p>
+            )}
           {departure.stops.map((stop) => (
             <div key={stop.stop_position.name}>
               <p className="text-xs">{stop.stop_position.name}</p>

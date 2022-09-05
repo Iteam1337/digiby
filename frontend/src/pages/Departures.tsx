@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { differenceInDays } from 'date-fns';
 
 import Loading from '../components/Loading';
-import { departuresAtom } from '../utils/atoms';
+import { departuresAtom, fromToAtom } from '../utils/atoms';
 import DeparturesCard from '../components/DeparturesCard';
 import { DepartureSearchParams } from '../utils/types';
 import { formatDate } from '../utils/dateTimeFormatting';
@@ -14,6 +14,7 @@ import EmptyStates from '../components/EmptyStates';
 const Departures = () => {
   const [departures, getDepartures] = useAtom(departuresAtom);
   const [searchParams] = useSearchParams();
+  const [_fromTo, setFromTo] = useAtom(fromToAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,8 +24,19 @@ const Departures = () => {
     const toLng = searchParams.get('toLng');
     const date = searchParams.get('date');
     const time = searchParams.get('time');
+    const fromAddress = searchParams.get('fromAddress');
+    const toAddress = searchParams.get('toAddress');
 
-    if (fromLat && fromLng && toLat && toLng && time && date) {
+    if (
+      fromLat &&
+      fromLng &&
+      toLat &&
+      toLng &&
+      time &&
+      date &&
+      fromAddress &&
+      toAddress
+    ) {
       const departureSearchParams: DepartureSearchParams = {
         fromLat,
         fromLng,
@@ -34,8 +46,18 @@ const Departures = () => {
         date,
       };
       getDepartures(departureSearchParams);
+      setFromTo({
+        from: {
+          address: fromAddress,
+          coordinates: [parseFloat(fromLng), parseFloat(fromLat)],
+        },
+        to: {
+          address: toAddress,
+          coordinates: [parseFloat(toLng), parseFloat(toLat)],
+        },
+      });
     }
-  }, [searchParams, getDepartures]);
+  }, [searchParams, getDepartures, setFromTo]);
 
   const { loading, data, error } = departures;
 
