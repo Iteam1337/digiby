@@ -61,11 +61,17 @@ const DepartureInfo = ({
           <DragIcon className="visible fill-pm-dark-grey md:invisible" /> */}
         </div>
         <div className="flex justify-between">
-          <h2 className="font-bold">{departure.line_number}</h2>
+          <h2 className="font-bold">
+            {`${departure.transportation_type} ${
+              departure.line_number ? departure.line_number : ''
+            }`}
+          </h2>
           <p className="text-xs">{getHoursAndMinutes(departure.stops)}</p>
         </div>
         <div className="flex justify-between pb-6">
-          <p className="text-xs">{departure.transportation_type}</p>
+          <p className="text-xs">
+            {departure.agency}, {departure.vehicle_type}
+          </p>
           <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
         </div>
         <div className="flex h-auto w-auto items-center justify-between">
