@@ -49,11 +49,11 @@ const Departures = () => {
       setFromTo({
         from: {
           address: fromAddress,
-          coordinates: [parseFloat(fromLng), parseFloat(fromLng)],
+          coordinates: [parseFloat(fromLng), parseFloat(fromLat)],
         },
         to: {
           address: toAddress,
-          coordinates: [parseFloat(toLng), parseFloat(toLng)],
+          coordinates: [parseFloat(toLng), parseFloat(toLat)],
         },
       });
     }
