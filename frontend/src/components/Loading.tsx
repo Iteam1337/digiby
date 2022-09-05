@@ -1,3 +1,5 @@
+import Section from './Section';
+
 const LoadingCard = () => {
   return (
     <div className="mb-4  flex  w-full justify-between rounded-md bg-pm-white p-4 align-bottom">
@@ -12,10 +14,10 @@ const LoadingCard = () => {
 
 const Loading = () => {
   return (
-    <section className="mx-auto h-full w-full max-w-screen-sm bg-pm-background px-6 pt-6">
+    <Section departures>
       <LoadingCard />
       <LoadingCard />
-    </section>
+    </Section>
   );
 };
 
