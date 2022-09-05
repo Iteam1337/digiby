@@ -48,8 +48,8 @@ defmodule Digiby.Samakning do
       last_stop =
         Map.new()
         |> Map.put(:stop_position, %{
-          "lat" => query_from_lat,
-          "lng" => query_from_lng,
+          "lat" => query_to_lat,
+          "lng" => query_to_lng,
           name: "Destination"
         })
         |> Map.put_new(
