@@ -3,8 +3,18 @@ defmodule Digiby.Adapters.Samakning do
   @harads %{lat: 66.082736, lng: 20.961049}
 
   def get_transports(_date) do
-    generate_transports(5, @central_vuollerim, @harads)
-    |> Enum.concat(generate_transports(5, @harads, @central_vuollerim))
+    samakning = :ets.lookup(:samakning, "transports")
+    if samakning == [], do: [], else: samakning |> List.first() |> elem(1)
+  end
+
+  def load_transports() do
+    :ets.new(:samakning, [:set, :public, :named_table])
+
+    transports =
+      generate_transports(5, @central_vuollerim, @harads)
+      |> Enum.concat(generate_transports(5, @harads, @central_vuollerim))
+
+    :ets.insert(:samakning, {"transports", transports})
   end
 
   def generate_transports(amount, start, stop) do
