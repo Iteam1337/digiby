@@ -94,7 +94,7 @@ defmodule Digiby.Fardtjanst do
         |> Map.put_new(
           :arrival_time,
           Time.from_iso8601!(departure_time)
-          |> Time.add(duration)
+          |> Time.add(round(duration))
         )
 
       %{
