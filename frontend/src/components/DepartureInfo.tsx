@@ -4,8 +4,21 @@ import ArrowIcon from '../icons/ArrowIcon';
 import { getHoursAndMinutes, humanizeTime } from '../utils/dateTimeFormatting';
 // import DragIcon from '../icons/DragIcon';
 import { Departure } from '../utils/types';
+import Button from './Button';
 
-const DepartureInfo = ({ departure }: { departure: Departure }) => {
+const DepartureInfo = ({
+  departure,
+  openModal,
+  showBooking,
+  handleBooking,
+  previouslyBooked,
+}: {
+  departure: Departure;
+  openModal: () => void;
+  showBooking: boolean;
+  handleBooking: (id: string, amount?: number) => void;
+  previouslyBooked: string | undefined;
+}) => {
   const [open, setOpen] = useState(false);
 
   const myPositionTime = (distance: number, arrival: string) => {
@@ -25,9 +38,11 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
   };
 
   return (
-    <details className="absolute left-0 bottom-0 right-0 z-10 max-h-screen overflow-scroll rounded-t-md bg-pm-white ">
+    <details className="absolute left-0 bottom-0 right-0 z-10 max-h-[70%] overflow-scroll rounded-t-md bg-pm-white ">
       <summary
-        className="mx-6 h-[160px] max-w-screen-sm cursor-pointer list-none pb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey focus-visible:ring-offset-8 focus-visible:ring-offset-pm-white sm:mx-auto sm:w-full"
+        className={`mx-6 ${
+          showBooking ? 'h-[180px]' : 'h-[160px]'
+        } max-w-screen-sm cursor-pointer list-none pb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey focus-visible:ring-offset-8 focus-visible:ring-offset-pm-white sm:mx-auto sm:w-full`}
         onClick={() => setOpen(!open)}
       >
         <p className="sr-only">Information om din resa</p>
@@ -53,9 +68,24 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
           <p className="text-xs">{departure.transportation_type}</p>
           <p className="text-xs">{humanizeTime(departure.travel_time)}</p>
         </div>
-        <div className="flex justify-end">
+        <div className="flex h-auto w-auto items-center justify-between">
           {/* <p className="font-bold">{`${departure.cost} SEK`}</p> */}
           <p className="font-bold">200 SEK</p>
+          {showBooking && (
+            <div className="w-30">
+              {previouslyBooked ? (
+                <Button
+                  type="button"
+                  onClick={() => handleBooking(departure.id)}
+                  text="Bokad"
+                  outline
+                  icon
+                />
+              ) : (
+                <Button type="button" onClick={openModal} text="Boka resa" />
+              )}
+            </div>
+          )}
         </div>
       </summary>
       <div className="mx-6 flex max-w-screen-sm border-t border-t-pm-black pt-6 sm:mx-auto sm:w-full">
@@ -69,7 +99,7 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
             </p>
           )}
           {departure.stops.map((stop) => (
-            <div key={stop.arrival_time} className="">
+            <div key={stop.stop_position.name} className="">
               <p className="text-xs">{stop.arrival_time.substring(0, 5)}</p>
             </div>
           ))}
@@ -87,7 +117,7 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
           )}
           {departure.stops.map((stop, i) => {
             return (
-              <div className="flex flex-col" key={stop.arrival_time}>
+              <div className="flex flex-col" key={stop.stop_position.name}>
                 <div className="mx-[12px] h-[10px] w-[10px] rounded-full border-2 border-pm-dark-grey" />
                 <div className="divide flex h-[30px] divide-x-2 divide-pm-dark-grey">
                   {i < departure.stops.length - 1 && (
@@ -106,7 +136,7 @@ const DepartureInfo = ({ departure }: { departure: Departure }) => {
             <p className="text-xs">Min position</p>
           )}
           {departure.stops.map((stop) => (
-            <div key={stop.arrival_time} className="">
+            <div key={stop.stop_position.name}>
               <p className="text-xs">{stop.stop_position.name}</p>
             </div>
           ))}

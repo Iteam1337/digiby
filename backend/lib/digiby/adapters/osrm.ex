@@ -3,6 +3,23 @@ defmodule Osrm do
 
   def route(from, to), do: route([from, to])
 
+  def get_duration(positions) do
+    coordinates =
+      positions
+      |> Enum.map(fn %{"lat" => lat, "lng" => lon} -> Enum.join([lon, lat], ",") end)
+      |> Enum.join(";")
+
+    url =
+      "#{osrm_url()}/route/v1/driving/#{coordinates}?steps=false&alternatives=false&annotations=false"
+
+    HTTPoison.get!(url)
+    |> Map.get(:body)
+    |> Jason.decode!()
+    |> Map.get("routes")
+    |> List.first()
+    |> Map.get("duration")
+  end
+
   def route(positions) do
     coordinates =
       positions
@@ -10,7 +27,7 @@ defmodule Osrm do
       |> Enum.join(";")
 
     url =
-      "#{osrm_url()}/route/v1/driving/#{coordinates}?steps=true&alternatives=false&overview=full&annotations=true"
+      "#{osrm_url()}/route/v1/driving/#{coordinates}?steps=false&alternatives=false&overview=full&annotations=false"
 
     HTTPoison.get!(url)
     |> Map.get(:body)

@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment, useEffect } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import axios from 'axios';
 import { Combobox } from '@headlessui/react';
 import debounce from 'lodash.debounce';
