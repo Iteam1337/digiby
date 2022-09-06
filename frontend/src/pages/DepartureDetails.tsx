@@ -86,15 +86,15 @@ const DeparturesDetails = () => {
         return {
           type: 'Feature',
           properties: {
-            color: dep.id === departure.id ? [19, 197, 123] : [200, 200, 200],
+            color: dep.id === departure.id ? [36, 47, 155] : [165, 173, 246],
           },
           geometry: { type: 'LineString', coordinates: dep.geometry },
         };
       })
       .sort((a, b) => {
-        return a.properties.color[0] === 19
+        return a.properties.color[0] === 36
           ? 1
-          : b.properties.color[0] === 19
+          : b.properties.color[0] === 36
           ? -1
           : 0;
       }),
@@ -140,8 +140,8 @@ const DeparturesDetails = () => {
         color:
           dep.id === departure.id
             ? [
-                [19, 197, 123],
-                [52, 51, 50],
+                [36, 47, 155],
+                [246, 246, 244],
               ]
             : [
                 [200, 200, 200],
@@ -150,7 +150,7 @@ const DeparturesDetails = () => {
       };
     })
     .sort((a, b) => {
-      return a.color[0][0] === 19 ? 1 : b.color[0][0] === 19 ? -1 : 0;
+      return a.color[0][0] === 36 ? 1 : b.color[0][0] === 36 ? -1 : 0;
     });
 
   function createStopIcon(colorArr: number[][]) {
@@ -228,8 +228,8 @@ const DeparturesDetails = () => {
     lineJointRounded: true,
     lineWidthScale: 1,
     lineWidthMinPixels: 3,
-    getFillColor: [253, 254, 255],
-    getLineColor: [253, 254, 255],
+    getFillColor: [151, 153, 158],
+    getLineColor: [151, 153, 158],
     getPointRadius: 100,
     getLineWidth: 3,
     getElevation: 3,
@@ -273,7 +273,7 @@ const DeparturesDetails = () => {
           <StaticMap
             mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
             reuseMaps
-            mapStyle="mapbox://styles/mapbox/dark-v10"
+            mapStyle="mapbox://styles/mapbox/light-v10"
           />
         </Deckgl>
       </div>

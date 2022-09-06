@@ -71,7 +71,7 @@ const BookingModalContent = ({
           </p>
           <div className="flex items-center justify-between space-x-5">
             <p className="text-xs">Boka plats</p>
-            <div className="flex items-center rounded-md bg-pm-grey">
+            <div className="flex items-center rounded-md bg-pm-grey-primary">
               <button
                 className="h-10 w-12 text-xl"
                 type="button"

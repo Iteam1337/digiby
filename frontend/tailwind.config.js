@@ -8,10 +8,9 @@ module.exports = {
     },
     extend: {
       colors: {
-        'pm-green': 'var(--pm-green)',
-        'pm-grey': 'var(--pm-grey)',
-        'pm-dark-grey': 'var(--pm-dark-grey)',
-        'pm-light-grey': 'var(--pm-light-grey)',
+        'pm-accent': 'var(--pm-accent)',
+        'pm-grey-primary': 'var(--pm-grey-primary)',
+        'pm-grey-secondary': 'var(--pm-grey-secondary)',
         'pm-black': 'var(--pm-black)',
         'pm-white': 'var(--pm-white)',
         'pm-background': 'var(--pm-background)',

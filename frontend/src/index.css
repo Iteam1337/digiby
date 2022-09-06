@@ -3,13 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --pm-green: #13c57b;
-  --pm-grey: #f1f3f5;
-  --pm-dark-grey: #737475;
-  --pm-light-grey: #f0f2f4;
+  --pm-accent: #242f9b;
+  --pm-grey-primary: #eff1f9;
+  --pm-grey-secondary: #97999e;
   --pm-black: #1f1f1f;
   --pm-white: #fdfeff;
-  --pm-background: #e5e5e5;
+  --pm-background: #f1f3f5;
 }
 
 body {
@@ -29,7 +28,7 @@ body {
 }
 
 input:focus-visible {
-  outline: 2px solid var(--pm-dark-grey);
+  outline: 2px solid var(--pm-grey-secondary);
 }
 
 code {
@@ -47,7 +46,7 @@ details > summary::-webkit-details-marker {
 .react-datepicker {
   font-family: inherit !important;
   color: var(--pm-black) !important;
-  border-color: var(--pm-dark-grey) !important;
+  border-color: var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker,
@@ -59,8 +58,8 @@ details > summary::-webkit-details-marker {
 }
 
 .react-datepicker__header {
-  background-color: var(--pm-grey) !important;
-  border-color: var(--pm-dark-grey) !important;
+  background-color: var(--pm-grey-primary) !important;
+  border-color: var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker__current-month,
@@ -71,7 +70,7 @@ details > summary::-webkit-details-marker {
 
 .react-datepicker__day--keyboard-selected,
 li.react-datepicker__time-list-item:focus-visible {
-  background-color: var(--pm-dark-grey) !important;
+  background-color: var(--pm-grey-secondary) !important;
   color: var(--pm-white) !important;
   outline: none;
 }
@@ -85,11 +84,11 @@ li.react-datepicker__time-list-item--selected {
 .react-datepicker__day--selected:focus-visible,
 li.react-datepicker__time-list-item--selected:focus-visible {
   background-color: var(--pm-black) !important;
-  outline: 2px solid var(--pm-dark-grey) !important;
+  outline: 2px solid var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker__navigation:focus-visible {
-  outline: 2px solid var(--pm-dark-grey) !important;
+  outline: 2px solid var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker__navigation-icon--next {
@@ -104,7 +103,7 @@ li.react-datepicker__time-list-item--selected:focus-visible {
 
 .react-datepicker__time-container,
 .react-datepicker__navigation-icon::before {
-  border-color: var(--pm-dark-grey) !important;
+  border-color: var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker__month {
@@ -113,7 +112,7 @@ li.react-datepicker__time-list-item--selected:focus-visible {
 }
 
 .react-datepicker__month:focus-within {
-  outline: 2px solid var(--pm-dark-grey) !important;
+  outline: 2px solid var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker__day-name {
@@ -121,7 +120,7 @@ li.react-datepicker__time-list-item--selected:focus-visible {
 }
 
 .react-datepicker__time-box:focus-within {
-  outline: 2px solid var(--pm-dark-grey) !important;
+  outline: 2px solid var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker__time-list:focus-visible {
@@ -135,30 +134,30 @@ li.react-datepicker__time-list-item--selected:focus-visible {
 
 .react-datepicker-popper[data-placement^='bottom']
   .react-datepicker__triangle::before {
-  border-bottom-color: var(--pm-dark-grey) !important;
+  border-bottom-color: var(--pm-grey-secondary) !important;
 }
 
 .react-datepicker-popper[data-placement^='top']
   .react-datepicker__triangle::before {
-  border-top-color: var(--pm-dark-grey);
+  border-top-color: var(--pm-grey-secondary);
 }
 
 @media (hover: hover) {
   .react-datepicker__month-text:hover,
   .react-datepicker__quarter-text:hover,
   .react-datepicker__year-text:hover {
-    background-color: var(--pm-grey) !important;
+    background-color: var(--pm-grey-primary) !important;
   }
 
   .react-datepicker__day:hover,
   li.react-datepicker__time-list-item:hover {
-    background-color: var(--pm-dark-grey) !important;
+    background-color: var(--pm-grey-secondary) !important;
     color: var(--pm-white) !important;
   }
 
   .react-datepicker__day--selected:hover,
   li.react-datepicker__time-list-item--selected:hover {
-    background-color: var(--pm-dark-grey) !important;
+    background-color: var(--pm-grey-secondary) !important;
   }
 }
 
@@ -173,10 +172,10 @@ li.react-datepicker__time-list-item--selected:focus-visible {
 .mapboxgl-ctrl-attrib-button:focus-visible,
 .mapboxgl-ctrl-logo:focus-visible,
 .mapboxgl-ctrl-attrib-inner > a:focus-visible {
-  outline: 2px solid var(--pm-white) !important;
+  outline: 2px solid var(--pm-black) !important;
 }
 
 /* todo: make this visible */
 .mapboxgl-canvas:focus-visible {
-  outline: 2px solid var(--pm-white) !important;
+  outline: 2px solid var(--pm-black) !important;
 }

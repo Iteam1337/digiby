@@ -59,11 +59,13 @@ const AutoCompleteAddress = ({ name, placeholder, previousSearch }: Props) => {
         }}
         placeholder={placeholder}
         name={name}
-        className="peer w-full rounded-md bg-pm-grey py-2 pl-8 pr-3 text-xs"
+        className="peer w-full rounded-md bg-pm-grey-primary py-2 pl-8 pr-3 text-xs"
       />
-      <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-dark-grey  peer-focus:fill-pm-black" />
+      <PosIcon className="absolute mt-[-23px] ml-[8px] fill-pm-grey-secondary  peer-focus:fill-pm-black" />
       <Combobox.Options
-        className={'-10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey '}
+        className={
+          '-10 mt-1 max-h-32 overflow-y-scroll rounded-md bg-pm-grey-primary '
+        }
       >
         {searchAddresses &&
           searchAddresses.map((address, i) => (
@@ -71,7 +73,9 @@ const AutoCompleteAddress = ({ name, placeholder, previousSearch }: Props) => {
               {({ active }) => (
                 <li
                   className={`${
-                    active ? 'bg-pm-dark-grey text-pm-white' : 'text-pm-black'
+                    active
+                      ? 'bg-pm-grey-secondary text-pm-white'
+                      : 'text-pm-black'
                   } py-2 pl-2 text-xs`}
                 >
                   {address.address}

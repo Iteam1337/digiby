@@ -17,7 +17,7 @@ const DeparturesCard = ({ departure }: { departure: Departure }) => {
   return (
     <button
       onClick={() => handleClick()}
-      className="mb-4 w-full rounded-md bg-pm-white p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-dark-grey"
+      className="mb-4 w-full rounded-md bg-pm-white p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-grey-secondary"
     >
       <div className="flex justify-between">
         <h3 className="font-bold">

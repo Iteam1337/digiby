@@ -13,11 +13,11 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     <>
       {pathname !== '/' && fromTo.from.address ? (
         <>
-          <header className="w-full bg-pm-green p-6">
+          <header className="w-full bg-pm-accent p-6">
             <div className="mx-auto max-w-screen-sm">
               <button
                 onClick={() => navigate(-1)}
-                className="absolute top-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-white focus-visible:ring-offset-8 focus-visible:ring-offset-pm-green"
+                className="absolute top-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-pm-white focus-visible:ring-offset-8 focus-visible:ring-offset-pm-accent"
                 aria-label="Gå tillbaka"
               >
                 <ArrowIcon className="fill-pm-white" />
@@ -50,7 +50,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
           </main>
         </>
       ) : (
-        <main className="h-full w-full bg-pm-green">{children}</main>
+        <main className="h-full w-full bg-pm-accent">{children}</main>
       )}
     </>
   );
