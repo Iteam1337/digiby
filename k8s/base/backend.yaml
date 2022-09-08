@@ -25,15 +25,22 @@ spec:
       containers:
         - name: backend
           image: iteam1337/digiby-backend
+          resources:
+            requests:
+              memory: "0.25Gi"
+              cpu: "0.5"
+            limits:
+              cpu: "1"
+              memory: "0.25Gi"
           ports:
             - containerPort: 4000
           env:
             - name: SECRET_KEY_BASE
-              valueFrom: 
+              valueFrom:
                 secretKeyRef:
                   name: digiby-secret-key-base
                   key: secret-key-base
-                    
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -55,7 +62,7 @@ spec:
           - path: /api
             pathType: Prefix
             backend:
-              service: 
+              service:
                 name: backend
                 port:
                   number: 4000
