@@ -7,5 +7,8 @@ RUN npm ci
 ADD . ./
 RUN npm run build
 
-FROM nginx:alpine AS runner
-COPY --from=builder /app/dist /usr/share/nginx/html
+FROM steebchen/nginx-spa:stable AS runner
+# FROM nginx:alpine AS runner
+COPY --from=builder /app/dist /app
+
+CMD ["nginx"]
