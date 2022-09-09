@@ -54,8 +54,19 @@ spec:
   tls:
     - hosts:
         - digiby.iteam.services
+        - digiby.predictivemovement.se
       secretName: digiby-stage-tls
   rules:
+    - host: digiby.predictivemovement.se
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 4000
     - host: digiby.iteam.services
       http:
         paths:
