@@ -56,6 +56,13 @@ spec:
     - host: digiby.predictivemovement.se
       http:
         paths:
+          - path: /departures
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
           - path: /
             pathType: Prefix
             backend:
@@ -66,6 +73,13 @@ spec:
     - host: digiby.iteam.services
       http:
         paths:
+          - path: /departures
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
           - path: /
             pathType: Prefix
             backend:
