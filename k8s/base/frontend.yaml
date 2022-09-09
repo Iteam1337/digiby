@@ -50,8 +50,19 @@ spec:
   tls:
     - hosts:
         - digiby.iteam.services
+        - digiby.predictivemovement.se
       secretName: digiby-tls
   rules:
+    - host: digiby.predictivemovement.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
     - host: digiby.iteam.services
       http:
         paths:
