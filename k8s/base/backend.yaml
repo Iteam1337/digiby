@@ -29,11 +29,11 @@ spec:
           image: iteam1337/digiby-backend
           resources:
             requests:
-              memory: "0.5Gi"
-              cpu: "0.5"
+              memory: "1Gi"
+              cpu: "1"
             limits:
               cpu: "1"
-              memory: "0.5Gi"
+              memory: "1Gi"
           ports:
             - containerPort: 4000
           env:
