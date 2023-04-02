@@ -11,7 +11,7 @@ const getAddress = (
   name: string,
   setSearchAddresses: React.Dispatch<React.SetStateAction<Address[]>>
 ) => {
-  const url = 'https://pelias.iteamdev.io';
+  const url = 'https://pelias.predictivemovement.se';
   axios.get(`${url}/v1/search?text=${encodeURIComponent(name)}`).then((res) => {
     setSearchAddresses(
       res.data.features.map((address: any) => ({

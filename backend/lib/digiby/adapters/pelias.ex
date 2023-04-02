@@ -1,6 +1,6 @@
 defmodule Digiby.Adapters.Pelias do
   # @pelias_url "https://pelias.iteam.services/v1"
-  @pelias_url "https://pelias.iteamdev.io/v1"
+  @pelias_url "https://pelias.predictivemovement.io/v1"
   def structured_search(street, municipality) do
     HTTPoison.get!(
       @pelias_url <>
